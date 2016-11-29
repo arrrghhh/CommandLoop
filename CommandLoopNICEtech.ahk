@@ -1750,7 +1750,7 @@ Loop, read, %SelectedFileMain%
 		Gui,Loading:Destroy
 	}
 	Gui, Loading:-Caption
-	Gui, Loading:Add, Progress, vlvl w250 h18 ; PBS_MARQUEE = 0x8
+	Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
 	Gui, Loading:Add, Text,,  Waiting for HKLM to finish on %line%
 	Gui, Hide
 	Gui, Loading:Show
@@ -1759,10 +1759,8 @@ Loop, read, %SelectedFileMain%
 	{	
 		IfExist \\%line%\%RemDriveLetter%$\NICETech\RegBackup\hklm_%line%.reg
 			HKLM_Exist = 1
-		GuiControl,Loading:, lvl, %A_Index%
-		if A_Index > 100
-			break
-		Sleep 250
+		GuiControl,Loading:, lvl, 1
+		Sleep 20
 	}
 	Gui,Loading:Destroy
 	IfNotExist \\%line%\%RemDriveLetter%$\NICETech\RegBackup\hklm_%line%.reg
@@ -1771,7 +1769,7 @@ Loop, read, %SelectedFileMain%
 		continue
 	}
 	Gui, Loading:-Caption
-	Gui, Loading:Add, Progress, vlvl w250 h18 ; PBS_MARQUEE = 0x8
+	Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
 	Gui, Loading:Add, Text,, Waiting for HKCU to finish on %line%
 	Gui, Hide
 	Gui, Loading:Show
@@ -1780,10 +1778,8 @@ Loop, read, %SelectedFileMain%
 	{	
 		IfExist \\%line%\%RemDriveLetter%$\NICETech\RegBackup\hkcu_%line%.reg
 			HKCU_Exist = 1
-		GuiControl,Loading:, lvl, %A_Index%
-		if A_Index > 100
-			break
-		Sleep 250
+		GuiControl,Loading:, lvl, 1
+		Sleep 20
 	}
 	Gui,Loading:Destroy
 	IfNotExist \\%line%\%RemDriveLetter%$\NICETech\RegBackup\hkcu_%line%.reg
