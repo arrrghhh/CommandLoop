@@ -1075,19 +1075,12 @@ IfNotExist, %SelectedFileMain%
 	MsgBox,,File Selection, No Server List found %SelectedFileMain%
 	Return
 }
-IfExist %LocDriveLetter%:\NICETech\RDPMan.rdg
+IfExist %LocDriveLetter%:\NICETech\AllServers-%A_UserName%.rdg
 	MsgBox,4,Overwrite, Overwrite old RDG file?
 IfMsgBox No
 	Return
 IfMsgBox Yes
-	FileDelete %LocDriveLetter%:\NICETech\RDPMan.rdg
-Loop, Read, %SelectedFileMain%
-{
-	If A_Index = 1
-		serverlist := A_LoopReadLine
-	Else
-		serverlist := serverlist . "," . A_LoopReadLine
-}
+	FileDelete %LocDriveLetter%:\NICETech\AllServers-%A_UserName%.rdg
 IfExist %LocDriveLetter%:\NICETech\RDPMan.ps1
 	FileDelete %LocDriveLetter%:\NICETech\RDPMan.ps1
 FileAppend, 
@@ -1116,7 +1109,8 @@ $DebugPreference = "SilentlyContinue"
 
 #let's define the file here, it should be a param, but this is a messed up script
 
-$computerFilePath = "%SelectedFileMain%" ## update this
+# Pull server list from existing txt file
+$computerFilePath = "%SelectedFileMain%"
 
 if `("Yes" -eq $debugScript`)
 {
@@ -1281,8 +1275,7 @@ $outputPath = "%LocDriveLetter%:\NICETech"
 # Example to get a list of MemberServers and Domain Controllers:
 #$computerObjects1 = Get-ADComputer -SearchBase "OU=MemberServers,DC=lunet,DC=lboro,DC=ac,DC=uk" -LDAPFilter "`(operatingsystem=*Windows server*`)"  | Select-Object -property name,dnshostname
 
-### either of these are fine, sorta....
-#$allComputers = @`("hlbwnwapp001"`)
+# Update to script - get server list from %SelectedFileMain%
 $allcomputers  = Get-Content $computerFilePath 
 
 ## if you want to retain properties, its more like this#####
@@ -1305,7 +1298,7 @@ $array[0].name # etc etc
 ######
 
 # Call the function to generate the file:
-$filePrefix = "allservers"
+$filePrefix = "AllServers"
 New-RDCManFile -username "$username" -outputPath "$outputPath\$filePrefix" -computerArray $allComputers
 #New-RDCManFile -username "useraccount2-admin" -outputPath "$outputPath\$filePrefix" -computerArray $allComputers
 
@@ -1329,14 +1322,22 @@ New-RDCManFile -username "$username" -outputPath "$outputPath\$filePrefix" -comp
 #* END OF SCRIPT
 #*=============================================================================
 ), %LocDriveLetter%:\NICETech\RDPMan.ps1
-Sleep, 200
+IfNotExist %LocDriveLetter%:\NICETech\RDPMan.ps1
+	Sleep, 200
+IfNotExist %LocDriveLetter%:\NICETech\RDPMan.ps1
+	Sleep, 2000
+IfNotExist %LocDriveLetter%:\NICETech\RDPMan.ps1
+{
+	MsgBox,,PS Fail,Creation of PS Script failed.  Cannot create RDG file.
+	Return
+}
 If MyCheckBox = 0
 	RunWait powershell.exe -NoExit -Command %LocDriveLetter%:\NICETech\RDPMan.ps1
 Else
 	RunWait powershell.exe -Command %LocDriveLetter%:\NICETech\RDPMan.ps1,,hide
 IfExist %LocDriveLetter%:\NICETech\RDPMan.ps1
 	FileDelete, %LocDriveLetter%:\NICETech\RDPMan.ps1
-MsgBox,,RDP Man, Task Complete - check %LocDriveLetter%:\NICETech for allservers-username.rdg
+MsgBox,,RDP Man, Task Complete - check %LocDriveLetter%:\NICETech for AllServers-%A_UserName%.rdg
 Gui, 1:Show
 Return
 
