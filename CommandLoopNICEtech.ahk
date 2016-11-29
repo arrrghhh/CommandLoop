@@ -34,7 +34,7 @@ gui, add, button, hwndhbuttonlogoff gLOGOFF, &Logoff Servers
 gui, add, button, hwndhbuttonnp gNP++, &Install NP++
 gui, add, button, hwndhbutton7z g7z, Install 7&zip
 gui, add, button, hwndhbuttonscc gscc, SCC Binding
-gui, add, button, hwndbuttonrdp grdp, RDP Man Setup
+gui, add, button, hwndhbuttonrdp grdp, RDP Man Setup
 gui, add, button, x105 y52 hwndhbuttonpulog gLogoffLink, Push Logoff Link
 ;gui, add, button, x105 y52 hwndhbuttonfunc gFUNCTEST, &Push FuncTest Shortcut
 gui, add, button, hwndhbuttonpunice gPushNiceTech, Push NICETech Folder
@@ -79,6 +79,14 @@ TT.Attach(HButtonreg, AnytimeTipTxt)
 TT.Update(HButtonreg, AnytimeTipTxt)
 TT.Attach(HButtonlogs, AfterNDMTipTxt)
 TT.Update(HButtonlogs, AfterNDMTipTxt)
+TT.Attach(HButtonscc, AfterNDMTipTxt)
+TT.Update(HButtonscc, AfterNDMTipTxt)
+TT.Attach(HButtonaddrolefeat, BeforeSRTTipTxt)
+TT.Update(HButtonaddrolefeat, BeforeSRTTipTxt)
+TT.Attach(HButtonregback, AnytimeTipTxt)
+TT.Update(HButtonregback, AnytimeTipTxt)
+TT.Attach(HButtonrdp, AnytimeTipTxt)
+TT.Update(HButtonrdp, AnytimeTipTxt)
 TT.Attach(HDdlRemoteDriveLetter, RemoteDriveLetterTipTxt)
 TT.Update(HDdlRemoteDriveLetter, RemoteDriveLetterTipTxt)
 TT.Attach(HDdlLocalDriveLetter, LocalDriveLetterTipTxt)
