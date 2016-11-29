@@ -34,6 +34,7 @@ gui, add, button, hwndhbuttonlogoff gLOGOFF, &Logoff Servers
 gui, add, button, hwndhbuttonnp gNP++, &Install NP++
 gui, add, button, hwndhbutton7z g7z, Install 7&zip
 gui, add, button, hwndhbuttonscc gscc, SCC Binding
+gui, add, button, hwndbuttonrdp grdp, RDP Man Setup
 gui, add, button, x105 y52 hwndhbuttonpulog gLogoffLink, Push Logoff Link
 ;gui, add, button, x105 y52 hwndhbuttonfunc gFUNCTEST, &Push FuncTest Shortcut
 gui, add, button, hwndhbuttonpunice gPushNiceTech, Push NICETech Folder
@@ -975,6 +976,11 @@ gui, Show
 GuiControlGet, MyCheckBox
 GuiControlGet, LocDriveLetter
 GuiControlGet, RemDriveLetter
+IfNotExist, %SelectedFileMain%
+{
+	MsgBox,,File Selection, No Server List found %SelectedFileMain%
+	Return
+}
 IfNotExist %LocDriveLetter%:\NICETech\Tools\cert_thumb.ps1
 {
 	FileAppend,
@@ -1055,6 +1061,283 @@ Loop, parse, BindServerSelection, |
 	}
 }
 MsgBox,,SCC Binding, Task Complete.
+Gui, 1:Show
+Return
+
+rdp:
+gui, Submit
+gui, Show
+GuiControlGet, MyCheckBox
+GuiControlGet, LocDriveLetter
+GuiControlGet, RemDriveLetter
+IfNotExist, %SelectedFileMain%
+{
+	MsgBox,,File Selection, No Server List found %SelectedFileMain%
+	Return
+}
+IfExist %LocDriveLetter%:\NICETech\RDPMan.rdg
+	MsgBox,4,Overwrite, Overwrite old RDG file?
+IfMsgBox No
+	Return
+IfMsgBox Yes
+	FileDelete %LocDriveLetter%:\NICETech\RDPMan.rdg
+Loop, Read, %SelectedFileMain%
+{
+	If A_Index = 1
+		serverlist := A_LoopReadLine
+	Else
+		serverlist := serverlist . "," . A_LoopReadLine
+}
+IfExist %LocDriveLetter%:\NICETech\RDPMan.ps1
+	FileDelete %LocDriveLetter%:\NICETech\RDPMan.ps1
+FileAppend, 
+(
+<#
+    .SYNOPSIS
+    This generates a Remote Desktop Manager file for computer names from a text file.
+    .DESCRIPTION
+    This generates a Remote Desktop Manager file for computer names from a text file.
+    Pass values required to the function rather than the script.
+    It is based off "New-RDCManFile.ps1" by: Jan Egil Ring.
+    .PARAMETER debugScript
+    Switch on Write-Debug output. Default is No.
+    .EXAMPLE
+    C:\PS> New-RDCManFile.ps1
+    .NOTES
+    Author: Jan Egil Ring | Robin Malik | powershell slack peeps
+#>
+
+#*=============================================================================
+#* DEFINE GLOBAL VARIABLES
+#*=============================================================================
+$startDateTime = Get-Date
+$EnableEmail = 1
+$DebugPreference = "SilentlyContinue"
+
+#let's define the file here, it should be a param, but this is a messed up script
+
+$computerFilePath = "%SelectedFileMain%" ## update this
+
+if `("Yes" -eq $debugScript`)
+{
+    $DebugPreference = "Continue"   # Write-Debug commands.
+    $EnableEmail = Read-Host "Enable email, 0 = No, 1 = Yes [0/1]: "
+}
+
+#*=============================================================================
+#* Function:    New-LURDCMFile
+#* ============================================================================
+function New-RDCManFile
+{
+    <#
+    .SYNOPSIS
+    This generates a Remote Desktop Manager file for computer names from a text file.
+    .DESCRIPTION
+    This generates a Remote Desktop Manager file for computer names from a text file.
+    .PARAMETER username
+    This username that you wish to be present in the RDG file by default.
+    .PARAMETER outputPath
+    The output path for the file `(e.g. D:\`).
+    .PARAMETER computerArray
+    Array of strings - computer names to add to the RDG file
+    .EXAMPLE
+    New-RDCManFile -Username "admin" -OutputPath "D:\" -ComputerArray @`('comp1','comp2'`)
+    #>
+
+
+    # Leave previous two lines blank
+    param`(
+        [Parameter`(Mandatory=$true, HelpMessage="Admin account."`)]
+        [String]
+        $Username,
+
+        [Parameter`(Mandatory=$true, HelpMessage="Output Path for file."`)]
+        [String]
+        $OutputPath,
+
+        [Parameter`(Mandatory=$true, HelpMessage="Array of computers."`)]
+        [Array]
+        $ComputerArray
+    `)
+
+# Create a template XML. This needs to be indented to the margin so that the output XML file has no indent.
+$template = @'
+<?xml version="1.0" encoding="utf-8"?>
+<RDCMan schemaVersion="1">
+    <version>2.2</version>
+    <file>
+        <properties>
+            <name></name>
+            <expanded>True</expanded>
+            <comment />
+            <logonCredentials inherit="FromParent" />
+            <connectionSettings inherit="FromParent" />
+            <gatewaySettings inherit="FromParent" />
+            <remoteDesktop inherit="FromParent" />
+            <localResources inherit="FromParent" />
+            <securitySettings inherit="FromParent" />
+            <displaySettings inherit="FromParent" />
+        </properties>
+        <group>
+            <properties>
+                <name></name>
+                <expanded>True</expanded>
+                <comment />
+                <logonCredentials inherit="None">
+                    <userName></userName>
+                    <domain></domain>
+                    <password storeAsClearText="False"></password>
+                </logonCredentials>
+                <connectionSettings inherit="FromParent" />
+                <gatewaySettings inherit="None">
+                    <userName></userName>
+                    <domain></domain>
+                    <password storeAsClearText="False" />
+                    <enabled>False</enabled>
+                    <hostName />
+                    <logonMethod>4</logonMethod>
+                    <localBypass>False</localBypass>
+                    <credSharing>False</credSharing>
+                </gatewaySettings>
+                <remoteDesktop inherit="FromParent" />
+                <localResources inherit="FromParent" />
+                <securitySettings inherit="FromParent" />
+                <displaySettings inherit="FromParent" />
+            </properties>
+            <server>
+                <name></name>
+                <displayName></displayName>
+                <comment />
+                <logonCredentials inherit="FromParent" />
+                <connectionSettings inherit="FromParent" />
+                <gatewaySettings inherit="FromParent" />
+                <remoteDesktop inherit="FromParent" />
+                <localResources inherit="FromParent" />
+                <securitySettings inherit="FromParent" />
+                <displaySettings inherit="FromParent" />
+            </server>
+        </group>
+    </file>
+</RDCMan>
+'@
+
+    $outputFile = "$outputPath-$username.rdg"
+
+    # Output $template to a temporary XML file:
+    $template | Out-File $home\RDCMan-template.xml -Encoding UTF8
+
+    # Load the XML template into XML object:
+    $xml = New-Object xml
+    $xml.Load`("$home\RDCMan-template.xml"`)
+
+    # Set the file properties:
+    $file = `(@`($xml.RDCMan.file.properties`)[0]`).Clone`(`)
+    $file.name = $domain
+    $xml.RDCMan.file.properties | Where-Object { "" -eq $_.Name } | ForEach-Object  { [void]$xml.RDCMan.file.ReplaceChild`($file,$_`) }
+
+    # Set the group properties
+    $group = `(@`($xml.RDCMan.file.group.properties`)[0]`).Clone`(`)
+    $group.name = $env:userdomain
+    $group.logonCredentials.Username = $username
+    $group.logonCredentials.Domain   = $domain
+
+    $xml.RDCMan.file.group.properties | Where-Object { "" -eq $_.Name } | ForEach-Object  { [void]$xml.RDCMan.file.group.ReplaceChild`($group, $_`) }
+
+    # Use template to add servers from Active Directory to the XML
+    $server = `(@`($xml.RDCMan.file.group.server`)[0]`).Clone`(`)
+
+    $computerArray | ForEach-Object {
+        
+        $server = $server.clone`(`)
+        [string]$server.DisplayName = $_
+        [string]$server.Name = $_
+
+        $xml.RDCMan.file.group.AppendChild`($server`) > $null
+    }
+    
+    # Remove template server
+    $xml.RDCMan.file.group.server | Where-Object { "" -eq $_.Name } | ForEach-Object { [void]$xml.RDCMan.file.group.RemoveChild`($_`) 
+    }
+
+    # Save the XML object to a file
+    $xml.Save`($outputFile`)
+
+    # Remove the temporary XML file:
+    Remove-Item $home\RDCMan-template.xml -Force
+}
+
+#*=============================================================================
+#* END OF FUNCTION LISTINGS
+#*=============================================================================
+
+#*=============================================================================
+#* SCRIPT BODY
+#*=============================================================================
+$domain = $Env:USERDOMAIN
+$username = $Env:USERNAME
+# Base output path:
+$outputPath = "%LocDriveLetter%:\NICETech"
+
+# Example to get a list of MemberServers and Domain Controllers:
+#$computerObjects1 = Get-ADComputer -SearchBase "OU=MemberServers,DC=lunet,DC=lboro,DC=ac,DC=uk" -LDAPFilter "`(operatingsystem=*Windows server*`)"  | Select-Object -property name,dnshostname
+
+### either of these are fine, sorta....
+#$allComputers = @`("hlbwnwapp001"`)
+$allcomputers  = Get-Content $computerFilePath 
+
+## if you want to retain properties, its more like this#####
+<#
+$array = @`(
+  @{
+    name='server123'
+    hostname='server123.whatever.com'
+    description="im cool!"
+  },
+  @{
+    name='server321'
+    hostname='server321.whatever.com'
+    description="im cool!"
+  }
+`)
+
+$array[0].name # etc etc
+#>
+######
+
+# Call the function to generate the file:
+$filePrefix = "allservers"
+New-RDCManFile -username "$username" -outputPath "$outputPath\$filePrefix" -computerArray $allComputers
+#New-RDCManFile -username "useraccount2-admin" -outputPath "$outputPath\$filePrefix" -computerArray $allComputers
+
+
+# Example to output a list of all SQL servers `(from an AD security group`):
+#$filePrefix = "sqlservers"
+#$sqlservers = Get-ADGroupMember -Identity "sql-servers" | Get-ADComputer | Select-Object -property name,dnshostname | Sort-Object -Property name
+# Call the function to generate the file:
+#New-RDCManFile -username "useraccount-admin" -outputPath "$outputPath\$filePrefix" -computerArray $sqlservers
+
+# Optional block to output script execution time:
+#$endDateTime = Get-Date
+#$scriptExecutionMin = `($endDateTime.Subtract`($startDateTime`).Minutes`)
+#$scriptExecutionSec = `($endDateTime.Subtract`($startDateTime`).Seconds`)
+#Write-Output "Script execution time: $scriptExecutionMin min $scriptExecutionSec sec."
+#*=============================================================================
+#* END SCRIPT BODY
+#*=============================================================================
+
+#*=============================================================================
+#* END OF SCRIPT
+#*=============================================================================
+), %LocDriveLetter%:\NICETech\RDPMan.ps1
+Sleep, 200
+If MyCheckBox = 0
+	RunWait powershell.exe -NoExit -Command %LocDriveLetter%:\NICETech\RDPMan.ps1
+Else
+	RunWait powershell.exe -Command %LocDriveLetter%:\NICETech\RDPMan.ps1,,hide
+IfExist %LocDriveLetter%:\NICETech\RDPMan.ps1
+	FileDelete, %LocDriveLetter%:\NICETech\RDPMan.ps1
+MsgBox,,RDP Man, Task Complete - check %LocDriveLetter%:\NICETech for allservers-username.rdg
+Gui, 1:Show
 Return
 
 LogoffLink:
