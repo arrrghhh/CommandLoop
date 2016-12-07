@@ -1345,7 +1345,10 @@ Else
 	RunWait powershell.exe -Command %LocDriveLetter%:\NICETech\RDPMan.ps1,,hide
 IfExist %LocDriveLetter%:\NICETech\RDPMan.ps1
 	FileDelete, %LocDriveLetter%:\NICETech\RDPMan.ps1
-MsgBox,,RDP Man, Task Complete - check %LocDriveLetter%:\NICETech for AllServers-%A_UserName%.rdg
+IfNotExist %LocDriveLetter%:\NICETech\AllServers-%A_UserName%.rdg
+	MsgBox,,Failure, Task Fail - Perhaps Server2008, please enable PS (Set-ExecutionPolicy Unresctricted)
+Else
+	MsgBox,,RDP Man, Task Complete - check %LocDriveLetter%:\NICETech for AllServers-%A_UserName%.rdg
 Gui, 1:Show
 Return
 
