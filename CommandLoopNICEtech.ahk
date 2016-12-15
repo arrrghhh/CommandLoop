@@ -1993,6 +1993,7 @@ CLSMonitorService
 CLSRCMService
 CIMService
 CoachingServerService
+ContentAnalysisService
 EnrollmentService
 EvaluationServerService
 FLM
@@ -2036,6 +2037,7 @@ SCLoader
 SearchTomcat7
 Searchzookeeper
 SystemAdminService
+TextAnalysisService
 TRSService
 ), %LocDriveLetter%:\NICETech\services.txt
 }
