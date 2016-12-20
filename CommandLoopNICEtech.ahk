@@ -1,6 +1,6 @@
 #SingleInstance
 #Include Class_GuiControlTips.ahk
-#Include Anchor.ahk
+#Include Anchor64.ahk
 
 if not A_IsAdmin
 {
@@ -2179,13 +2179,13 @@ TRSService
 }
 
 IISGuiSize:
-	Anchor("ServerSelectionIIS", "hw")
-	Anchor("Btn", "xy")
+	Anchor("ServerSelectionIIS", "hw", true)
+	Anchor("Btn", "xy", true)
 Return
 
 DBGuiSize:
-	Anchor("ServerSelectionDB", "hw")
-	Anchor("DBBtn", "xy")
+	Anchor("ServerSelectionDB", "hw", true)
+	Anchor("DBBtn", "xy", true)
 Return
 
 IISGuiClose:
