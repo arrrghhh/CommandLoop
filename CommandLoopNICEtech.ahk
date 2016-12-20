@@ -884,7 +884,7 @@ Loop, parse, ServerSelectionDB, |
 	}
 }
 If ErrDBServers
-	MsgBox,,SQL Missing, SQL PerfMon ini missing on %ErrDBServers%
+	MsgBox,,SQL Missing, SQL PerfMon ini missing on: %ErrDBServers%
 IfExist %A_ScriptDir%\sqlresult.txt
 	FileDelete %A_ScriptDir%\sqlresult.txt
 IfExist %A_ScriptDir%\sqlstatus.txt
