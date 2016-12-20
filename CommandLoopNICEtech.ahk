@@ -11,6 +11,14 @@ OnExit, ExitSub
 RemDriveLetter = D
 LocDriveLetter = D
 
+IfWinActive, Program Manager
+	WinMinimizeAllUndo
+Else
+{
+	WinMinimizeAll
+	WinActivate, Program Manager
+}
+
 GuiControlGet, LocDriveLetter
 menu, FileMenu, add, File Select Main, FSM
 SelectedFileMain = %LocDriveLetter%:\NICETech\servers.txt
@@ -41,6 +49,7 @@ gui, add, button, hwndhbuttonpunice gPushNiceTech, Push NICETech Folder
 gui, add, button, hwndhbuttonserv gPushConfigMgr, Push NICE ServiceMgr
 gui, add, button, hwndhbuttonsecpol gSecPol, Security Policies
 gui, add, button, hwndhbuttonaddrolefeat gAddRoleFeat, Add Roles/Features
+gui, add, button, hwndhbuttonperfcount gPerfCount, Reset PerfMon
 gui, add, button, x240 y110 hwndhbuttonreg gRegistryChange, Update Registry
 gui, add, button, hwndhbuttonregback gRegBackup, Backup Registry
 gui, add, button, hwndhbuttonlogs gPushLogShortcut, Logs Shortcut
@@ -87,6 +96,8 @@ TT.Attach(HButtonregback, AnytimeTipTxt)
 TT.Update(HButtonregback, AnytimeTipTxt)
 TT.Attach(HButtonrdp, AnytimeTipTxt)
 TT.Update(HButtonrdp, AnytimeTipTxt)
+TT.Attach(HButtonperfcount, AfterNDMTipTxt)
+TT.Update(HButtonperfcount, AfterNDMTipTxt)
 TT.Attach(HDdlRemoteDriveLetter, RemoteDriveLetterTipTxt)
 TT.Update(HDdlRemoteDriveLetter, RemoteDriveLetterTipTxt)
 TT.Attach(HDdlLocalDriveLetter, LocalDriveLetterTipTxt)
@@ -509,6 +520,7 @@ gui, show
 GuiControlGet, MyCheckBox
 GuiControlGet, LocDriveLetter
 GuiControlGet, RemDriveLetter
+ErrDEPServers = 
 IfExist %LocDriveLetter%:\NICETech\depstatus.txt
 	FileDelete %LocDriveLetter%:\NICETech\depstatus.txt
 FileAppend,
@@ -704,7 +716,7 @@ Loop, Read, %SelectedFileMain%
 	IISservers .= A_LoopReadLine "|"
 Gui, IIS:+Resize -MaximizeBox
 Gui, IIS:Add, Text, vIISText, Choose servers which need IIS:
-Gui, IIS:Add, ListBox, vServerSelection 8 W130 H160, %IISservers%
+Gui, IIS:Add, ListBox, vServerSelectionIIS 8 W130 H160, %IISservers%
 Gui, IIS:Add, Button, vBtn gBtn, Finalize Selection
 Gui, IIS:Show, W170 H220, IIS Servers
 Return
@@ -716,7 +728,7 @@ IfNotExist %LocDriveLetter%:\NICETech\WindowsFeatures.txt
 	FileAppend, Web-WebServer`,Web-Common-Http`,Web-Default-Doc`,Web-Dir-Browsing`,Web-Http-Errors`,Web-Static-Content`,Web-Http-Redirect`,Web-Health`,Web-Http-Logging`,Web-Log-Libraries`,Web-ODBC-Logging`,Web-Request-Monitor`,Web-Http-Tracing`,Web-Performance`,Web-Stat-Compression`,Web-Dyn-Compression`,Web-Security`,Web-Filtering`,Web-Basic-Auth`,Web-Client-Auth`,Web-Digest-Auth`,Web-Cert-Auth`,Web-IP-Security`,Web-Url-Auth`,Web-Windows-Auth`,Web-App-Dev`,Web-Net-Ext45`,Web-Asp-Net45`,Web-ISAPI-Ext`,Web-ISAPI-Filter`,SMTP-Server`,Web-Mgmt-Console`,Web-Mgmt-Compat`,Web-Metabase`,Web-Lgcy-Mgmt-Console`,Web-Lgcy-Scripting`,Web-WMI, %LocDriveLetter%:\NICETech\WindowsFeatures.txt
 Loop, Read, %LocDriveLetter%:\NICETech\WindowsFeatures.txt
 	Features = %A_LoopReadLine%
-Loop, parse, ServerSelection, |
+Loop, parse, ServerSelectionIIS, |
 {
 	If (MyCheckBox = 0)
 	{	
@@ -754,6 +766,130 @@ Loop, parse, ServerSelection, |
 	}
 }
 MsgBox,,Add Roles/Features, Task Complete.
+Gui, 1:Show
+Return
+
+PerfCount:
+Gui, Submit
+Gui, Show
+GuiControlGet, MyCheckBox
+GuiControlGet, LocDriveLetter
+GuiControlGet, RemDriveLetter
+IfNotExist, %SelectedFileMain%
+{
+	MsgBox,,File Selection, No Server List found %SelectedFileMain%
+	Return
+}
+DBservers = 
+ErrDBServers = 
+Loop, Read, %SelectedFileMain%
+	DBservers .= A_LoopReadLine "|"
+Gui, DB:+Resize -MaximizeBox -Caption
+Gui, DB:Add, Text, vDBText, SQL nodes for counter reset:
+Gui, DB:Add, ListBox, vServerSelectionDB 8 W130 H160, %DBservers%
+Gui, DB:Add, Button, vDBBtn gDBbtn, Finalize Selection
+Gui, DB:Show, W170 H220, DB Servers
+Gui, 1:Hide
+Return
+
+DBbtn:
+Gui, DB:Submit
+Gui, DB:Destroy
+MsgBox, 3, SQL Restart, Restart SQL Services?
+IfMsgBox Yes
+	SQLRestart = 1
+IfMsgBox No
+	SQLRestart = 0
+IfMsgBox Cancel
+	Return
+Loop, parse, ServerSelectionDB, |
+{
+	IfNotExist \\%A_LoopField%\%RemDriveLetter%$\Program files\Microsoft SQL Server\MSSQL12.MSSQLSERVER\MSSQL\Binn\perf-MSSQLSERVERsqlctr.ini
+		ErrDBServers .= ErrDBServers . "`n" . A_LoopField
+	If (MyCheckBox = 0)
+	{
+		RunWait, %comspec% /k wmic /node:"%A_LoopField%" process call create 'cmd.exe /k unlodctr MSSQLSERVER'
+		RunWait, %comspec% /k wmic /node:"%A_LoopField%" process call create 'cmd.exe /k lodctr "%RemDriveLetter%:\Program files\Microsoft SQL Server\MSSQL12.MSSQLSERVER\MSSQL\Binn\perf-MSSQLSERVERsqlctr.ini"'
+		RunWait, %comspec% /k wmic /node:"%A_LoopField%" process call create 'cmd.exe /k lodctr /R'
+		If SQLRestart
+		{
+			RunWait, %comspec% /k wmic /node:"%A_LoopField%" process call create 'cmd.exe /k sc config MSSQLSERVER start= disabled'
+			RunWait, %comspec% /k wmic /node:"%A_LoopField%" process call create 'cmd.exe /k sc config SQLSERVERAGENT start= disabled'
+			Sleep, 500
+			RunWait, %comspec% /k wmic /node:"%A_LoopField%" process call create 'cmd.exe /k sc stop SQLSERVERAGENT'
+			RunWait, %comspec% /k wmic /node:"%A_LoopField%" process call create 'cmd.exe /k sc stop MSSQLSERVER'
+			IfExist %A_ScriptDir%\sqlstatus.txt
+				FileDelete %A_ScriptDir%\sqlstatus.txt
+			IfExist %A_ScriptDir%\sqlresult.txt
+				FileDelete %A_ScriptDir%\sqlresult.txt
+			RunWait, %comspec% /c tasklist /s %A_LoopField% /fi "imagename eq sqlservr.exe" > %A_ScriptDir%\sqlstatus.txt,, hide
+			RunWait, %comspec% /c find /i "PID" < %A_ScriptDir%\sqlstatus.txt > %A_ScriptDir%\sqlresult.txt,, hide
+			FileGetSize, fsize, %A_ScriptDir%\sqlresult.txt
+			Gui, Loading:-Caption
+			Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
+			Gui, Loading:Add, Text,, Waiting for SQL to stop on %A_LoopField%
+			Gui, Hide
+			Gui, Loading:Show
+			While fsize <> 0
+			{
+				Sleep, 20
+				GuiControl,Loading:, lvl, 1
+				RunWait, %comspec% /c tasklist /s %A_LoopField% /fi "imagename eq sqlservr.exe" > %A_ScriptDir%\sqlstatus.txt,, hide
+				RunWait, %comspec% /c find /i "PID" < %A_ScriptDir%\sqlstatus.txt > %A_ScriptDir%\sqlresult.txt,, hide
+				FileGetSize, fsize, %A_ScriptDir%\sqlresult.txt
+			}
+			Gui,Loading:Destroy
+			RunWait, %comspec% /k wmic /node:"%A_LoopField%" process call create 'cmd.exe /k sc config MSSQLSERVER start= auto'
+			RunWait, %comspec% /k wmic /node:"%A_LoopField%" process call create 'cmd.exe /k sc config SQLSERVERAGENT start= auto'
+			RunWait, %comspec% /k wmic /node:"%A_LoopField%" process call create 'cmd.exe /k sc start SQLSERVERAGENT'
+		}
+	}
+	Else
+	{
+		RunWait, %comspec% /c wmic /node:"%A_LoopField%" process call create 'cmd.exe /c unlodctr MSSQLSERVER',, hide
+		RunWait, %comspec% /c wmic /node:"%A_LoopField%" process call create 'cmd.exe /c lodctr "%RemDriveLetter%:\Program files\Microsoft SQL Server\MSSQL12.MSSQLSERVER\MSSQL\Binn\perf-MSSQLSERVERsqlctr.ini"',, hide
+		RunWait, %comspec% /c wmic /node:"%A_LoopField%" process call create 'cmd.exe /c lodctr /R',, hide
+		If SQLRestart
+		{
+			RunWait, %comspec% /c wmic /node:"%A_LoopField%" process call create 'cmd.exe /k sc config MSSQLSERVER start= disabled',, hide
+			RunWait, %comspec% /c wmic /node:"%A_LoopField%" process call create 'cmd.exe /k sc config SQLSERVERAGENT start= disabled',, hide
+			Sleep, 500
+			RunWait, %comspec% /c wmic /node:"%A_LoopField%" process call create 'cmd.exe /k sc stop MSSQLSERVER',, hide
+			RunWait, %comspec% /c wmic /node:"%A_LoopField%" process call create 'cmd.exe /k sc stop SQLSERVERAGENT',, hide
+			IfExist %A_ScriptDir%\sqlstatus.txt
+				FileDelete %A_ScriptDir%\sqlstatus.txt
+			IfExist %A_ScriptDir%\sqlresult.txt
+				FileDelete %A_ScriptDir%\sqlresult.txt
+			RunWait, %comspec% /c tasklist /s %A_LoopField% /fi "imagename eq sqlservr.exe" > %A_ScriptDir%\sqlstatus.txt,, hide
+			RunWait, %comspec% /c find /i "PID" < %A_ScriptDir%\sqlstatus.txt > %A_ScriptDir%\sqlresult.txt,, hide
+			FileGetSize, fsize, %A_ScriptDir%\sqlresult.txt
+			Gui, Loading:-Caption
+			Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
+			Gui, Loading:Add, Text,, Waiting for SQL to stop on %A_LoopField%
+			Gui, Hide
+			Gui, Loading:Show
+			While fsize <> 0
+			{
+				Sleep, 20
+				GuiControl,Loading:, lvl, 1
+				RunWait, %comspec% /c tasklist /s %A_LoopField% /fi "imagename eq sqlservr.exe" > %A_ScriptDir%\sqlstatus.txt,, hide
+				RunWait, %comspec% /c find /i "PID" < %A_ScriptDir%\sqlstatus.txt > %A_ScriptDir%\sqlresult.txt,, hide
+				FileGetSize, fsize, %A_ScriptDir%\sqlresult.txt
+			}
+			Gui,Loading:Destroy
+			RunWait, %comspec% /c wmic /node:"%A_LoopField%" process call create 'cmd.exe /k sc config MSSQLSERVER start= auto',, hide
+			RunWait, %comspec% /c wmic /node:"%A_LoopField%" process call create 'cmd.exe /k sc config SQLSERVERAGENT start= auto',, hide
+			RunWait, %comspec% /c wmic /node:"%A_LoopField%" process call create 'cmd.exe /k sc start SQLSERVERAGENT',, hide
+		}
+	}
+}
+If ErrDBServers
+	MsgBox,,SQL Missing, SQL PerfMon ini missing on %ErrDBServers%
+IfExist %A_ScriptDir%\sqlresult.txt
+	FileDelete %A_ScriptDir%\sqlresult.txt
+IfExist %A_ScriptDir%\sqlstatus.txt
+	FileDelete %A_ScriptDir%\sqlstatus.txt
+MsgBox,,Reset PerfMon, Task Complete.
 Gui, 1:Show
 Return
 
@@ -2043,18 +2179,31 @@ TRSService
 }
 
 IISGuiSize:
-	Anchor("ServerSelection", "hw")
+	Anchor("ServerSelectionIIS", "hw")
 	Anchor("Btn", "xy")
+Return
+
+DBGuiSize:
+	Anchor("ServerSelectionDB", "hw")
+	Anchor("DBBtn", "xy")
 Return
 
 IISGuiClose:
 IISGuiEscape:
 Gui, IIS:Destroy
+Gui, 1:Show
+Return
+
+DBGuiClose:
+DBGuiEscape:
+Gui, DB:Destroy
+Gui, 1:Show
 Return
 
 SCCGuiClose:
 SCCGuiEscape:
 Gui, SCC:Destroy
+Gui, 1:Show
 Return
 
 ExitSub:
