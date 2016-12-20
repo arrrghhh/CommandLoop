@@ -805,11 +805,39 @@ IfMsgBox Cancel
 Loop, parse, ServerSelectionDB, |
 {
 	IfNotExist \\%A_LoopField%\%RemDriveLetter%$\Program files\Microsoft SQL Server\MSSQL12.MSSQLSERVER\MSSQL\Binn\perf-MSSQLSERVERsqlctr.ini
-		ErrDBServers .= ErrDBServers . "`n" . A_LoopField
+	{	
+		IfNotExist \\%A_LoopField%\%RemDriveLetter%$\Program files\Microsoft SQL Server\MSSQL11.MSSQLSERVER\MSSQL\Binn\perf-MSSQLSERVERsqlctr.ini
+		{
+			IfNotExist \\%A_LoopField%\%RemDriveLetter%$\Program files\Microsoft SQL Server\MSSQL10_50.MSSQLSERVER\MSSQL\Binn\perf-MSSQLSERVERsqlctr.ini
+			{
+				IfNotExist \\%A_LoopField%\%RemDriveLetter%$\Program files\Microsoft SQL Server\MSSQL10.MSSQLSERVER\MSSQL\Binn\perf-MSSQLSERVERsqlctr.ini
+				{
+					MsgBox, 3, Defaults?, Are default instance name/paths used?  (Yes = failure for %A_LoopField%)
+					IfMsgBox Yes
+					{	
+						ErrDBServers .= ErrDBServers . "`n" . A_LoopField
+						continue
+					}
+					IfMsgBox No
+						InputBox, dbpath, SQL Path, Enter SQL binary 'Binn' path (Ex D:\Program files\Microsoft SQL Server\MSSQL12.MSSQLSERVER\Binn)
+					IfMsgBox Cancel
+						Return
+				}
+				Else
+					dbpath = %RemDriveLetter%:\Program files\Microsoft SQL Server\MSSQL10.MSSQLSERVER\Binn
+			}
+			Else
+				dbpath = %RemDriveLetter%:\Program files\Microsoft SQL Server\MSSQL10_50.MSSQLSERVER\Binn
+		}
+		Else
+			dbpath = %RemDriveLetter%:\Program files\Microsoft SQL Server\MSSQL11.MSSQLSERVER\Binn
+	}
+	Else
+		dbpath = %RemDriveLetter%:\Program files\Microsoft SQL Server\MSSQL12.MSSQLSERVER\Binn
 	If (MyCheckBox = 0)
 	{
 		RunWait, %comspec% /k wmic /node:"%A_LoopField%" process call create 'cmd.exe /k unlodctr MSSQLSERVER'
-		RunWait, %comspec% /k wmic /node:"%A_LoopField%" process call create 'cmd.exe /k lodctr "%RemDriveLetter%:\Program files\Microsoft SQL Server\MSSQL12.MSSQLSERVER\MSSQL\Binn\perf-MSSQLSERVERsqlctr.ini"'
+		RunWait, %comspec% /k wmic /node:"%A_LoopField%" process call create 'cmd.exe /k lodctr "%dbpath%\perf-MSSQLSERVERsqlctr.ini"'
 		RunWait, %comspec% /k wmic /node:"%A_LoopField%" process call create 'cmd.exe /k lodctr /R'
 		If SQLRestart
 		{
@@ -847,8 +875,72 @@ Loop, parse, ServerSelectionDB, |
 	Else
 	{
 		RunWait, %comspec% /c wmic /node:"%A_LoopField%" process call create 'cmd.exe /c unlodctr MSSQLSERVER',, hide
-		RunWait, %comspec% /c wmic /node:"%A_LoopField%" process call create 'cmd.exe /c lodctr "%RemDriveLetter%:\Program files\Microsoft SQL Server\MSSQL12.MSSQLSERVER\MSSQL\Binn\perf-MSSQLSERVERsqlctr.ini"',, hide
+		IfExist %A_ScriptDir%\sqlstatus.txt
+			FileDelete %A_ScriptDir%\sqlstatus.txt
+		IfExist %A_ScriptDir%\sqlresult.txt
+			FileDelete %A_ScriptDir%\sqlresult.txt
+		RunWait, %comspec% /c tasklist /s %A_LoopField% /fi "imagename eq unlodctr.exe" > %A_ScriptDir%\sqlstatus.txt,, hide
+		RunWait, %comspec% /c find /i "PID" < %A_ScriptDir%\sqlstatus.txt > %A_ScriptDir%\sqlresult.txt,, hide
+		FileGetSize, fsize, %A_ScriptDir%\sqlresult.txt
+		Gui, Loading:-Caption
+		Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
+		Gui, Loading:Add, Text,, unlodctr on %A_LoopField%
+		Gui, Hide
+		Gui, Loading:Show
+		Sleep, 20
+		While fsize <> 0
+		{
+			Sleep, 20
+			GuiControl,Loading:, lvl, 1
+			RunWait, %comspec% /c tasklist /s %A_LoopField% /fi "imagename eq unlodctr.exe" > %A_ScriptDir%\sqlstatus.txt,, hide
+			RunWait, %comspec% /c find /i "PID" < %A_ScriptDir%\sqlstatus.txt > %A_ScriptDir%\sqlresult.txt,, hide
+			FileGetSize, fsize, %A_ScriptDir%\sqlresult.txt
+		}
+		Gui,Loading:Destroy
+		RunWait, %comspec% /c wmic /node:"%A_LoopField%" process call create 'cmd.exe /c lodctr "%dbpath%\perf-MSSQLSERVERsqlctr.ini"',, hide
+		IfExist %A_ScriptDir%\sqlstatus.txt
+			FileDelete %A_ScriptDir%\sqlstatus.txt
+		IfExist %A_ScriptDir%\sqlresult.txt
+			FileDelete %A_ScriptDir%\sqlresult.txt
+		RunWait, %comspec% /c tasklist /s %A_LoopField% /fi "imagename eq lodctr.exe" > %A_ScriptDir%\sqlstatus.txt,, hide
+		RunWait, %comspec% /c find /i "PID" < %A_ScriptDir%\sqlstatus.txt > %A_ScriptDir%\sqlresult.txt,, hide
+		FileGetSize, fsize, %A_ScriptDir%\sqlresult.txt
+		Gui, Loading:-Caption
+		Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
+		Gui, Loading:Add, Text,, lodctr ini on %A_LoopField%
+		Gui, Hide
+		Gui, Loading:Show
+		While fsize <> 0
+		{
+			Sleep, 20
+			GuiControl,Loading:, lvl, 1
+			RunWait, %comspec% /c tasklist /s %A_LoopField% /fi "imagename eq lodctr.exe" > %A_ScriptDir%\sqlstatus.txt,, hide
+			RunWait, %comspec% /c find /i "PID" < %A_ScriptDir%\sqlstatus.txt > %A_ScriptDir%\sqlresult.txt,, hide
+			FileGetSize, fsize, %A_ScriptDir%\sqlresult.txt
+		}
+		Gui,Loading:Destroy
 		RunWait, %comspec% /c wmic /node:"%A_LoopField%" process call create 'cmd.exe /c lodctr /R',, hide
+		IfExist %A_ScriptDir%\sqlstatus.txt
+			FileDelete %A_ScriptDir%\sqlstatus.txt
+		IfExist %A_ScriptDir%\sqlresult.txt
+			FileDelete %A_ScriptDir%\sqlresult.txt
+		RunWait, %comspec% /c tasklist /s %A_LoopField% /fi "imagename eq lodctr.exe" > %A_ScriptDir%\sqlstatus.txt,, hide
+		RunWait, %comspec% /c find /i "PID" < %A_ScriptDir%\sqlstatus.txt > %A_ScriptDir%\sqlresult.txt,, hide
+		FileGetSize, fsize, %A_ScriptDir%\sqlresult.txt
+		Gui, Loading:-Caption
+		Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
+		Gui, Loading:Add, Text,, lodctr /R on %A_LoopField%
+		Gui, Hide
+		Gui, Loading:Show
+		While fsize <> 0
+		{
+			Sleep, 20
+			GuiControl,Loading:, lvl, 1
+			RunWait, %comspec% /c tasklist /s %A_LoopField% /fi "imagename eq lodctr.exe" > %A_ScriptDir%\sqlstatus.txt,, hide
+			RunWait, %comspec% /c find /i "PID" < %A_ScriptDir%\sqlstatus.txt > %A_ScriptDir%\sqlresult.txt,, hide
+			FileGetSize, fsize, %A_ScriptDir%\sqlresult.txt
+		}
+		Gui,Loading:Destroy
 		If SQLRestart
 		{
 			RunWait, %comspec% /c wmic /node:"%A_LoopField%" process call create 'cmd.exe /k sc config MSSQLSERVER start= disabled',, hide
