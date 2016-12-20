@@ -714,7 +714,7 @@ Loop, Read, %SelectedFileMain%
 IISservers = 
 Loop, Read, %SelectedFileMain%
 	IISservers .= A_LoopReadLine "|"
-Gui, IIS:+Resize -MaximizeBox
+Gui, IIS:+Resize -MaximizeBox -Caption
 Gui, IIS:Add, Text, vIISText, Choose servers which need IIS:
 Gui, IIS:Add, ListBox, vServerSelectionIIS 8 W130 H160, %IISservers%
 Gui, IIS:Add, Button, vBtn gBtn, Finalize Selection
@@ -1139,7 +1139,7 @@ $getThumb.thumbprint | out-file %RemDriveLetter%:\nicetech\cert_$computerName.tx
 Bindservers = 
 Loop, Read, %SelectedFileMain%
 	Bindservers .= A_LoopReadLine "|"
-Gui, SCC:+Resize -MaximizeBox
+Gui, SCC:+Resize -MaximizeBox -Caption
 Gui, SCC:Add, Text, vBindText, Choose servers which need binding:
 Gui, SCC:Add, ListBox, vBindServerSelection 8 W130 H160, %Bindservers%
 Gui, SCC:Add, Button, vBindBtn gBindBtn, Finalize Selection
