@@ -1807,7 +1807,7 @@ Loop, read, %SelectedFileMain%
 			Run, %comspec% /c taskkill /S %A_LoopReadLine% /IM "Nice Services Configuration Manager.exe",, hide, pid
 			Gui, Loading:-Caption
 			Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
-			Gui, Loading:Add, Text,, Pushing ConfigMgr to %A_LoopReadLine%
+			Gui, Loading:Add, Text,, Killing ConfigMgr on %A_LoopReadLine%
 			Gui, Hide
 			Gui, Loading:Show
 			ErrorLevel:=1
