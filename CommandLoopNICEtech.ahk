@@ -22,7 +22,7 @@ Else
 GuiControlGet, LocDriveLetter
 menu, FileMenu, add, File Select Main, FSM
 SelectedFileMain = %LocDriveLetter%:\NICETech\servers.txt
-menu, FileMenu, add, File Select Logoff, FSL
+;menu, FileMenu, add, File Select Logoff, FSL
 SelectedFileLogoff = %LocDriveLetter%:\NICETech\servers.txt
 menu, FileMenu, add, Exit, ExitSub
 menu, DangerZone, add, &Reboot Servers, REBOOT
