@@ -678,10 +678,10 @@ Loop, Read, %SelectedFileMain%
 {
 	If (MyCheckBox = 0)
 	{
-		Run powershell.exe -NoExit -Command Add-WindowsFeature -IncludeAllSubFeature SNMP-WMI-Provider -ComputerName %A_LoopReadLine%,,, pid
+		Run powershell.exe -NoExit -Command Add-WindowsFeature -IncludeAllSubFeature SNMP-WMI-Provider`,NET-Framework-Core -ComputerName %A_LoopReadLine%,,, pid
 		Gui, Loading:-Caption
 		Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
-		Gui, Loading:Add, Text,, SNMP for %A_LoopReadLine%
+		Gui, Loading:Add, Text,, SNMP/.NET for %A_LoopReadLine%
 		Gui, Hide
 		Gui, Loading:Show
 		ErrorLevel:=1
@@ -695,10 +695,10 @@ Loop, Read, %SelectedFileMain%
 	}
 	Else
 	{
-		Run powershell.exe -Command Add-WindowsFeature -IncludeAllSubFeature SNMP-WMI-Provider -ComputerName %A_LoopReadLine%,, hide, pid
+		Run powershell.exe -Command Add-WindowsFeature -IncludeAllSubFeature SNMP-WMI-Provider`,NET-Framework-Core -ComputerName %A_LoopReadLine%,, hide, pid
 		Gui, Loading:-Caption
 		Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
-		Gui, Loading:Add, Text,, SNMP for %A_LoopReadLine%
+		Gui, Loading:Add, Text,, SNMP/.NET for %A_LoopReadLine%
 		Gui, Hide
 		Gui, Loading:Show
 		ErrorLevel:=1
@@ -724,15 +724,15 @@ Return
 Btn:
 Gui, IIS:Submit
 Gui, IIS:Destroy
-IfNotExist %LocDriveLetter%:\NICETech\WindowsFeatures.txt
+IfNotExist %LocDriveLetter%:\NICETech\IISFeatures.txt
 	FileAppend, Web-WebServer`,Web-Common-Http`,Web-Default-Doc`,Web-Dir-Browsing`,Web-Http-Errors`,Web-Static-Content`,Web-Http-Redirect`,Web-Health`,Web-Http-Logging`,Web-Log-Libraries`,Web-ODBC-Logging`,Web-Request-Monitor`,Web-Http-Tracing`,Web-Performance`,Web-Stat-Compression`,Web-Dyn-Compression`,Web-Security`,Web-Filtering`,Web-Basic-Auth`,Web-Client-Auth`,Web-Digest-Auth`,Web-Cert-Auth`,Web-IP-Security`,Web-Url-Auth`,Web-Windows-Auth`,Web-App-Dev`,Web-Net-Ext45`,Web-Asp-Net45`,Web-ISAPI-Ext`,Web-ISAPI-Filter`,SMTP-Server`,Web-Mgmt-Console`,Web-Mgmt-Compat`,Web-Metabase`,Web-Lgcy-Mgmt-Console`,Web-Lgcy-Scripting`,Web-WMI, %LocDriveLetter%:\NICETech\WindowsFeatures.txt
-Loop, Read, %LocDriveLetter%:\NICETech\WindowsFeatures.txt
-	Features = %A_LoopReadLine%
+Loop, Read, %LocDriveLetter%:\NICETech\IISFeatures.txt
+	IISFeatures = %A_LoopReadLine%
 Loop, parse, ServerSelectionIIS, |
 {
 	If (MyCheckBox = 0)
 	{	
-		Run, powershell.exe -NoExit -Command Add-WindowsFeature %Features% -ComputerName %A_LoopField%,,, pid
+		Run, powershell.exe -NoExit -Command Add-WindowsFeature %IISFeatures% -ComputerName %A_LoopField%,,, pid
 		Gui, Loading:-Caption
 		Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
 		Gui, Loading:Add, Text,, IIS components on %A_LoopField%
@@ -749,7 +749,7 @@ Loop, parse, ServerSelectionIIS, |
 	}
 	Else
 	{
-		Run powershell.exe -Command Add-WindowsFeature %Features% -ComputerName %A_LoopField%,, hide, pid
+		Run powershell.exe -Command Add-WindowsFeature %IISFeatures% -ComputerName %A_LoopField%,, hide, pid
 		Gui, Loading:-Caption
 		Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
 		Gui, Loading:Add, Text,, IIS components on %A_LoopField%
