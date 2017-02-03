@@ -2,6 +2,8 @@
 #Include Class_GuiControlTips.ahk
 #Include Anchor64.ahk
 
+version = 2017.02.03.1408
+
 if not A_IsAdmin
 {
    Run *RunAs "%A_ScriptFullPath%"  ; Requires v1.0.92.01+
@@ -30,9 +32,11 @@ menu, DangerZone, add, Stop/&Disable NICE Services, STOPALL
 menu, DangerZone, add, Start/&Auto NICE Services, STARTALL
 menu, DEPTOEmain, add, Disable DEP/TOE, DisableDEPTOE
 menu, DEPTOEmain, add, Audit DEP, AuditDEPTOE
+menu, HelpMenu, add, About, About
 menu, MyMenuBar, Add, &File, :FileMenu
 menu, MyMenuBar, Add, &DangerZone, :DangerZone
 menu, MyMenuBar, Add, D&EP/TOE, :DEPTOEmain
+menu, MyMenuBar, Add, &Help, :HelpMenu
 gui, menu, MyMenuBar
 
 gui, add, Text, w300 h100 r1 vFile, %SelectedFileMain%
@@ -2327,6 +2331,10 @@ SCCGuiClose:
 SCCGuiEscape:
 Gui, SCC:Destroy
 Gui, 1:Show
+Return
+
+About:
+MsgBox,, CommandLoop, Version: %version% `n`nCopyright 2017 Scott Brescia `n`nLicensed under the Apache License, Version 2.0 (the "License"); `nyou may not use this file except in compliance with the License. `n You may obtain a copy of the License at `n`nhttp://www.apache.org/licenses/LICENSE-2.0 `n`nUnless required by applicable law or agreed to in writing, software `ndistributed under the License is distributed on an "AS IS" BASIS, `nWITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, `neither express or implied. See the License for the `nspecific language governing permissions and limitations `nunder the License.
 Return
 
 ExitSub:
