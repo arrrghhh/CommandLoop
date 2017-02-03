@@ -1729,7 +1729,7 @@ Return
 
 PushConfigMgr:
 Gui, Submit
-Gui, Show
+Gui, Hide
 GuiControlGet, MyCheckBox
 GuiControlGet, LocDriveLetter
 GuiControlGet, RemDriveLetter
@@ -1738,8 +1738,6 @@ IfNotExist, %SelectedFileMain%
 	MsgBox,,File Selection, No Server List found %SelectedFileMain%
 	Return
 }
-IfNotExist, %LocDriveLetter%:\NICETech
-	FileCreateDir, %LocDriveLetter%:\NICETech
 IfNotExist, %LocDriveLetter%:\Program Files\NICE Systems\Nice Services Configuration Manager\Nice Services Configuration Manager.exe
 {
 	appservers = 
@@ -1783,6 +1781,83 @@ IfNotExist, %LocDriveLetter%:\Program Files\NICE Systems\Nice Services Configura
 		}
 		Gui,Loading:Destroy
 	}
+	IfNotExist, %A_ScriptDir%\Nice Services Configuration Manager.lnk
+	FileCreateShortcut, %LocDriveLetter%:\Program Files\NICE Systems\Nice Services Configuration Manager\Nice Services Configuration Manager.exe, %LocDriveLetter%:\NICETech\Nice Services Configuration Manager.lnk
+	Sleep, 200
+	Loop, read, %SelectedFileMain%
+	{
+		If (MyCheckBox = 0)
+		{
+			If A_LoopReadLine = %A_ComputerName%
+				Run, %comspec% /k robocopy /ETA %LocDriveLetter%:\NICETech C:\Users\Public\Desktop "Nice Services Configuration Manager.lnk"
+			Else
+			{
+				RunWait, %comspec% /k taskkill /S %A_LoopReadLine% /IM "Nice Services Configuration Manager.exe"
+				Sleep, 200
+				Run, %comspec% /k robocopy /E /ETA "%LocDriveLetter%:\Program Files\NICE Systems\Nice Services Configuration Manager" "\\%A_LoopReadLine%\%RemDriveLetter%$\Program Files\NICE Systems\Nice Services Configuration Manager"
+				Sleep, 200
+				Run, %comspec% /k robocopy /ETA %LocDriveLetter%:\NICETech \\%A_LoopReadLine%\c$\Users\Public\Desktop "Nice Services Configuration Manager.lnk"
+			}
+		}
+		Else
+		{
+			If A_LoopReadLine = %A_ComputerName%
+				Run, %comspec% /c robocopy /ETA %LocDriveLetter%:\NICETech C:\Users\Public\Desktop "Nice Services Configuration Manager.lnk",, hide
+			Else
+			{
+				Run, %comspec% /c taskkill /S %A_LoopReadLine% /IM "Nice Services Configuration Manager.exe",, hide, pid
+				Gui, Loading:-Caption
+				Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
+				Gui, Loading:Add, Text,, Killing ConfigMgr on %A_LoopReadLine%
+				Gui, Hide
+				Gui, Loading:Show
+				ErrorLevel:=1
+				While (ErrorLevel != 0)
+				{
+					Sleep, 20
+					GuiControl,Loading:, lvl, 1
+					Process, Exist, % pid
+				}
+				Gui,Loading:Destroy
+				Sleep, 200
+				Run, %comspec% /c robocopy /E /ETA "%LocDriveLetter%:\Program Files\NICE Systems\Nice Services Configuration Manager" "\\%A_LoopReadLine%\%RemDriveLetter%$\Program Files\NICE Systems\Nice Services Configuration Manager",, hide, pid
+				Gui, Loading:-Caption
+				Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
+				Gui, Loading:Add, Text,, Pushing ConfigMgr to %A_LoopReadLine%
+				Gui, Hide
+				Gui, Loading:Show
+				ErrorLevel:=1
+				While (ErrorLevel != 0)
+				{
+					Sleep, 20
+					GuiControl,Loading:, lvl, 1
+					Process, Exist, % pid
+				}
+				Gui,Loading:Destroy
+				Sleep, 200
+				Run, %comspec% /c robocopy /ETA %LocDriveLetter%:\NICETech \\%A_LoopReadLine%\c$\Users\Public\Desktop "Nice Services Configuration Manager.lnk",, hide, pid
+				Gui, Loading:-Caption
+				Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
+				Gui, Loading:Add, Text,, Pushing link to %A_LoopReadLine%
+				Gui, Hide
+				Gui, Loading:Show
+				ErrorLevel:=1
+				While (ErrorLevel != 0)
+				{
+					Sleep, 20
+					GuiControl,Loading:, lvl, 1
+					Process, Exist, % pid
+				}
+				Gui,Loading:Destroy
+			}
+		}
+	}
+	Sleep, 500
+	IfExist %A_ScriptDir%\Nice Services Configuration Manager.lnk
+		FileDelete, %A_ScriptDir%\Nice Services Configuration Manager.lnk
+	MsgBox,,Configuration Manager, Task Complete.
+	Gui, 1:Show
+	Return
 }
 IfNotExist, %A_ScriptDir%\Nice Services Configuration Manager.lnk
 	FileCreateShortcut, %LocDriveLetter%:\Program Files\NICE Systems\Nice Services Configuration Manager\Nice Services Configuration Manager.exe, %LocDriveLetter%:\NICETech\Nice Services Configuration Manager.lnk
