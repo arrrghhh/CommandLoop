@@ -1279,7 +1279,7 @@ Loop, parse, BindServerSelection, |
 		IfNotExist %LocDriveLetter%:\NICETech\RemoteNodeCerts\cert_%A_LoopField%.txt
 			MsgBox,,Thumbprint, Pull thumbprint manually from %A_LoopField%
 	}
-	InputBox, certhash, Cert Hash, Enter certificate hash (Check D:\NICETech\RemoteNodeCerts):
+	InputBox, certhash, Cert Hash, Enter certificate hash for %A_LoopField% (Check D:\NICETech\RemoteNodeCerts):
 	If ErrorLevel
 		Return
 	StringReplace, certhash, certhash, %A_Space%,,All
