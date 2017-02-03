@@ -20,7 +20,7 @@ Else
 }
 
 GuiControlGet, LocDriveLetter
-menu, FileMenu, add, File Select Main, FSM
+menu, FileMenu, add, File Selection, FSM
 SelectedFileMain = %LocDriveLetter%:\NICETech\servers.txt
 ;menu, FileMenu, add, File Select Logoff, FSL
 SelectedFileLogoff = %LocDriveLetter%:\NICETech\servers.txt
@@ -695,7 +695,7 @@ Loop, Read, %SelectedFileMain%
 	}
 	Else
 	{
-		Run powershell.exe -Command Add-WindowsFeature -IncludeAllSubFeature SNMP-WMI-Provider`,NET-Framework-Core -ComputerName %A_LoopReadLine%,, hide, pid
+		Run powershell.exe -Command Add-WindowsFeature -IncludeAllSubFeature SNMP-WMI-Provider`,NET-Framework-Core -ComputerName %A_LoopReadLine%,,, pid
 		Gui, Loading:-Caption
 		Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
 		Gui, Loading:Add, Text,, SNMP/.NET for %A_LoopReadLine%
@@ -749,7 +749,7 @@ Loop, parse, ServerSelectionIIS, |
 	}
 	Else
 	{
-		Run powershell.exe -Command Add-WindowsFeature %IISFeatures% -ComputerName %A_LoopField%,, hide, pid
+		Run powershell.exe -Command Add-WindowsFeature %IISFeatures% -ComputerName %A_LoopField%,,, pid
 		Gui, Loading:-Caption
 		Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
 		Gui, Loading:Add, Text,, IIS components on %A_LoopField%
@@ -1738,9 +1738,18 @@ IfNotExist, %LocDriveLetter%:\NICETech
 	FileCreateDir, %LocDriveLetter%:\NICETech
 IfNotExist, %LocDriveLetter%:\Program Files\NICE Systems\Nice Services Configuration Manager\Nice Services Configuration Manager.exe
 {
-	InputBox, appnode, Apps Hostname, Please enter app hostname:
-	If ErrorLevel
-		Return
+	appservers = 
+	Loop, Read, %SelectedFileMain%
+		appservers .= A_LoopReadLine "|"
+	Gui, APP:+Resize -MaximizeBox -Caption
+	Gui, APP:Add, Text, vAPPText, Choose APP server:
+	Gui, APP:Add, ListBox, vappnode W130 H160, %appservers%
+	Gui, APP:Add, Button, vAppBtn gAppBtn, Finalize Selection
+	Gui, APP:Show, W170 H220, App Server
+	Return
+	AppBtn:
+	Gui, APP:Submit
+	Gui, APP:Destroy
 	If appnode =
 	{
 		MsgBox,,Blank Host, Hostname cannot be blank!
@@ -1782,6 +1791,8 @@ Loop, read, %SelectedFileMain%
 			Run, %comspec% /k robocopy /ETA %LocDriveLetter%:\NICETech C:\Users\Public\Desktop "Nice Services Configuration Manager.lnk"
 		Else
 		{
+			RunWait, %comspec% /k taskkill /S %A_LoopReadLine% /IM "Nice Services Configuration Manager.exe"
+			Sleep, 200
 			Run, %comspec% /k robocopy /E /ETA "%LocDriveLetter%:\Program Files\NICE Systems\Nice Services Configuration Manager" "\\%A_LoopReadLine%\%RemDriveLetter%$\Program Files\NICE Systems\Nice Services Configuration Manager"
 			Sleep, 200
 			Run, %comspec% /k robocopy /ETA %LocDriveLetter%:\NICETech \\%A_LoopReadLine%\c$\Users\Public\Desktop "Nice Services Configuration Manager.lnk"
@@ -1793,6 +1804,21 @@ Loop, read, %SelectedFileMain%
 			Run, %comspec% /c robocopy /ETA %LocDriveLetter%:\NICETech C:\Users\Public\Desktop "Nice Services Configuration Manager.lnk",, hide
 		Else
 		{
+			Run, %comspec% /c taskkill /S %A_LoopReadLine% /IM "Nice Services Configuration Manager.exe",, hide, pid
+			Gui, Loading:-Caption
+			Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
+			Gui, Loading:Add, Text,, Pushing ConfigMgr to %A_LoopReadLine%
+			Gui, Hide
+			Gui, Loading:Show
+			ErrorLevel:=1
+			While (ErrorLevel != 0)
+			{
+				Sleep, 20
+				GuiControl,Loading:, lvl, 1
+				Process, Exist, % pid
+			}
+			Gui,Loading:Destroy
+			Sleep, 200
 			Run, %comspec% /c robocopy /E /ETA "%LocDriveLetter%:\Program Files\NICE Systems\Nice Services Configuration Manager" "\\%A_LoopReadLine%\%RemDriveLetter%$\Program Files\NICE Systems\Nice Services Configuration Manager",, hide, pid
 			Gui, Loading:-Caption
 			Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
@@ -2269,6 +2295,11 @@ TextAnalysisService
 TRSService
 ), %LocDriveLetter%:\NICETech\services.txt
 }
+
+AppGuiSize:
+	Anchor("appnode", "hw", true)
+	Anchor("AppBtn", "xy", true)
+Return
 
 IISGuiSize:
 	Anchor("ServerSelectionIIS", "hw", true)
