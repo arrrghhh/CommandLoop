@@ -799,13 +799,22 @@ Return
 DBbtn:
 Gui, DB:Submit
 Gui, DB:Destroy
+If ServerSelectionDB =
+{
+	MsgBox,,Blank Host, Hostname cannot be blank!
+	Gui, 1:Show
+	Return
+}
 MsgBox, 3, SQL Restart, Restart SQL Services?
 IfMsgBox Yes
 	SQLRestart = 1
 IfMsgBox No
 	SQLRestart = 0
 IfMsgBox Cancel
+{
+	Gui, 1:Show
 	Return
+}
 Loop, parse, ServerSelectionDB, |
 {
 	IfNotExist \\%A_LoopField%\%RemDriveLetter%$\Program files\Microsoft SQL Server\MSSQL12.MSSQLSERVER\MSSQL\Binn\perf-MSSQLSERVERsqlctr.ini
