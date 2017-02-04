@@ -2,7 +2,7 @@
 #Include Class_GuiControlTips.ahk
 #Include Anchor64.ahk
 
-version = 2017.02.03.1408
+version = 2017.02.03.2040
 
 if not A_IsAdmin
 {
@@ -1755,6 +1755,7 @@ IfNotExist, %LocDriveLetter%:\Program Files\NICE Systems\Nice Services Configura
 	If appnode =
 	{
 		MsgBox,,Blank Host, Hostname cannot be blank!
+		Gui, 1:Show
 		Return
 	}
 	IfNotExist, \\%appnode%\%RemDriveLetter%$\Program Files\NICE Systems\Applications\Tools\Nice Services Configuration Manager
@@ -2375,7 +2376,7 @@ TRSService
 ), %LocDriveLetter%:\NICETech\services.txt
 }
 
-AppGuiSize:
+APPGuiSize:
 	Anchor("appnode", "hw", true)
 	Anchor("AppBtn", "xy", true)
 Return
@@ -2388,6 +2389,17 @@ Return
 DBGuiSize:
 	Anchor("ServerSelectionDB", "hw", true)
 	Anchor("DBBtn", "xy", true)
+Return
+
+SCCGuiSize:
+	Anchor("BindServerSelection", "hw", true)
+	Anchor("BindBtn", "xy", true)
+Return
+
+AppGuiClose:
+AppGuiEscape:
+Gui, App:Destroy
+Gui, 1:Show
 Return
 
 IISGuiClose:
