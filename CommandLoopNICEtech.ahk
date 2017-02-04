@@ -2,7 +2,7 @@
 #Include Class_GuiControlTips.ahk
 #Include Anchor64.ahk
 
-version = 2017.02.03.2040
+version = 2017.02.03.2125
 
 if not A_IsAdmin
 {
@@ -1221,7 +1221,7 @@ Return
 
 scc:
 gui, Submit
-gui, Show
+gui, Hide
 GuiControlGet, MyCheckBox
 GuiControlGet, LocDriveLetter
 GuiControlGet, RemDriveLetter
