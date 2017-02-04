@@ -1236,7 +1236,7 @@ Bindservers =
 Loop, Read, %SelectedFileMain%
 	Bindservers .= A_LoopReadLine "|"
 Gui, SCC:+Resize -MaximizeBox -Caption
-Gui, SCC:Add, Text, vBindText, Choose servers which need binding:
+Gui, SCC:Add, Text, vBindText, Choose servers for binding:
 Gui, SCC:Add, ListBox, vBindServerSelection 8 W130 H160, %Bindservers%
 Gui, SCC:Add, Button, vBindBtn gBindBtn, Finalize Selection
 Gui, SCC:Show, W170 H220, SCC Servers
@@ -1245,6 +1245,12 @@ Return
 BindBtn:
 Gui, SCC:Submit
 Gui, SCC:Destroy
+If BindServerSelection =
+{
+	MsgBox,,Blank Host, Hostname cannot be blank!
+	Gui, 1:Show
+	Return
+}
 Loop, parse, BindServerSelection, |
 {
 	IfNotExist \\%A_LoopField%\%RemDriveLetter%$\NICETech\Tools\cert_thumb.ps1
