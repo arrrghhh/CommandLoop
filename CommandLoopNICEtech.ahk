@@ -2,7 +2,7 @@
 #Include Class_GuiControlTips.ahk
 #Include Anchor64.ahk
 
-version = 2017.02.03.2125
+version = 2017.02.10.1114
 
 if not A_IsAdmin
 {
@@ -272,7 +272,7 @@ Loop, read, %SelectedFileMain%
 		{
 			IfExist %A_ScriptDir%\checksvc.txt
 				FileDelete, %A_ScriptDir%\checksvc.txt
-			RunWait, %comspec% /c sc \\%line% query %A_LoopReadLine% |findstr STATE > %A_ScriptDir%\checksvc.txt,, hide
+			RunWait, %comspec% /c sc \\%line% query %A_LoopReadLine% |findstr STATE > "%A_ScriptDir%\checksvc.txt",, hide
 			FileGetSize, fsize, %A_ScriptDir%\checksvc.txt
 			IfNotEqual, fsize, 0
 				RunWait, %comspec% /k wmic /node:"%line%" process call create 'cmd.exe /k sc config %A_LoopReadLine% start= disabled'
@@ -283,7 +283,7 @@ Loop, read, %SelectedFileMain%
 		{
 			IfExist %A_ScriptDir%\checksvc.txt
 				FileDelete, %A_ScriptDir%\checksvc.txt
-			RunWait, %comspec% /c sc \\%line% query %A_LoopReadLine% |findstr STATE > %A_ScriptDir%\checksvc.txt,, hide
+			RunWait, %comspec% /c sc \\%line% query %A_LoopReadLine% |findstr STATE > "%A_ScriptDir%\checksvc.txt",, hide
 			FileGetSize, fsize, %A_ScriptDir%\checksvc.txt
 			IfNotEqual, fsize, 0
 				RunWait, %comspec% /k wmic /node:"%line%" process call create 'cmd.exe /k sc stop %A_LoopReadLine%'
@@ -297,7 +297,7 @@ Loop, read, %SelectedFileMain%
 		{
 			IfExist %A_ScriptDir%\checksvc.txt
 				FileDelete, %A_ScriptDir%\checksvc.txt
-			RunWait, %comspec% /c sc \\%line% query %A_LoopReadLine% |findstr STATE > %A_ScriptDir%\checksvc.txt,, hide
+			RunWait, %comspec% /c sc \\%line% query %A_LoopReadLine% |findstr STATE > "%A_ScriptDir%\checksvc.txt",, hide
 			FileGetSize, fsize, %A_ScriptDir%\checksvc.txt
 			IfNotEqual, fsize, 0
 			{
@@ -323,7 +323,7 @@ Loop, read, %SelectedFileMain%
 		{
 			IfExist %A_ScriptDir%\checksvc.txt
 				FileDelete, %A_ScriptDir%\checksvc.txt
-			RunWait, %comspec% /c sc \\%line% query %A_LoopReadLine% |findstr STATE > %A_ScriptDir%\checksvc.txt,, hide
+			RunWait, %comspec% /c sc \\%line% query %A_LoopReadLine% |findstr STATE > "%A_ScriptDir%\checksvc.txt",, hide
 			FileGetSize, fsize, %A_ScriptDir%\checksvc.txt
 			IfNotEqual, fsize, 0
 			{
@@ -380,7 +380,7 @@ Loop, read, %SelectedFileMain%
 		{
 			IfExist %A_ScriptDir%\checksvc.txt
 				FileDelete, %A_ScriptDir%\checksvc.txt
-			RunWait, %comspec% /c sc \\%line% query %A_LoopReadLine% |findstr STATE > %A_ScriptDir%\checksvc.txt,, hide
+			RunWait, %comspec% /c sc \\%line% query %A_LoopReadLine% |findstr STATE > "%A_ScriptDir%\checksvc.txt",, hide
 			FileGetSize, fsize, %A_ScriptDir%\checksvc.txt
 			IfNotEqual, fsize, 0
 				RunWait, %comspec% /k wmic /node:"%line%" process call create 'cmd.exe /k sc config %A_LoopReadLine% start= auto'
@@ -391,7 +391,7 @@ Loop, read, %SelectedFileMain%
 		{
 			IfExist %A_ScriptDir%\checksvc.txt
 				FileDelete, %A_ScriptDir%\checksvc.txt
-			RunWait, %comspec% /c sc \\%line% query %A_LoopReadLine% |findstr STATE > %A_ScriptDir%\checksvc.txt,, hide
+			RunWait, %comspec% /c sc \\%line% query %A_LoopReadLine% |findstr STATE > "%A_ScriptDir%\checksvc.txt",, hide
 			FileGetSize, fsize, %A_ScriptDir%\checksvc.txt
 			IfNotEqual, fsize, 0
 				RunWait, %comspec% /k wmic /node:"%line%" process call create 'cmd.exe /k sc start %A_LoopReadLine%'
@@ -405,7 +405,7 @@ Loop, read, %SelectedFileMain%
 		{
 			IfExist %A_ScriptDir%\checksvc.txt
 				FileDelete, %A_ScriptDir%\checksvc.txt
-			RunWait, %comspec% /c sc \\%line% query %A_LoopReadLine% |findstr STATE > %A_ScriptDir%\checksvc.txt,, hide
+			RunWait, %comspec% /c sc \\%line% query %A_LoopReadLine% |findstr STATE > "%A_ScriptDir%\checksvc.txt",, hide
 			FileGetSize, fsize, %A_ScriptDir%\checksvc.txt
 			IfNotEqual, fsize, 0
 			{
@@ -431,7 +431,7 @@ Loop, read, %SelectedFileMain%
 		{
 			IfExist %A_ScriptDir%\checksvc.txt
 				FileDelete, %A_ScriptDir%\checksvc.txt
-			RunWait, %comspec% /c sc \\%line% query %A_LoopReadLine% |findstr STATE > %A_ScriptDir%\checksvc.txt,, hide
+			RunWait, %comspec% /c sc \\%line% query %A_LoopReadLine% |findstr STATE > "%A_ScriptDir%\checksvc.txt",, hide
 			FileGetSize, fsize, %A_ScriptDir%\checksvc.txt
 			IfNotEqual, fsize, 0
 			{
@@ -863,8 +863,8 @@ Loop, parse, ServerSelectionDB, |
 				FileDelete %A_ScriptDir%\sqlstatus.txt
 			IfExist %A_ScriptDir%\sqlresult.txt
 				FileDelete %A_ScriptDir%\sqlresult.txt
-			RunWait, %comspec% /c tasklist /s %A_LoopField% /fi "imagename eq sqlservr.exe" > %A_ScriptDir%\sqlstatus.txt,, hide
-			RunWait, %comspec% /c find /i "PID" < %A_ScriptDir%\sqlstatus.txt > %A_ScriptDir%\sqlresult.txt,, hide
+			RunWait, %comspec% /c tasklist /s %A_LoopField% /fi "imagename eq sqlservr.exe" > "%A_ScriptDir%\sqlstatus.txt",, hide
+			RunWait, %comspec% /c find /i "PID" < "%A_ScriptDir%\sqlstatus.txt" > "%A_ScriptDir%\sqlresult.txt",, hide
 			FileGetSize, fsize, %A_ScriptDir%\sqlresult.txt
 			Gui, Loading:-Caption
 			Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
@@ -875,8 +875,8 @@ Loop, parse, ServerSelectionDB, |
 			{
 				Sleep, 20
 				GuiControl,Loading:, lvl, 1
-				RunWait, %comspec% /c tasklist /s %A_LoopField% /fi "imagename eq sqlservr.exe" > %A_ScriptDir%\sqlstatus.txt,, hide
-				RunWait, %comspec% /c find /i "PID" < %A_ScriptDir%\sqlstatus.txt > %A_ScriptDir%\sqlresult.txt,, hide
+				RunWait, %comspec% /c tasklist /s %A_LoopField% /fi "imagename eq sqlservr.exe" > "%A_ScriptDir%\sqlstatus.txt",, hide
+				RunWait, %comspec% /c find /i "PID" < "%A_ScriptDir%\sqlstatus.txt" > "%A_ScriptDir%\sqlresult.txt",, hide
 				FileGetSize, fsize, %A_ScriptDir%\sqlresult.txt
 			}
 			Gui,Loading:Destroy
@@ -892,8 +892,8 @@ Loop, parse, ServerSelectionDB, |
 			FileDelete %A_ScriptDir%\sqlstatus.txt
 		IfExist %A_ScriptDir%\sqlresult.txt
 			FileDelete %A_ScriptDir%\sqlresult.txt
-		RunWait, %comspec% /c tasklist /s %A_LoopField% /fi "imagename eq unlodctr.exe" > %A_ScriptDir%\sqlstatus.txt,, hide
-		RunWait, %comspec% /c find /i "PID" < %A_ScriptDir%\sqlstatus.txt > %A_ScriptDir%\sqlresult.txt,, hide
+		RunWait, %comspec% /c tasklist /s %A_LoopField% /fi "imagename eq unlodctr.exe" > "%A_ScriptDir%\sqlstatus.txt",, hide
+		RunWait, %comspec% /c find /i "PID" < "%A_ScriptDir%\sqlstatus.txt" > "%A_ScriptDir%\sqlresult.txt",, hide
 		FileGetSize, fsize, %A_ScriptDir%\sqlresult.txt
 		Gui, Loading:-Caption
 		Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
@@ -905,8 +905,8 @@ Loop, parse, ServerSelectionDB, |
 		{
 			Sleep, 20
 			GuiControl,Loading:, lvl, 1
-			RunWait, %comspec% /c tasklist /s %A_LoopField% /fi "imagename eq unlodctr.exe" > %A_ScriptDir%\sqlstatus.txt,, hide
-			RunWait, %comspec% /c find /i "PID" < %A_ScriptDir%\sqlstatus.txt > %A_ScriptDir%\sqlresult.txt,, hide
+			RunWait, %comspec% /c tasklist /s %A_LoopField% /fi "imagename eq unlodctr.exe" > "%A_ScriptDir%\sqlstatus.txt",, hide
+			RunWait, %comspec% /c find /i "PID" < "%A_ScriptDir%\sqlstatus.txt" > "%A_ScriptDir%\sqlresult.txt",, hide
 			FileGetSize, fsize, %A_ScriptDir%\sqlresult.txt
 		}
 		Gui,Loading:Destroy
@@ -915,8 +915,8 @@ Loop, parse, ServerSelectionDB, |
 			FileDelete %A_ScriptDir%\sqlstatus.txt
 		IfExist %A_ScriptDir%\sqlresult.txt
 			FileDelete %A_ScriptDir%\sqlresult.txt
-		RunWait, %comspec% /c tasklist /s %A_LoopField% /fi "imagename eq lodctr.exe" > %A_ScriptDir%\sqlstatus.txt,, hide
-		RunWait, %comspec% /c find /i "PID" < %A_ScriptDir%\sqlstatus.txt > %A_ScriptDir%\sqlresult.txt,, hide
+		RunWait, %comspec% /c tasklist /s %A_LoopField% /fi "imagename eq lodctr.exe" > "%A_ScriptDir%\sqlstatus.txt",, hide
+		RunWait, %comspec% /c find /i "PID" < "%A_ScriptDir%\sqlstatus.txt" > "%A_ScriptDir%\sqlresult.txt",, hide
 		FileGetSize, fsize, %A_ScriptDir%\sqlresult.txt
 		Gui, Loading:-Caption
 		Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
@@ -927,8 +927,8 @@ Loop, parse, ServerSelectionDB, |
 		{
 			Sleep, 20
 			GuiControl,Loading:, lvl, 1
-			RunWait, %comspec% /c tasklist /s %A_LoopField% /fi "imagename eq lodctr.exe" > %A_ScriptDir%\sqlstatus.txt,, hide
-			RunWait, %comspec% /c find /i "PID" < %A_ScriptDir%\sqlstatus.txt > %A_ScriptDir%\sqlresult.txt,, hide
+			RunWait, %comspec% /c tasklist /s %A_LoopField% /fi "imagename eq lodctr.exe" > "%A_ScriptDir%\sqlstatus.txt",, hide
+			RunWait, %comspec% /c find /i "PID" < "%A_ScriptDir%\sqlstatus.txt" > "%A_ScriptDir%\sqlresult.txt",, hide
 			FileGetSize, fsize, %A_ScriptDir%\sqlresult.txt
 		}
 		Gui,Loading:Destroy
@@ -937,8 +937,8 @@ Loop, parse, ServerSelectionDB, |
 			FileDelete %A_ScriptDir%\sqlstatus.txt
 		IfExist %A_ScriptDir%\sqlresult.txt
 			FileDelete %A_ScriptDir%\sqlresult.txt
-		RunWait, %comspec% /c tasklist /s %A_LoopField% /fi "imagename eq lodctr.exe" > %A_ScriptDir%\sqlstatus.txt,, hide
-		RunWait, %comspec% /c find /i "PID" < %A_ScriptDir%\sqlstatus.txt > %A_ScriptDir%\sqlresult.txt,, hide
+		RunWait, %comspec% /c tasklist /s %A_LoopField% /fi "imagename eq lodctr.exe" > "%A_ScriptDir%\sqlstatus.txt",, hide
+		RunWait, %comspec% /c find /i "PID" < "%A_ScriptDir%\sqlstatus.txt" > "%A_ScriptDir%\sqlresult.txt",, hide
 		FileGetSize, fsize, %A_ScriptDir%\sqlresult.txt
 		Gui, Loading:-Caption
 		Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
@@ -949,8 +949,8 @@ Loop, parse, ServerSelectionDB, |
 		{
 			Sleep, 20
 			GuiControl,Loading:, lvl, 1
-			RunWait, %comspec% /c tasklist /s %A_LoopField% /fi "imagename eq lodctr.exe" > %A_ScriptDir%\sqlstatus.txt,, hide
-			RunWait, %comspec% /c find /i "PID" < %A_ScriptDir%\sqlstatus.txt > %A_ScriptDir%\sqlresult.txt,, hide
+			RunWait, %comspec% /c tasklist /s %A_LoopField% /fi "imagename eq lodctr.exe" > "%A_ScriptDir%\sqlstatus.txt",, hide
+			RunWait, %comspec% /c find /i "PID" < "%A_ScriptDir%\sqlstatus.txt" > "%A_ScriptDir%\sqlresult.txt",, hide
 			FileGetSize, fsize, %A_ScriptDir%\sqlresult.txt
 		}
 		Gui,Loading:Destroy
@@ -965,8 +965,8 @@ Loop, parse, ServerSelectionDB, |
 				FileDelete %A_ScriptDir%\sqlstatus.txt
 			IfExist %A_ScriptDir%\sqlresult.txt
 				FileDelete %A_ScriptDir%\sqlresult.txt
-			RunWait, %comspec% /c tasklist /s %A_LoopField% /fi "imagename eq sqlservr.exe" > %A_ScriptDir%\sqlstatus.txt,, hide
-			RunWait, %comspec% /c find /i "PID" < %A_ScriptDir%\sqlstatus.txt > %A_ScriptDir%\sqlresult.txt,, hide
+			RunWait, %comspec% /c tasklist /s %A_LoopField% /fi "imagename eq sqlservr.exe" > "%A_ScriptDir%\sqlstatus.txt",, hide
+			RunWait, %comspec% /c find /i "PID" < "%A_ScriptDir%\sqlstatus.txt" > "%A_ScriptDir%\sqlresult.txt",, hide
 			FileGetSize, fsize, %A_ScriptDir%\sqlresult.txt
 			Gui, Loading:-Caption
 			Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
@@ -977,8 +977,8 @@ Loop, parse, ServerSelectionDB, |
 			{
 				Sleep, 20
 				GuiControl,Loading:, lvl, 1
-				RunWait, %comspec% /c tasklist /s %A_LoopField% /fi "imagename eq sqlservr.exe" > %A_ScriptDir%\sqlstatus.txt,, hide
-				RunWait, %comspec% /c find /i "PID" < %A_ScriptDir%\sqlstatus.txt > %A_ScriptDir%\sqlresult.txt,, hide
+				RunWait, %comspec% /c tasklist /s %A_LoopField% /fi "imagename eq sqlservr.exe" > "%A_ScriptDir%\sqlstatus.txt",, hide
+				RunWait, %comspec% /c find /i "PID" < "%A_ScriptDir%\sqlstatus.txt" > "%A_ScriptDir%\sqlresult.txt",, hide
 				FileGetSize, fsize, %A_ScriptDir%\sqlresult.txt
 			}
 			Gui,Loading:Destroy
@@ -1038,8 +1038,8 @@ Loop, read, %SelectedFileMain%
 	FileDelete, %A_ScriptDir%\checkos.txt
 	IfExist %A_ScriptDir%\result.txt
 		FileDelete, %A_ScriptDir%\result.txt
-	RunWait, %comspec% /c reg.exe query \\%A_LoopReadLine%\HKLM\Hardware\Description\System\CentralProcessor\0 > %A_ScriptDir%\checkos.txt,, hide
-	RunWait, %comspec% /c find /i "x86" < %A_ScriptDir%\checkos.txt > %A_ScriptDir%\result.txt,, hide
+	RunWait, %comspec% /c reg.exe query \\%A_LoopReadLine%\HKLM\Hardware\Description\System\CentralProcessor\0 > "%A_ScriptDir%\checkos.txt",, hide
+	RunWait, %comspec% /c find /i "x86" < "%A_ScriptDir%\checkos.txt" > "%A_ScriptDir%\result.txt",, hide
 	FileGetSize, fsize, %A_ScriptDir%\result.txt
 	If ErrorLevel
 		Return
@@ -1133,8 +1133,8 @@ Loop, read, %SelectedFileMain%
 		;FileDelete, %A_ScriptDir%\checkos.txt
 	;IfExist %A_ScriptDir%\result.txt
 		;FileDelete, %A_ScriptDir%\result.txt
-	;RunWait, %comspec% /c reg.exe query \\%A_LoopReadLine%\HKLM\Hardware\Description\System\CentralProcessor\0 > %A_ScriptDir%\checkos.txt,, hide
-	;RunWait, %comspec% /c find /i "x86" < %A_ScriptDir%\checkos.txt > %A_ScriptDir%\result.txt,, hide
+	;RunWait, %comspec% /c reg.exe query \\%A_LoopReadLine%\HKLM\Hardware\Description\System\CentralProcessor\0 > "%A_ScriptDir%\checkos.txt",, hide
+	;RunWait, %comspec% /c find /i "x86" < "%A_ScriptDir%\checkos.txt" > "%A_ScriptDir%\result.txt",, hide
 	;FileGetSize, fsize, %A_ScriptDir%\result.txt
 	If ErrorLevel
 		Return
@@ -2156,8 +2156,8 @@ Loop, read, %SelectedFileMain%
 			IfExist %A_ScriptDir%\result.txt
 				FileDelete %A_ScriptDir%\result.txt
 			RunWait, %comspec% /c wmic /node:"%line%" process call create 'cmd.exe /c "%RemDriveLetter%:\Program Files\7-zip\7z.exe" a %RemDriveLetter%:\NICETech\RegBackup\regbackup_%line%.zip %RemDriveLetter%:\NICETech\RegBackup\*.reg',, hide
-			RunWait, %comspec% /c tasklist /s %line% /fi "imagename eq 7z.exe" > %A_ScriptDir%\7zstatus.txt,, hide
-			RunWait, %comspec% /c find /i "PID" < %A_ScriptDir%\7zstatus.txt > %A_ScriptDir%\result.txt,, hide
+			RunWait, %comspec% /c tasklist /s %line% /fi "imagename eq 7z.exe" > "%A_ScriptDir%\7zstatus.txt",, hide
+			RunWait, %comspec% /c find /i "PID" < %A_ScriptDir%\7zstatus.txt > "%A_ScriptDir%\result.txt",, hide
 			FileGetSize, fsize, %A_ScriptDir%\result.txt
 			Gui, Loading:-Caption
 			Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
@@ -2168,8 +2168,8 @@ Loop, read, %SelectedFileMain%
 			{
 				Sleep, 20
 				GuiControl,Loading:, lvl, 1
-				RunWait, %comspec% /c tasklist /s %line% /fi "imagename eq 7z.exe" > %A_ScriptDir%\7zstatus.txt,, hide
-				RunWait, %comspec% /c find /i "PID" < %A_ScriptDir%\7zstatus.txt > %A_ScriptDir%\result.txt,, hide
+				RunWait, %comspec% /c tasklist /s %line% /fi "imagename eq 7z.exe" > "%A_ScriptDir%\7zstatus.txt",, hide
+				RunWait, %comspec% /c find /i "PID" < "%A_ScriptDir%\7zstatus.txt" > "%A_ScriptDir%\result.txt",, hide
 				FileGetSize, fsize, %A_ScriptDir%\result.txt
 			}
 			Gui,Loading:Destroy
