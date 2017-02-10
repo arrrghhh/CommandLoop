@@ -729,7 +729,7 @@ Btn:
 Gui, IIS:Submit
 Gui, IIS:Destroy
 IfNotExist %LocDriveLetter%:\NICETech\IISFeatures.txt
-	FileAppend, Web-WebServer`,Web-Common-Http`,Web-Default-Doc`,Web-Dir-Browsing`,Web-Http-Errors`,Web-Static-Content`,Web-Http-Redirect`,Web-Health`,Web-Http-Logging`,Web-Log-Libraries`,Web-ODBC-Logging`,Web-Request-Monitor`,Web-Http-Tracing`,Web-Performance`,Web-Stat-Compression`,Web-Dyn-Compression`,Web-Security`,Web-Filtering`,Web-Basic-Auth`,Web-Client-Auth`,Web-Digest-Auth`,Web-Cert-Auth`,Web-IP-Security`,Web-Url-Auth`,Web-Windows-Auth`,Web-App-Dev`,Web-Net-Ext45`,Web-Asp-Net45`,Web-ISAPI-Ext`,Web-ISAPI-Filter`,SMTP-Server`,Web-Mgmt-Console`,Web-Mgmt-Compat`,Web-Metabase`,Web-Lgcy-Mgmt-Console`,Web-Lgcy-Scripting`,Web-WMI, %LocDriveLetter%:\NICETech\WindowsFeatures.txt
+	FileAppend, Web-WebServer`,Web-Common-Http`,Web-Default-Doc`,Web-Dir-Browsing`,Web-Http-Errors`,Web-Static-Content`,Web-Http-Redirect`,Web-Health`,Web-Http-Logging`,Web-Log-Libraries`,Web-ODBC-Logging`,Web-Request-Monitor`,Web-Http-Tracing`,Web-Performance`,Web-Stat-Compression`,Web-Dyn-Compression`,Web-Security`,Web-Filtering`,Web-Basic-Auth`,Web-Client-Auth`,Web-Digest-Auth`,Web-Cert-Auth`,Web-IP-Security`,Web-Url-Auth`,Web-Windows-Auth`,Web-App-Dev`,Web-Net-Ext45`,Web-Asp-Net45`,Web-ISAPI-Ext`,Web-ISAPI-Filter`,SMTP-Server`,Web-Mgmt-Console`,Web-Mgmt-Compat`,Web-Metabase`,Web-Lgcy-Mgmt-Console`,Web-Lgcy-Scripting`,Web-WMI, %LocDriveLetter%:\NICETech\IISFeatures.txt
 Loop, Read, %LocDriveLetter%:\NICETech\IISFeatures.txt
 	IISFeatures = %A_LoopReadLine%
 Loop, parse, ServerSelectionIIS, |
