@@ -1,4 +1,4 @@
-#SingleInstance
+#SingleInstance force
 #Include Class_GuiControlTips.ahk
 #Include Anchor64.ahk
 
