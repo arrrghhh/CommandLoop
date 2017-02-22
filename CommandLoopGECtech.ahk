@@ -2,7 +2,7 @@
 #Include Class_GuiControlTips.ahk
 #Include Anchor64.ahk
 
-version = 2017.02.10.1204_GEC
+version = 2017.02.21.2037_GEC
 
 company = GEC
 
@@ -1230,24 +1230,35 @@ GuiControlGet, RemDriveLetter
 IfNotExist, %SelectedFileMain%
 {
 	MsgBox,,File Selection, No Server List found %SelectedFileMain%
+	Gui, Show
 	Return
 }
-IfNotExist %LocDriveLetter%:\%company%Tech\Tools\cert_thumb.ps1
+MsgBox, 3, SCC Binding, Are you doing a full binding (yes) or just checking the status (no)
+IfMsgBox Yes
+	FullBind = 1
+IfMsgBox No
+	FullBind = 0
+IfMsgBox Cancel
+	Return
+If (FullBind = 1)
 {
-	FileAppend,
-(
+	IfNotExist %LocDriveLetter%:\%company%Tech\Tools\cert_thumb.ps1
+	{
+		FileAppend,
+	(
 $computerName = $Env:Computername
 $domainName = $Env:UserDnsDomain
 write-host "CN=$computername.$domainname"
 $getThumb = Get-ChildItem -path cert:\LocalMachine\My | where { $_.Subject -match "CN\=$Computername\.$DomainName" }
 $getThumb.thumbprint | out-file %RemDriveLetter%:\%company%Tech\cert_$computerName.txt
-), %LocDriveLetter%:\%company%Tech\Tools\cert_thumb.ps1
+	), %LocDriveLetter%:\%company%Tech\Tools\cert_thumb.ps1
+	}
 }
 Bindservers = 
 Loop, Read, %SelectedFileMain%
 	Bindservers .= A_LoopReadLine "|"
 Gui, SCC:+Resize -MaximizeBox -Caption
-Gui, SCC:Add, Text, vBindText, Choose servers for binding:
+Gui, SCC:Add, Text, vBindText, Choose servers for SCC:
 Gui, SCC:Add, ListBox, vBindServerSelection 8 W130 H160, %Bindservers%
 Gui, SCC:Add, Button, vBindBtn gBindBtn, Finalize Selection
 Gui, SCC:Show, W170 H220, SCC Servers
@@ -1260,63 +1271,107 @@ If BindServerSelection =
 {
 	MsgBox,,Blank Host, Hostname cannot be blank!
 	Gui, 1:Show
-	Return
+	Exit
 }
 Loop, parse, BindServerSelection, |
 {
 	IfNotExist \\%A_LoopField%\%RemDriveLetter%$\%company%Tech\Tools\cert_thumb.ps1
 		RunWait, %comspec% /c "robocopy /ETA %LocDriveLetter%:\%company%Tech\Tools \\%A_LoopField%\%RemDriveLetter%$\%company%Tech\Tools cert_thumb.ps1",, hide
+	If (FullBind = 1)
+	{
+		If (MyCheckBox = 0)
+		{
+			RunWait, %comspec% /k wmic /node:"%A_LoopField%" process call create 'powershell.exe %RemDriveLetter%:\%company%Tech\Tools\cert_thumb.ps1'
+			RunWait, %comspec% /k "robocopy /ETA \\%A_LoopField%\%RemDriveLetter%$\%company%Tech\ %LocDriveLetter%:\%company%Tech\RemoteNodeCerts cert_%A_LoopField%.txt"
+			IfNotExist %LocDriveLetter%:\%company%Tech\RemoteNodeCerts\cert_%A_LoopField%.txt
+			{
+				Sleep, 1000
+				RunWait, %comspec% /k "robocopy /ETA \\%A_LoopField%\%RemDriveLetter%$\%company%Tech\ %LocDriveLetter%:\%company%Tech\RemoteNodeCerts cert_%A_LoopField%.txt"
+			}
+			IfNotExist %LocDriveLetter%:\%company%Tech\RemoteNodeCerts\cert_%A_LoopField%.txt
+			{
+				Sleep, 2000
+				RunWait, %comspec% /k "robocopy /ETA \\%A_LoopField%\%RemDriveLetter%$\%company%Tech\ %LocDriveLetter%:\%company%Tech\RemoteNodeCerts cert_%A_LoopField%.txt"
+			}
+			IfNotExist %LocDriveLetter%:\%company%Tech\RemoteNodeCerts\cert_%A_LoopField%.txt
+				MsgBox,,Certificate Thumbprint, Pull thumbprint manually from %A_LoopField%
+		}
+		Else
+		{
+			RunWait, %comspec% /c wmic /node:"%A_LoopField%" process call create 'powershell.exe %RemDriveLetter%:\%company%Tech\Tools\cert_thumb.ps1',, hide
+			RunWait, %comspec% /c "robocopy /ETA \\%A_LoopField%\%RemDriveLetter%$\%company%Tech\ %LocDriveLetter%:\%company%Tech\RemoteNodeCerts cert_%A_LoopField%.txt",, hide
+			IfNotExist %LocDriveLetter%:\%company%Tech\RemoteNodeCerts\cert_%A_LoopField%.txt
+			{
+				Sleep, 1000
+				RunWait, %comspec% /c "robocopy /ETA \\%A_LoopField%\%RemDriveLetter%$\%company%Tech\ %LocDriveLetter%:\%company%Tech\RemoteNodeCerts cert_%A_LoopField%.txt",, hide
+			}
+			IfNotExist %LocDriveLetter%:\%company%Tech\RemoteNodeCerts\cert_%A_LoopField%.txt
+			{
+				Sleep, 2000
+				RunWait, %comspec% /c "robocopy /ETA \\%A_LoopField%\%RemDriveLetter%$\%company%Tech\ %LocDriveLetter%:\%company%Tech\RemoteNodeCerts cert_%A_LoopField%.txt",, hide
+			}
+			IfNotExist %LocDriveLetter%:\%company%Tech\RemoteNodeCerts\cert_%A_LoopField%.txt
+				MsgBox,,Thumbprint, Pull thumbprint manually from %A_LoopField%
+		}
+
+		InputBox, certhash, Cert Hash, Enter certificate hash for %A_LoopField% (Check %LocDriveLetter%:\%company%Tech\RemoteNodeCerts):
+		If ErrorLevel
+			Return
+		StringReplace, certhash, certhash, %A_Space%,,All
+		InputBox, ports, Ports, Ports to bind to %A_LoopField% (comma separated):
+		If ErrorLevel
+			Return
+		StringReplace, ports, ports, %A_Space%,,All
+		hostname = %A_LoopField%
+		Loop, parse, ports, `,
+		{
+			If (MyCheckBox = 0)
+				RunWait, %comspec% /k wmic /node:"%hostname%" process call create 'cmd.exe /k netsh http add sslcert ipport=0.0.0.0:%A_LoopField% certhash=%certhash% appid={00000000-0000-0000-0000-000000000000}'
+			Else
+				RunWait, %comspec% /c wmic /node:"%hostname%" process call create 'cmd.exe /c netsh http add sslcert ipport=0.0.0.0:%A_LoopField% certhash=%certhash% appid={00000000-0000-0000-0000-000000000000}',, hide
+		}
+	}
 	If (MyCheckBox = 0)
 	{
-		RunWait, %comspec% /k wmic /node:"%A_LoopField%" process call create 'powershell.exe %RemDriveLetter%:\%company%Tech\Tools\cert_thumb.ps1'
-		RunWait, %comspec% /k "robocopy /ETA \\%A_LoopField%\%RemDriveLetter%$\%company%Tech\ %LocDriveLetter%:\%company%Tech\RemoteNodeCerts cert_%A_LoopField%.txt"
-		IfNotExist %LocDriveLetter%:\%company%Tech\RemoteNodeCerts\cert_%A_LoopField%.txt
+		IfNotExist %LocDriveLetter%:\%company%Tech\Tools\PsTools\psexec.exe
 		{
-			Sleep, 1000
-			RunWait, %comspec% /k "robocopy /ETA \\%A_LoopField%\%RemDriveLetter%$\%company%Tech\ %LocDriveLetter%:\%company%Tech\RemoteNodeCerts cert_%A_LoopField%.txt"
+			MsgBox,,PsExec Missing, PsExec (PsTools) missing in %LocDriveLetter%:\%company%Tech\Tools\PsTools\
+			break
 		}
-		IfNotExist %LocDriveLetter%:\%company%Tech\RemoteNodeCerts\cert_%A_LoopField%.txt
+		If A_LoopField = %A_ComputerName%
+			RunWait, %comspec% /k netsh http show sslcert > %LocDriveLetter%:\%company%Tech\RemoteNodeCerts\certinfo_%A_LoopField%.txt
+		Else
 		{
-			Sleep, 2000
-			RunWait, %comspec% /k "robocopy /ETA \\%A_LoopField%\%RemDriveLetter%$\%company%Tech\ %LocDriveLetter%:\%company%Tech\RemoteNodeCerts cert_%A_LoopField%.txt"
+			RunWait, %comspec% /k %LocDriveLetter%:\%company%Tech\Tools\PsTools\psexec.exe \\%A_LoopField% netsh http show sslcert > %LocDriveLetter%:\%company%Tech\RemoteNodeCerts\certinfo_%A_LoopField%.txt
+			IfNotExist %LocDriveLetter%:\%company%Tech\RemoteNodeCerts\certinfo_%A_LoopField%.txt
+			{
+				ErrCertInfo := ErrCertInfo . "`n" . A_LoopField
+				continue
+			}
 		}
-		IfNotExist %LocDriveLetter%:\%company%Tech\RemoteNodeCerts\cert_%A_LoopField%.txt
-			MsgBox,,Certificate Thumbprint, Pull thumbprint manually from %A_LoopField%
 	}
 	Else
 	{
-		RunWait, %comspec% /c wmic /node:"%A_LoopField%" process call create 'powershell.exe %RemDriveLetter%:\%company%Tech\Tools\cert_thumb.ps1',, hide
-		RunWait, %comspec% /c "robocopy /ETA \\%A_LoopField%\%RemDriveLetter%$\%company%Tech\ %LocDriveLetter%:\%company%Tech\RemoteNodeCerts cert_%A_LoopField%.txt",, hide
-		IfNotExist %LocDriveLetter%:\%company%Tech\RemoteNodeCerts\cert_%A_LoopField%.txt
+		IfNotExist %LocDriveLetter%:\%company%Tech\Tools\PsTools\psexec.exe
 		{
-			Sleep, 1000
-			RunWait, %comspec% /c "robocopy /ETA \\%A_LoopField%\%RemDriveLetter%$\%company%Tech\ %LocDriveLetter%:\%company%Tech\RemoteNodeCerts cert_%A_LoopField%.txt",, hide
+			MsgBox,,PsExec Missing, PsExec (PsTools) missing in %LocDriveLetter%:\%company%Tech\Tools\PsTools\
+			break
 		}
-		IfNotExist %LocDriveLetter%:\%company%Tech\RemoteNodeCerts\cert_%A_LoopField%.txt
-		{
-			Sleep, 2000
-			RunWait, %comspec% /c "robocopy /ETA \\%A_LoopField%\%RemDriveLetter%$\%company%Tech\ %LocDriveLetter%:\%company%Tech\RemoteNodeCerts cert_%A_LoopField%.txt",, hide
-		}
-		IfNotExist %LocDriveLetter%:\%company%Tech\RemoteNodeCerts\cert_%A_LoopField%.txt
-			MsgBox,,Thumbprint, Pull thumbprint manually from %A_LoopField%
-	}
-	InputBox, certhash, Cert Hash, Enter certificate hash for %A_LoopField% (Check D:\%company%Tech\RemoteNodeCerts):
-	If ErrorLevel
-		Return
-	StringReplace, certhash, certhash, %A_Space%,,All
-	InputBox, ports, Ports, Ports to bind to %A_LoopField% (comma separated):
-	If ErrorLevel
-		Return
-	StringReplace, ports, ports, %A_Space%,,All
-	hostname = %A_LoopField%
-	Loop, parse, ports, `,
-	{
-		If (MyCheckBox = 0)
-			RunWait, %comspec% /k wmic /node:"%hostname%" process call create 'cmd.exe /k netsh http add sslcert ipport=0.0.0.0:%A_LoopField% certhash=%certhash% appid={00000000-0000-0000-0000-000000000000}'
+		If A_LoopField = %A_ComputerName%
+			RunWait, %comspec% /c netsh http show sslcert > %LocDriveLetter%:\%company%Tech\RemoteNodeCerts\certinfo_%A_LoopField%.txt,, hide
 		Else
-			RunWait, %comspec% /c wmic /node:"%hostname%" process call create 'cmd.exe /c netsh http add sslcert ipport=0.0.0.0:%A_LoopField% certhash=%certhash% appid={00000000-0000-0000-0000-000000000000}',, hide
+		{
+			RunWait, %comspec% /c %LocDriveLetter%:\%company%Tech\Tools\PsTools\psexec.exe \\%A_LoopField% netsh http show sslcert > %LocDriveLetter%:\%company%Tech\RemoteNodeCerts\certinfo_%A_LoopField%.txt,, hide
+			IfNotExist %LocDriveLetter%:\%company%Tech\RemoteNodeCerts\certinfo_%A_LoopField%.txt
+			{
+				ErrCertInfo := ErrCertInfo . "`n" . A_LoopField
+				continue
+			}
+		}
 	}
 }
+If ErrCertInfo
+	MsgBox,,CertInfo Fail, Failed to pull certinfo on: %ErrCertInfo%
 MsgBox,,SCC Binding, Task Complete.
 Gui, 1:Show
 Return
