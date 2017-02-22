@@ -2264,6 +2264,7 @@ Loop, read, %SelectedFileMain%
 			Run, %comspec% /k ntrights -m \\%line% -u %A_LoopField% +r SeTcbPrivilege
 			Run, %comspec% /k ntrights -m \\%line% -u %A_LoopField% +r SeIncreaseQuotaPrivilege
 			Run, %comspec% /k ntrights -m \\%line% -u %A_LoopField% +r SeCreateGlobalPrivilege
+			Run, %comspec% /k ntrights -m \\%line% -u %A_LoopField% +r SeChangeNotifyPrivilege
 			Run, %comspec% /k ntrights -m \\%line% -u %A_LoopField% +r SeImpersonatePrivilege
 			Run, %comspec% /k ntrights -m \\%line% -u %A_LoopField% +r SeBatchLogonRight
 			Run, %comspec% /k ntrights -m \\%line% -u %A_LoopField% +r SeServiceLogonRight
@@ -2276,6 +2277,7 @@ Loop, read, %SelectedFileMain%
 			Run, %comspec% /c ntrights -m \\%line% -u %A_LoopField% +r SeTcbPrivilege,, hide
 			Run, %comspec% /c ntrights -m \\%line% -u %A_LoopField% +r SeIncreaseQuotaPrivilege,, hide
 			Run, %comspec% /c ntrights -m \\%line% -u %A_LoopField% +r SeCreateGlobalPrivilege,, hide
+			Run, %comspec% /c ntrights -m \\%line% -u %A_LoopField% +r SeChangeNotifyPrivilege,, hide
 			Run, %comspec% /c ntrights -m \\%line% -u %A_LoopField% +r SeImpersonatePrivilege,, hide
 			Run, %comspec% /c ntrights -m \\%line% -u %A_LoopField% +r SeBatchLogonRight,, hide
 			Run, %comspec% /c ntrights -m \\%line% -u %A_LoopField% +r SeServiceLogonRight,, hide
