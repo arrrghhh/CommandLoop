@@ -2,7 +2,7 @@
 #Include Class_GuiControlTips.ahk
 #Include Anchor64.ahk
 
-version = 2017.02.21.2037_GEC
+version = 2017.02.21.2103_GEC
 
 company = GEC
 
@@ -130,6 +130,7 @@ GuiControlGet, RemDriveLetter
 IfNotExist, %SelectedFileMain%
 {
 	MsgBox,,File Selection, No Server List found %SelectedFileMain%
+	Gui, 1:Show
 	Return
 }
 Loop, read, %SelectedFileMain%
@@ -169,6 +170,7 @@ GuiControlGet, RemDriveLetter
 IfNotExist, %SelectedFileLogoff%
 {
 	MsgBox,,File Selection, No Server List found %SelectedFileLogoff%
+	Gui, 1:Show
 	Return
 }
 Loop, read, %SelectedFileMain%
@@ -217,6 +219,7 @@ IfMsgBox No
 IfNotExist, %SelectedFileLogoff%
 {
 	MsgBox,,File Selection, No Server List found %SelectedFileLogoff%
+	Gui, 1:Show
 	Return
 }
 Loop, read, %SelectedFileMain%
@@ -261,6 +264,7 @@ IfNotExist %LocDriveLetter%:\%company%Tech\services.txt
 IfNotExist, %SelectedFileMain%
 {
 	MsgBox,,File Selection, No Server List found %SelectedFileMain%
+	Gui, 1:Show
 	Return
 }
 Loop, read, %SelectedFileMain%
@@ -369,6 +373,7 @@ IfNotExist %LocDriveLetter%:\%company%Tech\services.txt
 IfNotExist, %SelectedFileMain%
 {
 	MsgBox,,File Selection, No Server List found %SelectedFileMain%
+	Gui, 1:Show
 	Return
 }
 Loop, read, %SelectedFileMain%
@@ -475,6 +480,7 @@ IfMsgBox No
 IfNotExist, %SelectedFileMain%
 {
 	MsgBox,,File Selection, No Server List found %SelectedFileMain%
+	Gui, 1:Show
 	Return
 }
 Loop, read, %SelectedFileMain%
@@ -541,6 +547,7 @@ FileAppend,
 IfNotExist, %SelectedFileMain%
 {
 	MsgBox,,File Selection, No Server List found %SelectedFileMain%
+	Gui, 1:Show
 	Return
 }
 Loop, read, %SelectedFileMain%
@@ -678,6 +685,7 @@ GuiControlGet, RemDriveLetter
 IfNotExist, %SelectedFileMain%
 {
 	MsgBox,,File Selection, No Server List found %SelectedFileMain%
+	Gui, 1:Show
 	Return
 }
 Loop, Read, %SelectedFileMain%
@@ -784,6 +792,7 @@ GuiControlGet, RemDriveLetter
 IfNotExist, %SelectedFileMain%
 {
 	MsgBox,,File Selection, No Server List found %SelectedFileMain%
+	Gui, 1:Show
 	Return
 }
 DBservers = 
@@ -1010,6 +1019,7 @@ GuiControlGet, RemDriveLetter
 IfNotExist, %SelectedFileMain%
 {
 	MsgBox,,File Selection, No Server List found %SelectedFileMain%
+	Gui, 1:Show
 	Return
 }
 IfNotExist %LocDriveLetter%:\%company%Tech\Tools\npp*Installer.exe
@@ -1104,6 +1114,7 @@ GuiControlGet, RemDriveLetter
 IfNotExist, %SelectedFileMain%
 {
 	MsgBox,,File Selection, No Server List found %SelectedFileMain%
+	Gui, 1:Show
 	Return
 }
 IfNotExist %LocDriveLetter%:\%company%Tech\Tools\7z*.exe
@@ -1230,7 +1241,7 @@ GuiControlGet, RemDriveLetter
 IfNotExist, %SelectedFileMain%
 {
 	MsgBox,,File Selection, No Server List found %SelectedFileMain%
-	Gui, Show
+	Gui, 1:Show
 	Return
 }
 MsgBox, 3, SCC Binding, Are you doing a full binding (yes) or just checking the status (no)
@@ -1385,6 +1396,7 @@ GuiControlGet, RemDriveLetter
 IfNotExist, %SelectedFileMain%
 {
 	MsgBox,,File Selection, No Server List found %SelectedFileMain%
+	Gui, 1:Show
 	Return
 }
 IfExist %LocDriveLetter%:\%company%Tech\AllServers-%A_UserName%.rdg
@@ -1665,6 +1677,7 @@ GuiControlGet, RemDriveLetter
 IfNotExist, %SelectedFileMain%
 {
 	MsgBox,,File Selection, No Server List found %SelectedFileMain%
+	Gui, 1:Show
 	Return
 }
 
@@ -1694,6 +1707,7 @@ GuiControlGet, RemDriveLetter
 IfNotExist, %SelectedFileMain%
 {
 	MsgBox,,File Selection, No Server List found %SelectedFileMain%
+	Gui, 1:Show
 	Return
 }
 Loop, read, %SelectedFileMain%
@@ -1728,6 +1742,7 @@ GuiControlGet, RemDriveLetter
 IfNotExist, %SelectedFileMain%
 {
 	MsgBox,,File Selection, No Server List found %SelectedFileMain%
+	Gui, 1:Show
 	Return
 }
 Loop, read, %SelectedFileMain%
@@ -1808,6 +1823,7 @@ GuiControlGet, RemDriveLetter
 IfNotExist, %SelectedFileMain%
 {
 	MsgBox,,File Selection, No Server List found %SelectedFileMain%
+	Gui, 1:Show
 	Return
 }
 IfNotExist, %LocDriveLetter%:\Program Files\NICE Systems\Nice Services Configuration Manager\Nice Services Configuration Manager.exe
@@ -2024,6 +2040,7 @@ IfNotExist, %LocDriveLetter%:\%company%Tech\Tools\Registry_Setup.exe
 IfNotExist, %SelectedFileMain%
 {
 	MsgBox,,File Selection, No Server List found %SelectedFileMain%
+	Gui, 1:Show
 	Return
 }
 Loop, read, %SelectedFileMain%
@@ -2082,6 +2099,7 @@ GuiControlGet, RemDriveLetter
 IfNotExist, %SelectedFileMain%
 {
 	MsgBox,,File Selection, No Server List found %SelectedFileMain%
+	Gui, 1:Show
 	Return
 }
 MsgBox,3,Zip Files,Would you like to compress the files? (7-zip required)
@@ -2261,6 +2279,7 @@ LoggerBack:
 IfNotExist, %SelectedFileMain%
 {
 	MsgBox,,File Selection, No Server List found %SelectedFileMain%
+	Gui, 1:Show
 	Return
 }
 Loop, read, %SelectedFileMain%
@@ -2299,6 +2318,7 @@ If user =
 IfNotExist, %SelectedFileMain%
 {
 	MsgBox,,File Selection, No Server List found %SelectedFileMain%
+	Gui, 1:Show
 	Return
 }
 Loop, read, %SelectedFileMain%
@@ -2351,6 +2371,7 @@ gui, Show
 IfNotExist, %SelectedFileMain%
 {
 	MsgBox,,File Selection, No Server List found %SelectedFileMain%
+	Gui, 1:Show
 	Return
 }
 GuiControlGet, MyCheckBox
