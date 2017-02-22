@@ -1324,7 +1324,6 @@ Loop, parse, BindServerSelection, |
 			IfNotExist %LocDriveLetter%:\%company%Tech\RemoteNodeCerts\cert_%A_LoopField%.txt
 				MsgBox,,Thumbprint, Pull thumbprint manually from %A_LoopField%
 		}
-
 		InputBox, certhash, Cert Hash, Enter certificate hash for %A_LoopField% (Check %LocDriveLetter%:\%company%Tech\RemoteNodeCerts):
 		If ErrorLevel
 			Return
@@ -1891,10 +1890,10 @@ IfNotExist, %LocDriveLetter%:\Program Files\NICE Systems\Nice Services Configura
 		Else
 		{
 			If A_LoopReadLine = %A_ComputerName%
-				Run, %comspec% /c robocopy /ETA %LocDriveLetter%:\%company%Tech C:\Users\Public\Desktop "Nice Services Configuration Manager.lnk",, hide
+				RunWait, %comspec% /c robocopy /ETA %LocDriveLetter%:\%company%Tech C:\Users\Public\Desktop "Nice Services Configuration Manager.lnk",, hide
 			Else
 			{
-				Run, %comspec% /c taskkill /S %A_LoopReadLine% /IM "Nice Services Configuration Manager.exe",, hide, pid
+				RunWait, %comspec% /c taskkill /S %A_LoopReadLine% /IM "Nice Services Configuration Manager.exe",, hide, pid
 				Gui, Loading:-Caption
 				Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
 				Gui, Loading:Add, Text,, Killing ConfigMgr on %A_LoopReadLine%
