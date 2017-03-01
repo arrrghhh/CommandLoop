@@ -2,7 +2,6 @@
 #Include Class_GuiControlTips.ahk
 #Include Anchor64.ahk
 
-version = 2017.02.21.2103_GEC
 
 company = GEC
 
@@ -40,6 +39,7 @@ menu, MyMenuBar, Add, &DangerZone, :DangerZone
 menu, MyMenuBar, Add, D&EP/TOE, :DEPTOEmain
 menu, MyMenuBar, Add, &Help, :HelpMenu
 gui, menu, MyMenuBar
+Menu, Tray, Tip, CommandLoop
 
 gui, add, Text, w300 h100 r1 vFile, %SelectedFileMain%
 gui, add, edit, w300 h100 r1 vCommand
@@ -1238,6 +1238,7 @@ gui, Hide
 GuiControlGet, MyCheckBox
 GuiControlGet, LocDriveLetter
 GuiControlGet, RemDriveLetter
+ErrCertInfo =
 IfNotExist, %SelectedFileMain%
 {
 	MsgBox,,File Selection, No Server List found %SelectedFileMain%
@@ -1346,13 +1347,14 @@ Loop, parse, BindServerSelection, |
 		IfNotExist %LocDriveLetter%:\%company%Tech\Tools\PsTools\psexec.exe
 		{
 			MsgBox,,PsExec Missing, PsExec (PsTools) missing in %LocDriveLetter%:\%company%Tech\Tools\PsTools\
-			break
+			continue
 		}
 		If A_LoopField = %A_ComputerName%
 			RunWait, %comspec% /k netsh http show sslcert > %LocDriveLetter%:\%company%Tech\RemoteNodeCerts\certinfo_%A_LoopField%.txt
 		Else
 		{
 			RunWait, %comspec% /k %LocDriveLetter%:\%company%Tech\Tools\PsTools\psexec.exe \\%A_LoopField% netsh http show sslcert > %LocDriveLetter%:\%company%Tech\RemoteNodeCerts\certinfo_%A_LoopField%.txt
+			Sleep, 200
 			IfNotExist %LocDriveLetter%:\%company%Tech\RemoteNodeCerts\certinfo_%A_LoopField%.txt
 			{
 				ErrCertInfo := ErrCertInfo . "`n" . A_LoopField
@@ -1365,13 +1367,14 @@ Loop, parse, BindServerSelection, |
 		IfNotExist %LocDriveLetter%:\%company%Tech\Tools\PsTools\psexec.exe
 		{
 			MsgBox,,PsExec Missing, PsExec (PsTools) missing in %LocDriveLetter%:\%company%Tech\Tools\PsTools\
-			break
+			continue
 		}
 		If A_LoopField = %A_ComputerName%
 			RunWait, %comspec% /c netsh http show sslcert > %LocDriveLetter%:\%company%Tech\RemoteNodeCerts\certinfo_%A_LoopField%.txt,, hide
 		Else
 		{
 			RunWait, %comspec% /c %LocDriveLetter%:\%company%Tech\Tools\PsTools\psexec.exe \\%A_LoopField% netsh http show sslcert > %LocDriveLetter%:\%company%Tech\RemoteNodeCerts\certinfo_%A_LoopField%.txt,, hide
+			Sleep, 200
 			IfNotExist %LocDriveLetter%:\%company%Tech\RemoteNodeCerts\certinfo_%A_LoopField%.txt
 			{
 				ErrCertInfo := ErrCertInfo . "`n" . A_LoopField
