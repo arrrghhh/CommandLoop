@@ -2,6 +2,7 @@
 #Include Class_GuiControlTips.ahk
 #Include Anchor64.ahk
 
+version = 2017.03.01.1258_GEC
 
 company = GEC
 
