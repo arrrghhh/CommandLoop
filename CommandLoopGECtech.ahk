@@ -2,7 +2,7 @@
 #Include Class_GuiControlTips.ahk
 #Include Anchor64.ahk
 
-version = 2017.03.01.1258_GEC
+version = 2017.03.08.1600_GEC
 
 company = GEC
 
@@ -42,6 +42,7 @@ menu, MyMenuBar, Add, &Help, :HelpMenu
 gui, menu, MyMenuBar
 Menu, Tray, Tip, CommandLoop
 
+gui, font, s8, MS Shell Dlg
 gui, add, Text, w300 h100 r1 vFile, %SelectedFileMain%
 gui, add, edit, w300 h100 r1 vCommand
 gui, add, button, hwndhbuttonrun gRUN, &Run
