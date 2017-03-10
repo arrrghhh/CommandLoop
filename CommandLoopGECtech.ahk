@@ -139,11 +139,33 @@ Loop, read, %SelectedFileMain%
 {
 	If ErrorLevel
 		Return
+	IfNotExist %LocDriveLetter%:\%company%Tech\Tools\PsTools\psexec.exe
+	{
+		If (MyCheckBox = 0)
+			Run, %comspec% /k wmic /node:"%A_LoopReadLine%" process call create 'cmd.exe /k %command%'
+		Else
+		{
+			Run, %comspec% /c wmic /node:"%A_LoopReadLine%" process call create 'cmd.exe /c %command%',, hide, pid
+			Gui, Loading:-Caption
+			Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
+			Gui, Loading:Add, Text,, Running on %A_LoopReadLine%
+			Gui, Hide
+			Gui, Loading:Show
+			ErrorLevel:=1
+			While (ErrorLevel != 0)
+			{
+				Sleep, 20
+				GuiControl,Loading:, lvl, 1
+				Process, Exist, % pid
+			}
+			Gui,Loading:Destroy
+		}
+	}
 	If (MyCheckBox = 0)
-		Run, %comspec% /k wmic /node:"%A_LoopReadLine%" process call create 'cmd.exe /k %command%'
+		Run, %comspec% /k %LocDriveLetter%:\%company%Tech\Tools\PsTools\psexec.exe \\%A_LoopReadLine% %command%
 	Else
 	{
-		Run, %comspec% /c wmic /node:"%A_LoopReadLine%" process call create 'cmd.exe /c %command%',, hide, pid
+		Run, %comspec% /c %LocDriveLetter%:\%company%Tech\Tools\PsTools\psexec.exe \\%A_LoopReadLine% %command%,, hide, pid
 		Gui, Loading:-Caption
 		Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
 		Gui, Loading:Add, Text,, Running on %A_LoopReadLine%
