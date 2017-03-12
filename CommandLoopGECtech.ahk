@@ -690,7 +690,12 @@ gui, submit, nohide
 GuiControlGet, MyCheckBox
 GuiControlGet, LocDriveLetter
 GuiControlGet, RemDriveLetter
-ErrDEPServers = 
+IfNotExist, %SelectedFileMain%
+{
+	MsgBox,,File Selection, No Server List found %SelectedFileMain%
+	Gui, 1:Show
+	Return
+}
 IfExist %LocDriveLetter%:\%company%Tech\depstatus.txt
 	FileDelete %LocDriveLetter%:\%company%Tech\depstatus.txt
 FileAppend,
@@ -699,17 +704,25 @@ FileAppend,
 1 – AlwaysOn - DEP is enabled for all processes.
 2 – OptIn - Only Windows system components and services have DEP applied. (Default)
 3 – OptOut - DEP is enabled for all processes. Administrators can manually create a list of specific applications which do not have DEP applied
-
-
+ErrDEPPing = 
+ErrDEPServers = 
 ), %LocDriveLetter%:\%company%Tech\depstatus.txt
-IfNotExist, %SelectedFileMain%
-{
-	MsgBox,,File Selection, No Server List found %SelectedFileMain%
-	Gui, 1:Show
-	Return
-}
 Loop, read, %SelectedFileMain%
 {
+	Gui,Loading:Destroy
+	Gui, Loading:-Caption
+	Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
+	Gui, Loading:Add, Text,, Pinging %A_LoopReadLine%...
+	Gui, Hide
+	Gui, Loading:Show
+	RTT := Ping4(A_LoopReadLine, PingResult)
+	If ErrorLevel
+	{
+		ErrDEPPing := ErrDEPPing . "`n" . A_LoopReadLine
+		Gui, Loading:Destroy
+		continue
+	}
+	Gui, Loading:Destroy
 	If (MyCheckBox = 0)
 	{
 		FileAppend, %A_LoopReadLine%`r`n, %LocDriveLetter%:\%company%Tech\depstatus.txt
@@ -790,9 +803,18 @@ Loop, read, %SelectedFileMain%
 	FileDelete %LocDriveLetter%:\%company%Tech\depstatus_%A_LoopReadLine%.txt
 	Gui,Loading:Destroy
 }
-MsgBox,,Audit DEP, Task Complete, look for %LocDriveLetter%:\%company%Tech\depstatus.txt
+If ErrDEPPing
+{
+	MsgBox,,DEP Failures, Failed to ping: %ErrDEPPing%
+	MsgBox,,Audit DEP, Task Complete (With Failures). `n Look for %LocDriveLetter%:\%company%Tech\depstatus.txt
+}
 If ErrDEPServers
+{
 	MsgBox,,DEP Failures, Failed to pull DEP on: %ErrDEPServers%
+	MsgBox,,Audit DEP, Task Complete (With Failures). `n Look for %LocDriveLetter%:\%company%Tech\depstatus.txt
+}
+Else
+	MsgBox,,Audit DEP, Task Complete, look for %LocDriveLetter%:\%company%Tech\depstatus.txt
 Sleep, 100
 FileDelete %LocDriveLetter%:\%company%Tech\depstatus_*.txt
 Gui, 1:Show
