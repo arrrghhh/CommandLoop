@@ -854,8 +854,23 @@ IfNotExist, %SelectedFileMain%
 	Gui, 1:Show
 	Return
 }
+ErrAddRole = 
 Loop, Read, %SelectedFileMain%
 {
+	Gui,Loading:Destroy
+	Gui, Loading:-Caption
+	Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
+	Gui, Loading:Add, Text,, Pinging %A_LoopReadLine%...
+	Gui, Hide
+	Gui, Loading:Show
+	RTT := Ping4(A_LoopReadLine, PingResult)
+	If ErrorLevel
+	{
+		ErrAddRole := ErrAddRole . "`n" . A_LoopReadLine
+		Gui, Loading:Destroy
+		continue
+	}
+	Gui, Loading:Destroy
 	If (MyCheckBox = 0)
 	{
 		Run powershell.exe -NoExit -Command Add-WindowsFeature -IncludeAllSubFeature SNMP-WMI-Provider`,NET-Framework-Core -ComputerName %A_LoopReadLine%,,, pid
@@ -908,8 +923,23 @@ IfNotExist %LocDriveLetter%:\%company%Tech\IISFeatures.txt
 	FileAppend, Web-WebServer`,Web-Common-Http`,Web-Default-Doc`,Web-Dir-Browsing`,Web-Http-Errors`,Web-Static-Content`,Web-Http-Redirect`,Web-Health`,Web-Http-Logging`,Web-Log-Libraries`,Web-ODBC-Logging`,Web-Request-Monitor`,Web-Http-Tracing`,Web-Performance`,Web-Stat-Compression`,Web-Dyn-Compression`,Web-Security`,Web-Filtering`,Web-Basic-Auth`,Web-Client-Auth`,Web-Digest-Auth`,Web-Cert-Auth`,Web-IP-Security`,Web-Url-Auth`,Web-Windows-Auth`,Web-App-Dev`,Web-Net-Ext45`,Web-Asp-Net45`,Web-ISAPI-Ext`,Web-ISAPI-Filter`,SMTP-Server`,Web-Mgmt-Console`,Web-Mgmt-Compat`,Web-Metabase`,Web-Lgcy-Mgmt-Console`,Web-Lgcy-Scripting`,Web-WMI, %LocDriveLetter%:\%company%Tech\IISFeatures.txt
 Loop, Read, %LocDriveLetter%:\%company%Tech\IISFeatures.txt
 	IISFeatures = %A_LoopReadLine%
+ErrIIS = 
 Loop, parse, ServerSelectionIIS, |
 {
+	Gui,Loading:Destroy
+	Gui, Loading:-Caption
+	Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
+	Gui, Loading:Add, Text,, Pinging %A_LoopField%...
+	Gui, Hide
+	Gui, Loading:Show
+	RTT := Ping4(A_LoopField, PingResult)
+	If ErrorLevel
+	{
+		ErrIIS := ErrIIS . "`n" . A_LoopField
+		Gui, Loading:Destroy
+		continue
+	}
+	Gui, Loading:Destroy
 	If (MyCheckBox = 0)
 	{	
 		Run, powershell.exe -NoExit -Command Add-WindowsFeature %IISFeatures% -ComputerName %A_LoopField%,,, pid
@@ -945,7 +975,18 @@ Loop, parse, ServerSelectionIIS, |
 		Gui,Loading:Destroy
 	}
 }
-MsgBox,,Add Roles/Features, Task Complete.
+If ErrAddRole
+{
+	MsgBox,,AddRole Failures, Failed to ping: %ErrAddRole%
+	MsgBox,,Add Roles/Features, Task Complete (With Failures).
+}
+If ErrIIS
+{
+	MsgBox,,AddIIS Failures, Failed to ping: %ErrIIS%
+	MsgBox,,Add IIS, Task Complete (With Failures).
+}
+Else
+	MsgBox,,Add Roles/Features, Task Complete.
 Gui, 1:Show
 Return
 
