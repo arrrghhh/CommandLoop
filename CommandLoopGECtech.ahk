@@ -232,7 +232,7 @@ Loop, read, %SelectedFileMain%
 	RTT := Ping4(A_LoopReadLine, PingResult)
 	If ErrorLevel
 	{
-		ErrRunServers := ErrRunServers . "`n" . A_LoopReadLine
+		ErrLogoffServers := ErrLogoffServers . "`n" . A_LoopReadLine
 		Gui, Loading:Destroy
 		continue
 	}
