@@ -1389,8 +1389,23 @@ If 7zver =
 	MsgBox,,7zip Missing, No valid 7zip installer selected!
 	Return
 }
+Ping7z = 
 Loop, read, %SelectedFileMain%
 {
+	Gui,Loading:Destroy
+	Gui, Loading:-Caption
+	Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
+	Gui, Loading:Add, Text,, Pinging %A_LoopReadLine%...
+	Gui, Hide
+	Gui, Loading:Show
+	RTT := Ping4(A_LoopReadLine, PingResult)
+	If ErrorLevel
+	{
+		Ping7z := Ping7z . "`n" . A_LoopReadLine
+		Gui, Loading:Destroy
+		continue
+	}
+	Gui, Loading:Destroy
 	;IfExist %A_ScriptDir%\checkos.txt
 		;FileDelete, %A_ScriptDir%\checkos.txt
 	;IfExist %A_ScriptDir%\result.txt
@@ -1398,8 +1413,6 @@ Loop, read, %SelectedFileMain%
 	;RunWait, %comspec% /c reg.exe query \\%A_LoopReadLine%\HKLM\Hardware\Description\System\CentralProcessor\0 > "%A_ScriptDir%\checkos.txt",, hide
 	;RunWait, %comspec% /c find /i "x86" < "%A_ScriptDir%\checkos.txt" > "%A_ScriptDir%\result.txt",, hide
 	;FileGetSize, fsize, %A_ScriptDir%\result.txt
-	If ErrorLevel
-		Return
 	IfNotExist \\%A_LoopReadLine%\%RemDriveLetter%$\%company%Tech\Tools\%7zver%
 	{
 		ErrServers7z := ErrServers7z . "`n" . A_LoopReadLine
@@ -1477,7 +1490,13 @@ IfExist %A_ScriptDir%\checkos.txt
 	FileDelete, %A_ScriptDir%\checkos.txt
 IfExist %A_ScriptDir%\result.txt
 	FileDelete, %A_ScriptDir%\result.txt
-MsgBox,,Install 7zip, Task complete.
+If Ping7z
+{
+	MsgBox,,7zip Ping, Failed to ping: %Ping7z%
+	MsgBox,,Install 7zip, Task Complete (With Failures).
+}
+Else
+	MsgBox,,Install 7zip, Task complete.
 Gui, 1:Show
 Return
 
