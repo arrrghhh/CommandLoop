@@ -27,8 +27,6 @@ Else
 GuiControlGet, LocDriveLetter
 menu, FileMenu, add, File Selection, FSM
 SelectedFileMain = %LocDriveLetter%:\%company%Tech\servers.txt
-;menu, FileMenu, add, File Select Logoff, FSL
-SelectedFileLogoff = %LocDriveLetter%:\%company%Tech\servers.txt
 menu, FileMenu, add, Exit, ExitSub
 menu, DangerZone, add, &Reboot Servers, REBOOT
 menu, DangerZone, add, Stop/&Disable NICE Services, STOPALL
@@ -120,7 +118,6 @@ GuiControlGet, MyCheckBox
 GuiControlGet, LocDriveLetter
 GuiControlGet, RemDriveLetter
 SelectedFileMain = %LocDriveLetter%:\%company%Tech\servers.txt
-SelectedFileLogoff = %LocDriveLetter%:\%company%Tech\servers.txt
 guicontrol, , File, %SelectedFileMain%
 Return
 
@@ -216,9 +213,9 @@ gui, show
 GuiControlGet, MyCheckBox
 GuiControlGet, LocDriveLetter
 GuiControlGet, RemDriveLetter
-IfNotExist, %SelectedFileLogoff%
+IfNotExist, %SelectedFileMain%
 {
-	MsgBox,,File Selection, No Server List found %SelectedFileLogoff%
+	MsgBox,,File Selection, No Server List found %SelectedFileMain%
 	Gui, 1:Show
 	Return
 }
@@ -265,9 +262,9 @@ GuiControlGet, RemDriveLetter
 MsgBox,4,Reboot All, Are you sure?
 IfMsgBox No
 	Return
-IfNotExist, %SelectedFileLogoff%
+IfNotExist, %SelectedFileMain%
 {
-	MsgBox,,File Selection, No Server List found %SelectedFileLogoff%
+	MsgBox,,File Selection, No Server List found %SelectedFileMain%
 	Gui, 1:Show
 	Return
 }
@@ -699,17 +696,6 @@ FileSelectFile, SelectedFileMain, 3, %LocDriveLetter%:\%company%Tech\servers.txt
 if SelectedFileMain =
     MsgBox,,File Selection Main, The user didn't select anything.
 GuiControl,, File, %SelectedFileMain%
-Return
-
-FSL:
-Gui, Submit
-Gui, Show
-GuiControlGet, MyCheckBox
-GuiControlGet, LocDriveLetter
-GuiControlGet, RemDriveLetter
-FileSelectFile, SelectedFileLogoff, 3, %LocDriveLetter%:\%company%Tech\servers.txt, Open a file, Text Documents (*.txt)
-if SelectedFileLogoff =
-    MsgBox,,File Selection Logoff, The user didn't select anything.
 Return
 
 LoggerLoc:
