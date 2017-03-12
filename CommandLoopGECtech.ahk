@@ -479,7 +479,10 @@ GuiControlGet, LocDriveLetter
 GuiControlGet, RemDriveLetter
 MsgBox,4,Start all NICE Services, Are you sure?
 IfMsgBox No
+{
+	Gui, 1:Show
 	Return
+}
 IfNotExist %LocDriveLetter%:\%company%Tech\services.txt
 	AppendServices()
 IfNotExist, %SelectedFileMain%
@@ -488,11 +491,26 @@ IfNotExist, %SelectedFileMain%
 	Gui, 1:Show
 	Return
 }
+ErrStartAll =
 Loop, read, %SelectedFileMain%
 {
 	line := A_LoopReadLine
 	If line = %A_ComputerName%
 		continue
+	Gui,Loading:Destroy
+	Gui, Loading:-Caption
+	Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
+	Gui, Loading:Add, Text,, Pinging %A_LoopReadLine%...
+	Gui, Hide
+	Gui, Loading:Show
+	RTT := Ping4(A_LoopReadLine, PingResult)
+	If ErrorLevel
+	{
+		ErrStartAll := ErrStartAll . "`n" . A_LoopReadLine
+		Gui, Loading:Destroy
+		continue
+	}
+	Gui, Loading:Destroy
 	If (MyCheckBox = 0)
 	{
 		Loop, read, %LocDriveLetter%:\%company%Tech\services.txt
@@ -576,7 +594,13 @@ Loop, read, %SelectedFileMain%
 }
 IfExist %A_ScriptDir%\checksvc.txt
 	FileDelete, %A_ScriptDir%\checksvc.txt
-MsgBox,,Start All Services, Task complete.
+If ErrStopAll
+{
+	MsgBox,,StartAll Failures, Failed to ping: %ErrStartAll%
+	MsgBox,,StartAll Services, Task Complete (With Failures).
+}
+Else
+	MsgBox,,StartAll Services, Task Complete.
 Gui, 1:Show
 Return
 
