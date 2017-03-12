@@ -1273,8 +1273,23 @@ If nppver =
 	MsgBox,,NP++ Install, No valid NP++ installer selected!
 	Return
 }
+PingNPPServers = 
 Loop, read, %SelectedFileMain%
 {
+	Gui,Loading:Destroy
+	Gui, Loading:-Caption
+	Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
+	Gui, Loading:Add, Text,, Pinging %A_LoopReadLine%...
+	Gui, Hide
+	Gui, Loading:Show
+	RTT := Ping4(A_LoopReadLine, PingResult)
+	If ErrorLevel
+	{
+		PingNPPServers := PingNPPServers . "`n" . A_LoopReadLine
+		Gui, Loading:Destroy
+		continue
+	}
+	Gui, Loading:Destroy
 	IfExist %A_ScriptDir%\checkos.txt
 	FileDelete, %A_ScriptDir%\checkos.txt
 	IfExist %A_ScriptDir%\result.txt
@@ -1330,7 +1345,13 @@ IfExist %A_ScriptDir%\checkos.txt
 	FileDelete, %A_ScriptDir%\checkos.txt
 IfExist %A_ScriptDir%\result.txt
 	FileDelete, %A_ScriptDir%\result.txt
-MsgBox,,Install NP++, Task complete.
+If PingNPPServers
+{
+	MsgBox,,NP++ Failures, Failed to ping: %PingNPPServers%
+	MsgBox,,Install NP++, Task Complete (With Failures).
+}
+Else
+	MsgBox,,Install NP++, Task complete.
 Return
 
 7z:
