@@ -1032,8 +1032,23 @@ IfMsgBox Cancel
 	Gui, 1:Show
 	Return
 }
+PingDBServers = 
 Loop, parse, ServerSelectionDB, |
 {
+	Gui,Loading:Destroy
+	Gui, Loading:-Caption
+	Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
+	Gui, Loading:Add, Text,, Pinging %A_LoopField%...
+	Gui, Hide
+	Gui, Loading:Show
+	RTT := Ping4(A_LoopField, PingResult)
+	If ErrorLevel
+	{
+		PingDBServers := PingDBServers . "`n" . A_LoopField
+		Gui, Loading:Destroy
+		continue
+	}
+	Gui, Loading:Destroy
 	IfNotExist \\%A_LoopField%\%RemDriveLetter%$\Program files\Microsoft SQL Server\MSSQL12.MSSQLSERVER\MSSQL\Binn\perf-MSSQLSERVERsqlctr.ini
 	{	
 		IfNotExist \\%A_LoopField%\%RemDriveLetter%$\Program files\Microsoft SQL Server\MSSQL11.MSSQLSERVER\MSSQL\Binn\perf-MSSQLSERVERsqlctr.ini
@@ -1051,7 +1066,10 @@ Loop, parse, ServerSelectionDB, |
 					IfMsgBox No
 						InputBox, dbpath, SQL Path, Enter SQL binary 'Binn' path (Ex D:\Program files\Microsoft SQL Server\MSSQL12.MSSQLSERVER\Binn)
 					IfMsgBox Cancel
+					{
+						Gui, 1:Show
 						Return
+					}
 				}
 				Else
 					dbpath = %RemDriveLetter%:\Program files\Microsoft SQL Server\MSSQL10.MSSQLSERVER\Binn
@@ -1211,7 +1229,13 @@ IfExist %A_ScriptDir%\sqlresult.txt
 	FileDelete %A_ScriptDir%\sqlresult.txt
 IfExist %A_ScriptDir%\sqlstatus.txt
 	FileDelete %A_ScriptDir%\sqlstatus.txt
-MsgBox,,Reset PerfMon, Task Complete.
+If PingDBServers
+{
+	MsgBox,,DB Ping Fail, Failed to ping: %PingDBServers%
+	MsgBox,,Reset PerfMon, Task Complete (With Failures).
+}
+Else
+	MsgBox,,Reset PerfMon, Task Complete.
 Gui, 1:Show
 Return
 
