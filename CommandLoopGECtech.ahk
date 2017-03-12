@@ -344,8 +344,7 @@ Gui, 1:Show
 Return
 
 STOPALL:
-gui, submit
-gui, show
+gui, submit, nohide
 GuiControlGet, MyCheckBox
 GuiControlGet, LocDriveLetter
 GuiControlGet, RemDriveLetter
@@ -474,8 +473,7 @@ Gui, 1:Show
 Return
 
 STARTALL:
-gui, submit
-gui, show
+gui, submit, nohide
 GuiControlGet, MyCheckBox
 GuiControlGet, LocDriveLetter
 GuiControlGet, RemDriveLetter
@@ -583,8 +581,7 @@ Gui, 1:Show
 Return
 
 DisableDEPTOE:
-gui, submit
-gui, show
+gui, submit, nohide
 GuiControlGet, MyCheckBox
 GuiControlGet, LocDriveLetter
 GuiControlGet, RemDriveLetter
@@ -641,8 +638,7 @@ Gui, 1:Show
 Return
 
 AuditDEPTOE:
-gui, submit
-gui, show
+gui, submit, nohide
 GuiControlGet, MyCheckBox
 GuiControlGet, LocDriveLetter
 GuiControlGet, RemDriveLetter
@@ -755,8 +751,7 @@ Gui, 1:Show
 Return
 
 FSM:
-Gui, Submit
-Gui, Show
+Gui, Submit, nohide
 GuiControlGet, MyCheckBox
 GuiControlGet, LocDriveLetter
 GuiControlGet, RemDriveLetter
@@ -767,8 +762,7 @@ GuiControl,, File, %SelectedFileMain%
 Return
 
 LoggerLoc:
-gui, submit
-gui, show
+gui, submit, nohide
 GuiControlGet, MyCheckBox
 GuiControlGet, LocDriveLetter
 GuiControlGet, RemDriveLetter
@@ -780,8 +774,7 @@ IfMsgBox Yes
 Return
 
 AddRoleFeat:
-gui, submit
-gui, show
+gui, submit, nohide
 GuiControlGet, MyCheckBox
 GuiControlGet, LocDriveLetter
 GuiControlGet, RemDriveLetter
@@ -887,8 +880,7 @@ Gui, 1:Show
 Return
 
 PerfCount:
-Gui, Submit
-Gui, Show
+Gui, Submit, nohide
 GuiControlGet, MyCheckBox
 GuiControlGet, LocDriveLetter
 GuiControlGet, RemDriveLetter
@@ -1113,8 +1105,7 @@ Gui, 1:Show
 Return
 
 NP++:
-gui, Submit
-gui, Show
+gui, Submit, nohide
 ErrNPServers =
 GuiControlGet, MyCheckBox
 GuiControlGet, LocDriveLetter
@@ -1208,8 +1199,7 @@ MsgBox,,Install NP++, Task complete.
 Return
 
 7z:
-gui, Submit
-gui, Show
+gui, Submit, nohide
 ErrServers7z =
 GuiControlGet, MyCheckBox
 GuiControlGet, LocDriveLetter
@@ -1336,8 +1326,7 @@ Gui, 1:Show
 Return
 
 scc:
-gui, Submit
-gui, Hide
+gui, Submit, nohide
 GuiControlGet, MyCheckBox
 GuiControlGet, LocDriveLetter
 GuiControlGet, RemDriveLetter
@@ -1493,8 +1482,7 @@ Gui, 1:Show
 Return
 
 rdp:
-gui, Submit
-gui, Show
+gui, Submit, nohide
 GuiControlGet, MyCheckBox
 GuiControlGet, LocDriveLetter
 GuiControlGet, RemDriveLetter
@@ -1774,8 +1762,7 @@ Gui, 1:Show
 Return
 
 LogoffLink:
-gui, Submit
-gui, Show
+gui, Submit, nohide
 GuiControlGet, MyCheckBox
 GuiControlGet, LocDriveLetter
 GuiControlGet, RemDriveLetter
@@ -1804,8 +1791,7 @@ MsgBox,,Logoff Link, Task complete.
 Return
 
 FUNCTEST:
-gui, Submit
-gui, Show
+gui, Submit, nohide
 GuiControlGet, MyCheckBox
 GuiControlGet, LocDriveLetter
 GuiControlGet, RemDriveLetter
@@ -1839,8 +1825,7 @@ MsgBox,,FuncTest Push, Task complete.
 Return
 
 PushNiceTech:
-Gui, Submit
-Gui, Show
+Gui, Submit, nohide
 GuiControlGet, MyCheckBox
 GuiControlGet, LocDriveLetter
 GuiControlGet, RemDriveLetter
@@ -1920,8 +1905,7 @@ Gui, 1:Show
 Return
 
 PushConfigMgr:
-Gui, Submit
-Gui, Hide
+Gui, Submit, nohide
 GuiControlGet, MyCheckBox
 GuiControlGet, LocDriveLetter
 GuiControlGet, RemDriveLetter
@@ -2132,8 +2116,7 @@ Gui, 1:Show
 Return
 
 RegistryChange:
-gui, submit
-gui, show
+gui, submit, nohide
 GuiControlGet, MyCheckBox
 GuiControlGet, LocDriveLetter
 GuiControlGet, RemDriveLetter
@@ -2192,8 +2175,7 @@ Gui, 1:Show
 Return
 
 RegBackup:
-gui, submit
-gui, show
+gui, submit, nohide
 Err7zServers = 
 ErrregbackupServers =
 ErrhkcuServers =
@@ -2471,8 +2453,7 @@ MsgBox,,Security Policies, Task complete.
 Return
 
 PushLogShortcut:
-gui, Submit
-gui, Show
+gui, Submit, nohide
 IfNotExist, %SelectedFileMain%
 {
 	MsgBox,,File Selection, No Server List found %SelectedFileMain%
