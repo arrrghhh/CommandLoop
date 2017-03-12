@@ -1,8 +1,9 @@
 #SingleInstance force
 #Include Class_GuiControlTips.ahk
 #Include Anchor64.ahk
+#Include ping4.ahk
 
-version = 2017.03.10.1018_GEC
+version = 2017.03.11.1718_GEC
 
 company = GEC
 
@@ -125,10 +126,10 @@ Return
 
 RUN:
 gui, submit
-gui, show
 GuiControlGet, MyCheckBox
 GuiControlGet, LocDriveLetter
 GuiControlGet, RemDriveLetter
+ErrRunServers = 
 IfNotExist, %SelectedFileMain%
 {
 	MsgBox,,File Selection, No Server List found %SelectedFileMain%
@@ -137,8 +138,20 @@ IfNotExist, %SelectedFileMain%
 }
 Loop, read, %SelectedFileMain%
 {
+	Gui,Loading:Destroy
+	Gui, Loading:-Caption
+	Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
+	Gui, Loading:Add, Text,, Pinging %A_LoopReadLine%...
+	Gui, Hide
+	Gui, Loading:Show
+	RTT := Ping4(A_LoopReadLine, PingResult)
 	If ErrorLevel
-		Return
+	{
+		ErrRunServers := ErrRunServers . "`n" . A_LoopReadLine
+		Gui, Loading:Destroy
+		continue
+	}
+	Gui, Loading:Destroy
 	IfNotExist %LocDriveLetter%:\%company%Tech\Tools\PsTools\psexec.exe
 	{
 		If (MyCheckBox = 0)
@@ -160,28 +173,40 @@ Loop, read, %SelectedFileMain%
 			}
 			Gui,Loading:Destroy
 		}
+		Gui,Loading:Destroy
 	}
-	If (MyCheckBox = 0)
-		Run, %comspec% /k %LocDriveLetter%:\%company%Tech\Tools\PsTools\psexec.exe \\%A_LoopReadLine% %command%
 	Else
 	{
-		Run, %comspec% /c %LocDriveLetter%:\%company%Tech\Tools\PsTools\psexec.exe \\%A_LoopReadLine% %command%,, hide, pid
-		Gui, Loading:-Caption
-		Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
-		Gui, Loading:Add, Text,, Running on %A_LoopReadLine%
-		Gui, Hide
-		Gui, Loading:Show
-		ErrorLevel:=1
-		While (ErrorLevel != 0)
+		If (MyCheckBox = 0)
+			Run, %comspec% /k %LocDriveLetter%:\%company%Tech\Tools\PsTools\psexec.exe \\%A_LoopReadLine% %command%
+		Else
 		{
-			Sleep, 20
-			GuiControl,Loading:, lvl, 1
-			Process, Exist, % pid
+			Run, %comspec% /c %LocDriveLetter%:\%company%Tech\Tools\PsTools\psexec.exe \\%A_LoopReadLine% %command%,, hide, pid
+			Gui, Loading:-Caption
+			Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
+			Gui, Loading:Add, Text,, Running on %A_LoopReadLine%
+			Gui, Hide
+			Gui, Loading:Show
+			ErrorLevel:=1
+			While (ErrorLevel != 0)
+			{
+				Sleep, 20
+				GuiControl,Loading:, lvl, 1
+				Process, Exist, % pid
+			}
+			Gui,Loading:Destroy
 		}
 		Gui,Loading:Destroy
 	}
+	Gui,Loading:Destroy
 }
-MsgBox,, Run Command, Task Complete.
+If ErrRunServers
+{
+	MsgBox,,Run Failures, Failed to ping: %ErrRunServers%
+	MsgBox,,Run Command, Task Complete (With Failures).
+}
+Else
+	MsgBox,,Run Command, Task Complete.
 Gui, 1:Show
 Return
 
