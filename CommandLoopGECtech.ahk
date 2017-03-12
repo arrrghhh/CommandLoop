@@ -363,8 +363,8 @@ ErrStopAll =
 Loop, read, %SelectedFileMain%
 {
 	line := A_LoopReadLine
-	;If line = %A_ComputerName%
-	;	continue
+	If line = %A_ComputerName%
+		continue
 	Gui,Loading:Destroy
 	Gui, Loading:-Caption
 	Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
