@@ -274,24 +274,41 @@ Gui, 1:Show
 Return
 
 REBOOT:
-gui, submit
-gui, show
+gui, submit, nohide
 GuiControlGet, MyCheckBox
 GuiControlGet, LocDriveLetter
 GuiControlGet, RemDriveLetter
 MsgBox,4,Reboot All, Are you sure?
 IfMsgBox No
+{
+	Gui, 1:Show
 	Return
+}
 IfNotExist, %SelectedFileMain%
 {
 	MsgBox,,File Selection, No Server List found %SelectedFileMain%
 	Gui, 1:Show
 	Return
 }
+ErrRebootServers =
 Loop, read, %SelectedFileMain%
 {
 	If A_LoopReadLine = %A_ComputerName%
 		continue
+	Gui,Loading:Destroy
+	Gui, Loading:-Caption
+	Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
+	Gui, Loading:Add, Text,, Pinging %A_LoopReadLine%...
+	Gui, Hide
+	Gui, Loading:Show
+	RTT := Ping4(A_LoopReadLine, PingResult)
+	If ErrorLevel
+	{
+		ErrRunServers := ErrRunServers . "`n" . A_LoopReadLine
+		Gui, Loading:Destroy
+		continue
+	}
+	Gui, Loading:Destroy
 	If (MyCheckBox = 0)
 		Run, %comspec% /k wmic /node:"%A_LoopReadLine%" os where primary=true call win32shutdown 6
 	Else
@@ -312,7 +329,13 @@ Loop, read, %SelectedFileMain%
 		Gui,Loading:Destroy
 	}
 }
-MsgBox,, Reboot, Task Complete.
+If ErrRebootServers
+{
+	MsgBox,,Reboot Failures, Failed to ping: %ErrRebootServers%
+	MsgBox,,Reboot Servers, Task Complete (With Failures).
+}
+Else
+	MsgBox,,Reboot Servers, Task Complete.
 Gui, 1:Show
 Return
 
