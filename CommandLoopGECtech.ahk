@@ -611,15 +611,33 @@ GuiControlGet, LocDriveLetter
 GuiControlGet, RemDriveLetter
 MsgBox,4,Disable DEP/TOE, Are you sure?
 IfMsgBox No
+{
+	gui, 1:show
 	Return
+}
 IfNotExist, %SelectedFileMain%
 {
 	MsgBox,,File Selection, No Server List found %SelectedFileMain%
 	Gui, 1:Show
 	Return
 }
+ErrDisableDEPTOE = 
 Loop, read, %SelectedFileMain%
 {
+	Gui,Loading:Destroy
+	Gui, Loading:-Caption
+	Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
+	Gui, Loading:Add, Text,, Pinging %A_LoopReadLine%...
+	Gui, Hide
+	Gui, Loading:Show
+	RTT := Ping4(A_LoopReadLine, PingResult)
+	If ErrorLevel
+	{
+		ErrDisableDEPTOE := ErrDisableDEPTOE . "`n" . A_LoopReadLine
+		Gui, Loading:Destroy
+		continue
+	}
+	Gui, Loading:Destroy
 	If (MyCheckBox = 0)
 	{
 		Run, %comspec% /k wmic /node:"%A_LoopReadLine%" process call create 'cmd.exe /k bcdedit.exe /set {current} nx AlwaysOff'
@@ -657,7 +675,13 @@ Loop, read, %SelectedFileMain%
 		Gui,Loading:Destroy
 	}
 }
-MsgBox,,Disable DEP/TOE, Task complete.
+If ErrDisableDEPTOE
+{
+	MsgBox,,DEP/TOE Failures, Failed to ping: %ErrDisableDEPTOE%
+	MsgBox,,Disable DEP/TOE, Task Complete (With Failures).
+}
+Else
+	MsgBox,,Disable DEP/TOE, Task complete.
 Gui, 1:Show
 Return
 
