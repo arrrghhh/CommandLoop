@@ -304,13 +304,17 @@ Loop, read, %SelectedFileMain%
 	RTT := Ping4(A_LoopReadLine, PingResult)
 	If ErrorLevel
 	{
-		ErrRunServers := ErrRunServers . "`n" . A_LoopReadLine
+		ErrRebootServers := ErrRebootServers . "`n" . A_LoopReadLine
 		Gui, Loading:Destroy
 		continue
 	}
 	Gui, Loading:Destroy
 	If (MyCheckBox = 0)
+	{
 		Run, %comspec% /k wmic /node:"%A_LoopReadLine%" os where primary=true call win32shutdown 6
+		Sleep, 300
+		Run, %comspec% /k wmic /node:"%A_LoopReadLine%" os where primary=true call win32shutdown 6		
+	}
 	Else
 	{
 		Run, %comspec% /c wmic /node:"%A_LoopReadLine%" os where primary=true call win32shutdown 6,, hide, pid
