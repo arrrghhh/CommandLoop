@@ -208,11 +208,11 @@ Gui, 1:Show
 Return
 
 LOGOFF:
-gui, submit
-gui, show
+gui, submit, nohide
 GuiControlGet, MyCheckBox
 GuiControlGet, LocDriveLetter
 GuiControlGet, RemDriveLetter
+ErrLogoffServers = 
 IfNotExist, %SelectedFileMain%
 {
 	MsgBox,,File Selection, No Server List found %SelectedFileMain%
@@ -223,6 +223,20 @@ Loop, read, %SelectedFileMain%
 {
 	If A_LoopReadLine = %A_ComputerName%
 		continue
+	Gui,Loading:Destroy
+	Gui, Loading:-Caption
+	Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
+	Gui, Loading:Add, Text,, Pinging %A_LoopReadLine%...
+	Gui, Hide
+	Gui, Loading:Show
+	RTT := Ping4(A_LoopReadLine, PingResult)
+	If ErrorLevel
+	{
+		ErrRunServers := ErrRunServers . "`n" . A_LoopReadLine
+		Gui, Loading:Destroy
+		continue
+	}
+	Gui, Loading:Destroy
 	If (MyCheckBox = 0)
 	{
 		Run, %comspec% /k wmic /node:"%A_LoopReadLine%" os where primary=true call win32shutdown 0
@@ -249,7 +263,13 @@ Loop, read, %SelectedFileMain%
 		;Run, %comspec% /c wmic /node:"%A_LoopReadLine%" os where primary=true call win32shutdown 0,, hide
 	}
 }
-MsgBox,, Logoff, Task Complete.
+If ErrLogoffServers
+{
+	MsgBox,,Logoff Failures, Failed to ping: %ErrLogoffServers%
+	MsgBox,,Logoff Servers, Task Complete (With Failures).
+}
+Else
+	MsgBox,,Logoff Servers, Task Complete.
 Gui, 1:Show
 Return
 
