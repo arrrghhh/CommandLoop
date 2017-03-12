@@ -356,11 +356,26 @@ IfNotExist, %SelectedFileMain%
 	Gui, 1:Show
 	Return
 }
+ErrStopAll = 
 Loop, read, %SelectedFileMain%
 {
 	line := A_LoopReadLine
 	;If line = %A_ComputerName%
 	;	continue
+	Gui,Loading:Destroy
+	Gui, Loading:-Caption
+	Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
+	Gui, Loading:Add, Text,, Pinging %A_LoopReadLine%...
+	Gui, Hide
+	Gui, Loading:Show
+	RTT := Ping4(A_LoopReadLine, PingResult)
+	If ErrorLevel
+	{
+		ErrStopAll := ErrStopAll . "`n" . A_LoopReadLine
+		Gui, Loading:Destroy
+		continue
+	}
+	Gui, Loading:Destroy
 	If (MyCheckBox = 0)
 	{
 		Loop, read, %LocDriveLetter%:\%company%Tech\services.txt
@@ -444,7 +459,13 @@ Loop, read, %SelectedFileMain%
 }
 IfExist %A_ScriptDir%\checksvc.txt
 	FileDelete, %A_ScriptDir%\checksvc.txt
-MsgBox,,Stop All Services, Task complete.
+If ErrStopAll
+{
+	MsgBox,,StopAll Failures, Failed to ping: %ErrStopAll%
+	MsgBox,,StopAll Services, Task Complete (With Failures).
+}
+Else
+	MsgBox,,StopAll Services, Task Complete.
 Gui, 1:Show
 Return
 
