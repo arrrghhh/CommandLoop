@@ -1518,7 +1518,10 @@ IfMsgBox Yes
 IfMsgBox No
 	FullBind = 0
 IfMsgBox Cancel
+{
+	Gui, 1:Show
 	Return
+}
 If (FullBind = 1)
 {
 	IfNotExist %LocDriveLetter%:\%company%Tech\Tools\cert_thumb.ps1
@@ -1552,8 +1555,23 @@ If BindServerSelection =
 	Gui, 1:Show
 	Exit
 }
+ErrSCC = 
 Loop, parse, BindServerSelection, |
 {
+	Gui,Loading:Destroy
+	Gui, Loading:-Caption
+	Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
+	Gui, Loading:Add, Text,, Pinging %A_LoopField%...
+	Gui, Hide
+	Gui, Loading:Show
+	RTT := Ping4(A_LoopField, PingResult)
+	If ErrorLevel
+	{
+		ErrSCC := ErrSCC . "`n" . A_LoopField
+		Gui, Loading:Destroy
+		continue
+	}
+	Gui, Loading:Destroy
 	IfNotExist \\%A_LoopField%\%RemDriveLetter%$\%company%Tech\Tools\cert_thumb.ps1
 		RunWait, %comspec% /c "robocopy /ETA %LocDriveLetter%:\%company%Tech\Tools \\%A_LoopField%\%RemDriveLetter%$\%company%Tech\Tools cert_thumb.ps1",, hide
 	If (FullBind = 1)
@@ -1652,7 +1670,13 @@ Loop, parse, BindServerSelection, |
 }
 If ErrCertInfo
 	MsgBox,,CertInfo Fail, Failed to pull certinfo on: %ErrCertInfo%
-MsgBox,,SCC Binding, Task Complete.
+If ErrSCC
+{
+	MsgBox,,SCC Ping, Failed to ping: %ErrSCC%
+	MsgBox,,SCC Binding, Task Complete (With Failures).
+}
+Else
+	MsgBox,,SCC Binding, Task Complete.
 Gui, 1:Show
 Return
 
