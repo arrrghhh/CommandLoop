@@ -2054,6 +2054,7 @@ IfNotExist, %SelectedFileMain%
 	Gui, 1:Show
 	Return
 }
+ErrPushTech =
 Loop, read, %SelectedFileMain%
 {
 	If A_LoopReadLine = %A_ComputerName%
@@ -2097,8 +2098,23 @@ Loop, read, %SelectedFileMain%
 	IfNotExist %LocDriveLetter%:\%company%Tech\Tools
 	{
 		MsgBox,,Tools Missing, Cannot push from %LocDriveLetter%:\%company%Tech\Tools
+		Gui, 1:Show
 		Return
 	}
+	Gui,Loading:Destroy
+	Gui, Loading:-Caption
+	Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
+	Gui, Loading:Add, Text,, Pinging %A_LoopReadLine%...
+	Gui, Hide
+	Gui, Loading:Show
+	RTT := Ping4(A_LoopReadLine, PingResult)
+	If ErrorLevel
+	{
+		ErrPushTech := ErrPushTech . "`n" . A_LoopReadLine
+		Gui, Loading:Destroy
+		continue
+	}
+	Gui, Loading:Destroy
 	If (MyCheckBox = 0)
 		Run, %comspec% /k "robocopy /E /ETA %LocDriveLetter%:\%company%Tech\Tools \\%A_LoopReadLine%\%RemDriveLetter%$\%company%Tech\Tools"
 	Else
@@ -2119,7 +2135,13 @@ Loop, read, %SelectedFileMain%
 		Gui,Loading:Destroy
 	}
 }
-MsgBox,,Push %company%Tech, Task complete.
+If ErrPushTech
+{
+	MsgBox,,Push Ping, Failed to ping: %ErrPushTech%
+	MsgBox,,Push %company%Tech, Task Complete (With Failures).
+}
+Else
+	MsgBox,,Push %company%Tech, Task complete.
 Gui, 1:Show
 Return
 
