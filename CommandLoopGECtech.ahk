@@ -1971,13 +1971,27 @@ IfNotExist, %SelectedFileMain%
 	Gui, 1:Show
 	Return
 }
-
 IfNotExist, %LocDriveLetter%:\%company%Tech
 	FileCreateDir, %LocDriveLetter%:\%company%Tech
 IfNotExist, %LocDriveLetter%:\%company%Tech\Logoff.lnk
 	FileCreateShortcut, C:\Windows\System32\shutdown.exe, %LocDriveLetter%:\%company%Tech\Logoff.lnk, , /l /f
+ErrLogoffLink = 
 Loop, read, %SelectedFileMain%
 {
+	Gui,Loading:Destroy
+	Gui, Loading:-Caption
+	Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
+	Gui, Loading:Add, Text,, Pinging %A_LoopReadLine%...
+	Gui, Hide
+	Gui, Loading:Show
+	RTT := Ping4(A_LoopReadLine, PingResult)
+	If ErrorLevel
+	{
+		ErrLogoffLink := ErrLogoffLink . "`n" . A_LoopReadLine
+		Gui, Loading:Destroy
+		continue
+	}
+	Gui, Loading:Destroy
 	If (MyCheckBox = 0)
 		Run, %comspec% /k "robocopy /ETA %LocDriveLetter%:\%company%Tech \\%A_LoopReadLine%\c$\Users\Public\Desktop Logoff.lnk"
 	Else
@@ -1986,7 +2000,13 @@ Loop, read, %SelectedFileMain%
 Sleep, 500
 IfExist %A_ScriptDir%\Logoff.lnk
 	FileDelete, %A_ScriptDir%\Logoff.lnk
-MsgBox,,Logoff Link, Task complete.
+If ErrLogoffLink
+{
+	MsgBox,,Logoff Ping, Failed to ping: %ErrLogoffLink%
+	MsgBox,,Logoff Link, Task Complete (With Failures).
+}
+Else
+	MsgBox,,Logoff Link, Task complete.
 Return
 
 FUNCTEST:
