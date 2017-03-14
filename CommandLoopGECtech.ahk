@@ -3,7 +3,7 @@
 #Include Anchor64.ahk
 #Include ping4.ahk
 
-version = 2017.03.11.1718_GEC
+version = 2017.03.13.2149_GEC
 
 company = GEC
 
@@ -2007,6 +2007,7 @@ If ErrLogoffLink
 }
 Else
 	MsgBox,,Logoff Link, Task complete.
+Gui, 1:Show
 Return
 
 FUNCTEST:
@@ -2832,8 +2833,23 @@ IfNotExist, %LocDriveLetter%:\Program Files\NICE Systems\Logs
 	FileCreateDir, %LocDriveLetter%:\Program Files\NICE Systems\Logs
 IfNotExist, %LocDriveLetter%:\%company%Tech\Logs.lnk
 	FileCreateShortcut, %LocDriveLetter%:\Program Files\NICE Systems\Logs, %LocDriveLetter%:\%company%Tech\Logs.lnk
+ErrPushLog =
 Loop, read, %SelectedFileMain%
 {
+	Gui,Loading:Destroy
+	Gui, Loading:-Caption
+	Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
+	Gui, Loading:Add, Text,, Pinging %A_LoopReadLine%...
+	Gui, Hide
+	Gui, Loading:Show
+	RTT := Ping4(A_LoopReadLine, PingResult)
+	If ErrorLevel
+	{
+		ErrPushLog := ErrPushLog . "`n" . A_LoopReadLine
+		Gui, Loading:Destroy
+		continue
+	}
+	Gui, Loading:Destroy
 	If (MyCheckBox = 0)
 		RunWait, %comspec% /k "robocopy /ETA %LocDriveLetter%:\%company%Tech \\%A_LoopReadLine%\c$\Users\Public\Desktop Logs.lnk"
 	Else
@@ -2854,7 +2870,13 @@ Loop, read, %SelectedFileMain%
 		Gui,Loading:Destroy
 	}
 }
-MsgBox,,Log Shortcut, Task complete.
+If ErrPushLog
+{
+	MsgBox,,Log Failures, Failed to ping: %ErrPushLog%
+	MsgBox,,Log Shortcut, Task Complete (With Failures).
+}
+Else
+	MsgBox,,Log Shortcut, Task complete.
 Gui, 1:Show
 Return
 
