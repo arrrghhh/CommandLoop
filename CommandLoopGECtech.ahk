@@ -2176,9 +2176,25 @@ IfNotExist, %LocDriveLetter%:\Program Files\NICE Systems\Nice Services Configura
 		Gui, 1:Show
 		Return
 	}
+	Gui,Loading:Destroy
+	Gui, Loading:-Caption
+	Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
+	Gui, Loading:Add, Text,, Pinging %appnode%...
+	Gui, Hide
+	Gui, Loading:Show
+	RTT := Ping4(appnode, PingResult)
+	If ErrorLevel
+	{
+		MsgBox,,Ping App,Failed to ping %appnode%
+		Gui, Loading:Destroy
+		Gui, 1:Show
+		Return
+	}
+	Gui, Loading:Destroy
 	IfNotExist, \\%appnode%\%RemDriveLetter%$\Program Files\NICE Systems\Applications\Tools\Nice Services Configuration Manager
 	{
 		MsgBox,,Config Manager Missing, Local node and/or %appnode% do not have ConfigMgr!  (Have you deployed yet?)
+		Gui, 1:Show
 		Return
 	}
 	If (MyCheckBox = 0)
@@ -2201,10 +2217,25 @@ IfNotExist, %LocDriveLetter%:\Program Files\NICE Systems\Nice Services Configura
 		Gui,Loading:Destroy
 	}
 	IfNotExist, %A_ScriptDir%\Nice Services Configuration Manager.lnk
-	FileCreateShortcut, %LocDriveLetter%:\Program Files\NICE Systems\Nice Services Configuration Manager\Nice Services Configuration Manager.exe, %LocDriveLetter%:\%company%Tech\Nice Services Configuration Manager.lnk
+		FileCreateShortcut, %LocDriveLetter%:\Program Files\NICE Systems\Nice Services Configuration Manager\Nice Services Configuration Manager.exe, %LocDriveLetter%:\%company%Tech\Nice Services Configuration Manager.lnk
 	Sleep, 200
+	ErrPushConfig =
 	Loop, read, %SelectedFileMain%
 	{
+		Gui,Loading:Destroy
+		Gui, Loading:-Caption
+		Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
+		Gui, Loading:Add, Text,, Pinging %A_LoopReadLine%...
+		Gui, Hide
+		Gui, Loading:Show
+		RTT := Ping4(A_LoopReadLine, PingResult)
+		If ErrorLevel
+		{
+			ErrPushConfig := ErrPushConfig . "`n" . A_LoopReadLine
+			Gui, Loading:Destroy
+			continue
+		}
+		Gui, Loading:Destroy
 		If (MyCheckBox = 0)
 		{
 			If A_LoopReadLine = %A_ComputerName%
@@ -2274,15 +2305,36 @@ IfNotExist, %LocDriveLetter%:\Program Files\NICE Systems\Nice Services Configura
 	Sleep, 500
 	IfExist %A_ScriptDir%\Nice Services Configuration Manager.lnk
 		FileDelete, %A_ScriptDir%\Nice Services Configuration Manager.lnk
-	MsgBox,,Configuration Manager, Task Complete.
+	If ErrPushConfig
+	{
+		MsgBox,,ConfigMgr Failures, Failed to ping: %ErrPushConfig%
+		MsgBox,,Configuration Manager, Task Complete (With Failures).
+	}
+	Else
+		MsgBox,,Configuration Manager, Task Complete.
 	Gui, 1:Show
 	Return
 }
 IfNotExist, %A_ScriptDir%\Nice Services Configuration Manager.lnk
 	FileCreateShortcut, %LocDriveLetter%:\Program Files\NICE Systems\Nice Services Configuration Manager\Nice Services Configuration Manager.exe, %LocDriveLetter%:\%company%Tech\Nice Services Configuration Manager.lnk
 Sleep, 200
+ErrPushConfig =
 Loop, read, %SelectedFileMain%
 {
+	Gui,Loading:Destroy
+	Gui, Loading:-Caption
+	Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
+	Gui, Loading:Add, Text,, Pinging %A_LoopReadLine%...
+	Gui, Hide
+	Gui, Loading:Show
+	RTT := Ping4(A_LoopReadLine, PingResult)
+	If ErrorLevel
+	{
+		ErrPushConfig := ErrPushConfig . "`n" . A_LoopReadLine
+		Gui, Loading:Destroy
+		continue
+	}
+	Gui, Loading:Destroy
 	If (MyCheckBox = 0)
 	{
 		If A_LoopReadLine = %A_ComputerName%
@@ -2352,7 +2404,13 @@ Loop, read, %SelectedFileMain%
 Sleep, 500
 IfExist %A_ScriptDir%\Nice Services Configuration Manager.lnk
 	FileDelete, %A_ScriptDir%\Nice Services Configuration Manager.lnk
-MsgBox,,Configuration Manager, Task Complete.
+If ErrPushConfig
+{
+	MsgBox,,ConfigMgr Failures, Failed to ping: %ErrPushConfig%
+	MsgBox,,Configuration Manager, Task Complete (With Failures).
+}
+Else
+	MsgBox,,Configuration Manager, Task Complete.
 Gui, 1:Show
 Return
 
