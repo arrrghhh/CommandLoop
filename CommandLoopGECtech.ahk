@@ -2515,9 +2515,27 @@ IfMsgBox No
 IfMsgBox Yes
 	ZipFiles = 1
 IfMsgBox Cancel
+{
+	Gui, 1:Show
 	Return
+}
+ErrRegBak = 
 Loop, read, %SelectedFileMain%
 {
+	Gui,Loading:Destroy
+	Gui, Loading:-Caption
+	Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
+	Gui, Loading:Add, Text,, Pinging %A_LoopReadLine%...
+	Gui, Hide
+	Gui, Loading:Show
+	RTT := Ping4(A_LoopReadLine, PingResult)
+	If ErrorLevel
+	{
+		ErrRegBak := ErrRegBak . "`n" . A_LoopReadLine
+		Gui, Loading:Destroy
+		continue
+	}
+	Gui, Loading:Destroy
 	line := A_LoopReadLine
 	GuiControlGet, MyCheckBox
 	If (MyCheckBox = 0)
@@ -2678,7 +2696,13 @@ If Err7zServers
 	MsgBox,,7z Missing, 7-zip not installed on: %Err7zServers%
 FileDelete %A_ScriptDir%\7zstatus.txt
 FileDelete %A_ScriptDir%\result.txt
-MsgBox,,Registry Backup, Task Complete.
+If ErrRegBak
+{
+	MsgBox,,Reg Failures, Failed to ping: %ErrRegBak%
+	MsgBox,,Registry Backup, Task Complete (With Failures).
+}
+Else
+	MsgBox,,Registry Backup, Task Complete.
 Gui, 1:Show
 Return
 
