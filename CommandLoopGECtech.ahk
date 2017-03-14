@@ -2741,10 +2741,14 @@ Return
 SecPol:
 InputBox, user, User Account, Please enter (comma separated) user account(s) (domain\user):
 If ErrorLevel
+{
+	Gui, 1:Show
 	Return
+}
 If user = 
 {
 	MsgBox,,User Blank, User account cannot be blank!
+	Gui, 1:Show
 	Return
 }
 IfNotExist, %SelectedFileMain%
@@ -2815,6 +2819,7 @@ If ErrSecPol
 }
 Else
 	MsgBox,,Security Policies, Task complete.
+Gui, 1:Show
 Return
 
 PushLogShortcut:
