@@ -2752,15 +2752,29 @@ IfNotExist, %SelectedFileMain%
 	Gui, 1:Show
 	Return
 }
+ErrSecPol = 
 Loop, read, %SelectedFileMain%
 {
+	Gui,Loading:Destroy
+	Gui, Loading:-Caption
+	Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
+	Gui, Loading:Add, Text,, Pinging %A_LoopReadLine%...
+	Gui, Hide
+	Gui, Loading:Show
+	RTT := Ping4(A_LoopReadLine, PingResult)
+	If ErrorLevel
+	{
+		ErrSecPol := ErrSecPol . "`n" . A_LoopReadLine
+		Gui, Loading:Destroy
+		continue
+	}
+	Gui, Loading:Destroy
 	IfNotExist, C:\Program Files (x86)\Windows Resource Kits\Tools
 	{
 		MsgBox,,Resource Kit, Please install Windows Resource Kit locally to C:\Program Files (x86)\Windows Resource Kits\Tools
+		Gui, 1:Show
 		Return
 	}
-	If ErrorLevel
-		Return
 	line := A_LoopReadLine
 	Loop, parse, user, `,
 	{
@@ -2793,7 +2807,13 @@ Loop, read, %SelectedFileMain%
 		}
 	}
 }
-MsgBox,,Security Policies, Task complete.
+If ErrSecPol
+{
+	MsgBox,,SecPol Failures, Failed to ping: %ErrSecPol%
+	MsgBox,,Security Policies, Task Complete (With Failures).
+}
+Else
+	MsgBox,,Security Policies, Task complete.
 Return
 
 PushLogShortcut:
