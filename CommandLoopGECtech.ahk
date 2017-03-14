@@ -2430,8 +2430,23 @@ IfNotExist, %SelectedFileMain%
 	Gui, 1:Show
 	Return
 }
+ErrRegUpdate = 
 Loop, read, %SelectedFileMain%
 {
+	Gui,Loading:Destroy
+	Gui, Loading:-Caption
+	Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
+	Gui, Loading:Add, Text,, Pinging %A_LoopReadLine%...
+	Gui, Hide
+	Gui, Loading:Show
+	RTT := Ping4(A_LoopReadLine, PingResult)
+	If ErrorLevel
+	{
+		ErrRegUpdate := ErrRegUpdate . "`n" . A_LoopReadLine
+		Gui, Loading:Destroy
+		continue
+	}
+	Gui, Loading:Destroy
 	IfNotExist \\%A_LoopReadLine%\%RemDriveLetter%$\%company%Tech\Tools\Registry_Setup.exe
 	{
 		ErrRegServers := ErrRegServers . "`n" . A_LoopReadLine
@@ -2469,7 +2484,13 @@ Loop, read, %SelectedFileMain%
 }
 If ErrRegServers
 	MsgBox,,Registry Setup Missing, Failed to find Registry_Setup.exe on: %ErrRegServers%
-MsgBox,,Registry Update, Task Complete.
+If ErrRegUpdate
+{
+	MsgBox,,Registry Failures, Failed to ping: %ErrRegUpdate%
+	MsgBox,,Registry Update, Task Complete (With Failures).
+}
+Else
+	MsgBox,,Registry Update, Task Complete.
 Gui, 1:Show
 Return
 
