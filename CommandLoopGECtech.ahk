@@ -3,9 +3,9 @@
 #Include Anchor64.ahk
 #Include ping4.ahk
 
-version = 2017.03.13.2149_GEC
-
 company = GEC
+
+version = 2017.03.14.1752_%company%
 
 if not A_IsAdmin
 {
