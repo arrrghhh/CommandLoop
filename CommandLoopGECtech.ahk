@@ -704,8 +704,7 @@ FileAppend,
 1 – AlwaysOn - DEP is enabled for all processes.
 2 – OptIn - Only Windows system components and services have DEP applied. (Default)
 3 – OptOut - DEP is enabled for all processes. Administrators can manually create a list of specific applications which do not have DEP applied
-ErrDEPPing = 
-ErrDEPServers = 
+
 ), %LocDriveLetter%:\%company%Tech\depstatus.txt
 Loop, read, %SelectedFileMain%
 {
