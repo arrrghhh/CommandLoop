@@ -5,7 +5,7 @@
 
 company = GEC
 
-version = 2017.03.14.1752_%company%
+version = 2017.04.03.1948_%company%
 
 if not A_IsAdmin
 {
@@ -60,6 +60,7 @@ gui, add, button, hwndhbuttonperfcount gPerfCount, Reset PerfMon
 gui, add, button, x240 y110 hwndhbuttonreg gRegistryChange, Update Registry
 gui, add, button, hwndhbuttonregback gRegBackup, Backup Registry
 gui, add, button, hwndhbuttonlogs gPushLogShortcut, Logs Shortcut
+gui, add, button, hwndhbuttonevnt gEventVwr, Pull EventVwr
 gui, add, DropDownList, x240 y52 w35 hwndhddlremotedriveletter vRemDriveLetter, D||E|F|G|H
 gui, add, DropDownList, x280 y52 w35 hwndhddllocaldriveletter vLocDriveLetter gLocDrive, D||E|F|G|H
 gui, add, checkbox, checked x240 y82 vMyCheckBox, Close CMD?
@@ -2881,6 +2882,134 @@ If ErrPushLog
 }
 Else
 	MsgBox,,Log Shortcut, Task complete.
+Gui, 1:Show
+Return
+
+EventVwr:
+gui, Submit, nohide
+IfNotExist, %SelectedFileMain%
+{
+	MsgBox,,File Selection, No Server List found %SelectedFileMain%
+	Gui, 1:Show
+	Return
+}
+GuiControlGet, MyCheckBox
+GuiControlGet, LocDriveLetter
+ErrEventvwr = 
+ErrCopyEventApp =
+ErrCopyEventSys =
+Gui,Loading:Destroy
+Gui, Loading:-Caption
+Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
+Gui, Loading:Add, Text, vLoadingTxt,
+GuiControl, Loading:Move, LoadingTxt, W300
+Gui, Hide
+Gui, Loading:Show
+Loop, read, %SelectedFileMain%
+{
+	GuiControl, Loading:Text, LoadingTxt, Pinging %A_LoopReadLine%...
+	RTT := Ping4(A_LoopReadLine, PingResult)
+	If ErrorLevel
+	{
+		ErrEventvwr := ErrEventvwr . "`n" . A_LoopReadLine
+		continue
+	}
+	IfExist \\%A_LoopReadLine%\%RemDriveLetter%$\%company%Tech\application_%A_LoopReadLine%.evtx
+		FileDelete, \\%A_LoopReadLine%\%RemDriveLetter%$\%company%Tech\application_%A_LoopReadLine%.evtx
+	IfExist \\%A_LoopReadLine%\%RemDriveLetter%$\%company%Tech\system_%A_LoopReadLine%.evtx
+		FileDelete, \\%A_LoopReadLine%\%RemDriveLetter%$\%company%Tech\system_%A_LoopReadLine%.evtx
+	If (MyCheckBox = 0)
+	{
+		RunWait, %comspec% /k "wevtutil epl Application %RemDriveLetter%:\%company%Tech\application_%A_LoopReadLine%.evtx /q:"*[System[(Level=1 or Level=2) and TimeCreated[timediff(@SystemTime)<=2592000000]]]" /r:%A_LoopReadLine%"
+		RunWait, %comspec% /k "wevtutil epl System %RemDriveLetter%:\%company%Tech\system_%A_LoopReadLine%.evtx /q:"*[System[(Level=1 or Level=2) and TimeCreated[timediff(@SystemTime)<=2592000000]]]" /r:%A_LoopReadLine%"
+		RunWait, %comspec% /k "robocopy /ETA \\%A_LoopReadLine%\%RemDriveLetter%$\%company%Tech %LocDriveLetter%:\%company%Tech\RemoteEventvwr application_%A_LoopReadLine%.evtx"
+		RunWait, %comspec% /k "robocopy /ETA \\%A_LoopReadLine%\%RemDriveLetter%$\%company%Tech %LocDriveLetter%:\%company%Tech\RemoteEventvwr system_%A_LoopReadLine%.evtx"
+	}
+	Else
+	{
+		Run, %comspec% /c "wevtutil epl Application %RemDriveLetter%:\%company%Tech\application_%A_LoopReadLine%.evtx /q:"*[System[(Level=1 or Level=2) and TimeCreated[timediff(@SystemTime)<=2592000000]]]" /r:%A_LoopReadLine%",, hide, pid
+		GuiControl, Loading:Text, LoadingTxt, Pulling app events from %A_LoopReadLine%
+		ErrorLevel:=1
+		While (ErrorLevel != 0)
+		{
+			Sleep, 20
+			GuiControl,Loading:, lvl, 1
+			Process, Exist, % pid
+		}
+		Run, %comspec% /c "wevtutil epl System %RemDriveLetter%:\%company%Tech\system_%A_LoopReadLine%.evtx /q:"*[System[(Level=1 or Level=2) and TimeCreated[timediff(@SystemTime)<=2592000000]]]" /r:%A_LoopReadLine%",, hide, pid
+		GuiControl, Loading:Text, LoadingTxt, Pulling sys events from %A_LoopReadLine%
+		ErrorLevel:=1
+		While (ErrorLevel != 0)
+		{
+			Sleep, 20
+			GuiControl,Loading:, lvl, 1
+			Process, Exist, % pid
+		}
+		GuiControl, Loading:Text, LoadingTxt, Waiting on app events from %A_LoopReadLine%
+		AppEVTX = 0
+		While AppEVTX = 0
+		{
+			IfExist \\%A_LoopReadLine%\%RemDriveLetter%$\%company%Tech\application_%A_LoopReadLine%.evtx
+				AppEVTX = 1
+			GuiControl,Loading:, lvl, 1
+			Sleep, 20
+			If (A_Index > 600)
+				break
+		}
+		IfNotExist \\%A_LoopReadLine%\%RemDriveLetter%$\%company%Tech\application_%A_LoopReadLine%.evtx
+			ErrCopyEventApp := ErrCopyEventApp . "`n" . A_LoopReadLine
+		IfExist \\%A_LoopReadLine%\%RemDriveLetter%$\%company%Tech\application_%A_LoopReadLine%.evtx
+		{
+			Run, %comspec% /c "robocopy /ETA \\%A_LoopReadLine%\%RemDriveLetter%$\%company%Tech %LocDriveLetter%:\%company%Tech\RemoteEventvwr application_%A_LoopReadLine%.evtx",, hide, pid
+			GuiControl, Loading:Text, LoadingTxt, Copying app events from %A_LoopReadLine%
+			ErrorLevel:=1
+			While (ErrorLevel != 0)
+			{
+				Sleep, 20
+				GuiControl,Loading:, lvl, 1
+				Process, Exist, % pid
+			}
+		}
+		GuiControl, Loading:Text, LoadingTxt, Waiting on sys events from %A_LoopReadLine%
+		SysEVTX = 0
+		While SysEVTX = 0
+		{
+			IfExist \\%A_LoopReadLine%\%RemDriveLetter%$\%company%Tech\system_%A_LoopReadLine%.evtx
+				SysEVTX = 1
+			GuiControl,Loading:, lvl, 1
+			Sleep, 20
+			If (A_Index > 600)
+				break
+		}
+		IfNotExist \\%A_LoopReadLine%\%RemDriveLetter%$\%company%Tech\system_%A_LoopReadLine%.evtx
+			ErrCopyEventSys := ErrCopyEventSys . "`n" . A_LoopReadLine
+		IfExist \\%A_LoopReadLine%\%RemDriveLetter%$\%company%Tech\system_%A_LoopReadLine%.evtx
+		{
+			Run, %comspec% /c "robocopy /ETA \\%A_LoopReadLine%\%RemDriveLetter%$\%company%Tech %LocDriveLetter%:\%company%Tech\RemoteEventvwr system_%A_LoopReadLine%.evtx",, hide, pid
+			GuiControl, Loading:Text, LoadingTxt, Copying sys events from %A_LoopReadLine%
+			ErrorLevel:=1
+			While (ErrorLevel != 0)
+			{
+				Sleep, 20
+				GuiControl,Loading:, lvl, 1
+				Process, Exist, % pid
+			}
+		}
+	}
+}
+If ErrEventvwr or ErrCopyEventApp or ErrCopyEventSys
+{
+	If ErrEventvwr
+		MsgBox,, EventVwr Failures, Failed to ping: %ErrEventvwr%
+	If ErrCopyEventApp
+		MsgBox,, EventVwr Failures, Failed to copy eventvwr app: %ErrCopyEventApp%
+	If ErrCopyEventSys
+		MsgBox,, EventVwr Failures, Failed to copy eventvwr sys: %ErrCopyEventSys%
+	MsgBox,, EventVwr Pull, Task Complete (With Failures).  Check %LocDriveLetter%:\%company%Tech\RemoteEventvwr.
+}
+Else
+	MsgBox,, EventVwr Pull, Task Complete.  Check %LocDriveLetter%:\%company%Tech\RemoteEventvwr.
+Gui,Loading:Destroy
 Gui, 1:Show
 Return
 
