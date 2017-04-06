@@ -134,22 +134,22 @@ IfNotExist, %SelectedFileMain%
 	Gui, 1:Show
 	Return
 }
+Gui,Loading:Destroy
+Gui, Loading:-Caption
+Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
+Gui, Loading:Add, Text, vLoadingTxt,
+GuiControl, Loading:Move, LoadingTxt, W300
+Gui, Hide
+Gui, Loading:Show
 Loop, read, %SelectedFileMain%
 {
-	Gui,Loading:Destroy
-	Gui, Loading:-Caption
-	Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
-	Gui, Loading:Add, Text,, Pinging %A_LoopReadLine%...
-	Gui, Hide
-	Gui, Loading:Show
+	GuiControl, Loading:Text, LoadingTxt, Pinging %A_LoopReadLine%...
 	RTT := Ping4(A_LoopReadLine, PingResult)
 	If ErrorLevel
 	{
 		ErrRunServers := ErrRunServers . "`n" . A_LoopReadLine
-		Gui, Loading:Destroy
 		continue
 	}
-	Gui, Loading:Destroy
 	IfNotExist %LocDriveLetter%:\%company%Tech\Tools\PsTools\psexec.exe
 	{
 		If (MyCheckBox = 0)
@@ -157,11 +157,7 @@ Loop, read, %SelectedFileMain%
 		Else
 		{
 			Run, %comspec% /c wmic /node:"%A_LoopReadLine%" process call create 'cmd.exe /c %command%',, hide, pid
-			Gui, Loading:-Caption
-			Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
-			Gui, Loading:Add, Text,, Running on %A_LoopReadLine%
-			Gui, Hide
-			Gui, Loading:Show
+			GuiControl, Loading:Text, LoadingTxt, Running on %A_LoopReadLine%
 			ErrorLevel:=1
 			While (ErrorLevel != 0)
 			{
@@ -169,9 +165,7 @@ Loop, read, %SelectedFileMain%
 				GuiControl,Loading:, lvl, 1
 				Process, Exist, % pid
 			}
-			Gui,Loading:Destroy
 		}
-		Gui,Loading:Destroy
 	}
 	Else
 	{
@@ -180,11 +174,7 @@ Loop, read, %SelectedFileMain%
 		Else
 		{
 			Run, %comspec% /c %LocDriveLetter%:\%company%Tech\Tools\PsTools\psexec.exe \\%A_LoopReadLine% %command%,, hide, pid
-			Gui, Loading:-Caption
-			Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
-			Gui, Loading:Add, Text,, Running on %A_LoopReadLine%
-			Gui, Hide
-			Gui, Loading:Show
+			GuiControl, Loading:Text, LoadingTxt, Running on %A_LoopReadLine%
 			ErrorLevel:=1
 			While (ErrorLevel != 0)
 			{
@@ -192,11 +182,8 @@ Loop, read, %SelectedFileMain%
 				GuiControl,Loading:, lvl, 1
 				Process, Exist, % pid
 			}
-			Gui,Loading:Destroy
 		}
-		Gui,Loading:Destroy
 	}
-	Gui,Loading:Destroy
 }
 If ErrRunServers
 {
@@ -205,6 +192,7 @@ If ErrRunServers
 }
 Else
 	MsgBox,,Run Command, Task Complete.
+Gui, Loading:Destroy
 Gui, 1:Show
 Return
 
@@ -220,38 +208,34 @@ IfNotExist, %SelectedFileMain%
 	Gui, 1:Show
 	Return
 }
+Gui,Loading:Destroy
+Gui, Loading:-Caption
+Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
+Gui, Loading:Add, Text, vLoadingTxt,
+GuiControl, Loading:Move, LoadingTxt, W300
+Gui, Hide
+Gui, Loading:Show
 Loop, read, %SelectedFileMain%
 {
 	If A_LoopReadLine = %A_ComputerName%
 		continue
-	Gui,Loading:Destroy
-	Gui, Loading:-Caption
-	Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
-	Gui, Loading:Add, Text,, Pinging %A_LoopReadLine%...
-	Gui, Hide
-	Gui, Loading:Show
+	GuiControl, Loading:Text, LoadingTxt, Pinging %A_LoopReadLine%...
 	RTT := Ping4(A_LoopReadLine, PingResult)
 	If ErrorLevel
 	{
 		ErrLogoffServers := ErrLogoffServers . "`n" . A_LoopReadLine
-		Gui, Loading:Destroy
 		continue
 	}
-	Gui, Loading:Destroy
 	If (MyCheckBox = 0)
 	{
 		Run, %comspec% /k wmic /node:"%A_LoopReadLine%" os where primary=true call win32shutdown 0
-		Sleep, 300
-		Run, %comspec% /k wmic /node:"%A_LoopReadLine%" os where primary=true call win32shutdown 0
+		;Sleep, 300
+		;Run, %comspec% /k wmic /node:"%A_LoopReadLine%" os where primary=true call win32shutdown 0
 	}
 	Else
 	{
 		Run, %comspec% /c wmic /node:"%A_LoopReadLine%" os where primary=true call win32shutdown 0,, hide, pid
-		Gui, Loading:-Caption
-		Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
-		Gui, Loading:Add, Text,, Logoff %A_LoopReadLine%
-		Gui, Hide
-		Gui, Loading:Show
+		GuiControl, Loading:Text, LoadingTxt, Logoff %A_LoopReadLine%
 		ErrorLevel:=1
 		While (ErrorLevel != 0)
 		{
@@ -259,7 +243,6 @@ Loop, read, %SelectedFileMain%
 			GuiControl,Loading:, lvl, 1
 			Process, Exist, % pid
 		}
-		Gui,Loading:Destroy
 		;Sleep, 300
 		;Run, %comspec% /c wmic /node:"%A_LoopReadLine%" os where primary=true call win32shutdown 0,, hide
 	}
@@ -271,6 +254,7 @@ If ErrLogoffServers
 }
 Else
 	MsgBox,,Logoff Servers, Task Complete.
+Gui, Loading:Destroy
 Gui, 1:Show
 Return
 
@@ -291,39 +275,31 @@ IfNotExist, %SelectedFileMain%
 	Gui, 1:Show
 	Return
 }
+Gui,Loading:Destroy
+Gui, Loading:-Caption
+Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
+Gui, Loading:Add, Text, vLoadingTxt,
+GuiControl, Loading:Move, LoadingTxt, W300
+Gui, Hide
+Gui, Loading:Show
 ErrRebootServers =
 Loop, read, %SelectedFileMain%
 {
 	If A_LoopReadLine = %A_ComputerName%
 		continue
-	Gui,Loading:Destroy
-	Gui, Loading:-Caption
-	Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
-	Gui, Loading:Add, Text,, Pinging %A_LoopReadLine%...
-	Gui, Hide
-	Gui, Loading:Show
+	GuiControl, Loading:Text, LoadingTxt, Pinging %A_LoopReadLine%...
 	RTT := Ping4(A_LoopReadLine, PingResult)
 	If ErrorLevel
 	{
 		ErrRebootServers := ErrRebootServers . "`n" . A_LoopReadLine
-		Gui, Loading:Destroy
 		continue
 	}
-	Gui, Loading:Destroy
 	If (MyCheckBox = 0)
-	{
 		Run, %comspec% /k wmic /node:"%A_LoopReadLine%" os where primary=true call win32shutdown 6
-		Sleep, 300
-		Run, %comspec% /k wmic /node:"%A_LoopReadLine%" os where primary=true call win32shutdown 6		
-	}
 	Else
 	{
 		Run, %comspec% /c wmic /node:"%A_LoopReadLine%" os where primary=true call win32shutdown 6,, hide, pid
-		Gui, Loading:-Caption
-		Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
-		Gui, Loading:Add, Text,, Rebooting %A_LoopReadLine%
-		Gui, Hide
-		Gui, Loading:Show
+		GuiControl, Loading:Text, LoadingTxt, Rebooting %A_LoopReadLine%
 		ErrorLevel:=1
 		While (ErrorLevel != 0)
 		{
@@ -331,7 +307,6 @@ Loop, read, %SelectedFileMain%
 			GuiControl,Loading:, lvl, 1
 			Process, Exist, % pid
 		}
-		Gui,Loading:Destroy
 	}
 }
 If ErrRebootServers
@@ -341,6 +316,7 @@ If ErrRebootServers
 }
 Else
 	MsgBox,,Reboot Servers, Task Complete.
+Gui, Loading:Destroy
 Gui, 1:Show
 Return
 
@@ -360,26 +336,26 @@ IfNotExist, %SelectedFileMain%
 	Gui, 1:Show
 	Return
 }
+Gui,Loading:Destroy
+Gui, Loading:-Caption
+Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
+Gui, Loading:Add, Text, vLoadingTxt,
+GuiControl, Loading:Move, LoadingTxt, W300
+Gui, Hide
+Gui, Loading:Show
 ErrStopAll = 
 Loop, read, %SelectedFileMain%
 {
 	line := A_LoopReadLine
 	If line = %A_ComputerName%
 		continue
-	Gui,Loading:Destroy
-	Gui, Loading:-Caption
-	Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
-	Gui, Loading:Add, Text,, Pinging %A_LoopReadLine%...
-	Gui, Hide
-	Gui, Loading:Show
+	GuiControl, Loading:Text, LoadingTxt, Pinging %A_LoopReadLine%...
 	RTT := Ping4(A_LoopReadLine, PingResult)
 	If ErrorLevel
 	{
 		ErrStopAll := ErrStopAll . "`n" . A_LoopReadLine
-		Gui, Loading:Destroy
 		continue
 	}
-	Gui, Loading:Destroy
 	If (MyCheckBox = 0)
 	{
 		Loop, read, %LocDriveLetter%:\%company%Tech\services.txt
@@ -416,11 +392,7 @@ Loop, read, %SelectedFileMain%
 			IfNotEqual, fsize, 0
 			{
 				Run, %comspec% /c wmic /node:"%line%" process call create 'cmd.exe /c sc config %A_LoopReadLine% start= disabled',, hide, pid
-				Gui, Loading:-Caption
-				Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
-				Gui, Loading:Add, Text,, Disabling %A_LoopReadLine% on %line%
-				Gui, Hide
-				Gui, Loading:Show
+				GuiControl, Loading:Text, LoadingTxt, Disabling %A_LoopReadLine% on %line%
 				ErrorLevel:=1
 				While (ErrorLevel != 0)
 				{
@@ -428,7 +400,6 @@ Loop, read, %SelectedFileMain%
 					GuiControl,Loading:, lvl, 1
 					Process, Exist, % pid
 				}
-				Gui,Loading:Destroy
 			}
 			Else
 				continue
@@ -442,11 +413,7 @@ Loop, read, %SelectedFileMain%
 			IfNotEqual, fsize, 0
 			{
 				Run, %comspec% /c wmic /node:"%line%" process call create 'cmd.exe /c sc stop %A_LoopReadLine%',, hide, pid
-				Gui, Loading:-Caption
-				Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
-				Gui, Loading:Add, Text,, Stop %A_LoopReadLine% on %line%
-				Gui, Hide
-				Gui, Loading:Show
+				GuiControl, Loading:Text, LoadingTxt, Stop %A_LoopReadLine% on %line%
 				ErrorLevel:=1
 				While (ErrorLevel != 0)
 				{
@@ -454,7 +421,6 @@ Loop, read, %SelectedFileMain%
 					GuiControl,Loading:, lvl, 1
 					Process, Exist, % pid
 				}
-				Gui,Loading:Destroy
 			}
 			Else
 				continue
@@ -470,6 +436,7 @@ If ErrStopAll
 }
 Else
 	MsgBox,,StopAll Services, Task Complete.
+Gui, Loading:Destroy
 Gui, 1:Show
 Return
 
@@ -492,26 +459,26 @@ IfNotExist, %SelectedFileMain%
 	Gui, 1:Show
 	Return
 }
+Gui,Loading:Destroy
+Gui, Loading:-Caption
+Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
+Gui, Loading:Add, Text, vLoadingTxt,
+GuiControl, Loading:Move, LoadingTxt, W300
+Gui, Hide
+Gui, Loading:Show
 ErrStartAll =
 Loop, read, %SelectedFileMain%
 {
 	line := A_LoopReadLine
 	If line = %A_ComputerName%
 		continue
-	Gui,Loading:Destroy
-	Gui, Loading:-Caption
-	Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
-	Gui, Loading:Add, Text,, Pinging %A_LoopReadLine%...
-	Gui, Hide
-	Gui, Loading:Show
+	GuiControl, Loading:Text, LoadingTxt, Pinging %A_LoopReadLine%...
 	RTT := Ping4(A_LoopReadLine, PingResult)
 	If ErrorLevel
 	{
 		ErrStartAll := ErrStartAll . "`n" . A_LoopReadLine
-		Gui, Loading:Destroy
 		continue
 	}
-	Gui, Loading:Destroy
 	If (MyCheckBox = 0)
 	{
 		Loop, read, %LocDriveLetter%:\%company%Tech\services.txt
@@ -548,11 +515,7 @@ Loop, read, %SelectedFileMain%
 			IfNotEqual, fsize, 0
 			{
 				Run, %comspec% /c wmic /node:"%line%" process call create 'cmd.exe /c sc config %A_LoopReadLine% start= auto',, hide, pid
-				Gui, Loading:-Caption
-				Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
-				Gui, Loading:Add, Text,, Set %A_LoopReadLine% on %line% to auto
-				Gui, Hide
-				Gui, Loading:Show
+				GuiControl, Loading:Text, LoadingTxt, Set %A_LoopReadLine% on %line% to auto
 				ErrorLevel:=1
 				While (ErrorLevel != 0)
 				{
@@ -560,7 +523,6 @@ Loop, read, %SelectedFileMain%
 					GuiControl,Loading:, lvl, 1
 					Process, Exist, % pid
 				}
-				Gui,Loading:Destroy
 			}
 			Else
 				continue
@@ -574,11 +536,7 @@ Loop, read, %SelectedFileMain%
 			IfNotEqual, fsize, 0
 			{
 				Run, %comspec% /c wmic /node:"%line%" process call create 'cmd.exe /c sc start %A_LoopReadLine%',, hide, pid
-				Gui, Loading:-Caption
-				Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
-				Gui, Loading:Add, Text,, Starting %A_LoopReadLine% on %line%
-				Gui, Hide
-				Gui, Loading:Show
+				GuiControl, Loading:Text, LoadingTxt, Starting %A_LoopReadLine% on %line%
 				ErrorLevel:=1
 				While (ErrorLevel != 0)
 				{
@@ -586,7 +544,6 @@ Loop, read, %SelectedFileMain%
 					GuiControl,Loading:, lvl, 1
 					Process, Exist, % pid
 				}
-				Gui,Loading:Destroy
 			}
 			Else
 				continue
@@ -602,6 +559,7 @@ If ErrStopAll
 }
 Else
 	MsgBox,,StartAll Services, Task Complete.
+Gui, Loading:Destroy
 Gui, 1:Show
 Return
 
@@ -622,23 +580,23 @@ IfNotExist, %SelectedFileMain%
 	Gui, 1:Show
 	Return
 }
+Gui,Loading:Destroy
+Gui, Loading:-Caption
+Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
+Gui, Loading:Add, Text, vLoadingTxt,
+GuiControl, Loading:Move, LoadingTxt, W300
+Gui, Hide
+Gui, Loading:Show
 ErrDisableDEPTOE = 
 Loop, read, %SelectedFileMain%
 {
-	Gui,Loading:Destroy
-	Gui, Loading:-Caption
-	Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
-	Gui, Loading:Add, Text,, Pinging %A_LoopReadLine%...
-	Gui, Hide
-	Gui, Loading:Show
+	GuiControl, Loading:Text, LoadingTxt, Pinging %A_LoopReadLine%...
 	RTT := Ping4(A_LoopReadLine, PingResult)
 	If ErrorLevel
 	{
 		ErrDisableDEPTOE := ErrDisableDEPTOE . "`n" . A_LoopReadLine
-		Gui, Loading:Destroy
 		continue
 	}
-	Gui, Loading:Destroy
 	If (MyCheckBox = 0)
 	{
 		Run, %comspec% /k wmic /node:"%A_LoopReadLine%" process call create 'cmd.exe /k bcdedit.exe /set {current} nx AlwaysOff'
@@ -647,11 +605,7 @@ Loop, read, %SelectedFileMain%
 	Else
 	{
 		Run, %comspec% /c wmic /node:"%A_LoopReadLine%" process call create 'cmd.exe /c bcdedit.exe /set {current} nx AlwaysOff',, hide, pid
-		Gui, Loading:-Caption
-		Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
-		Gui, Loading:Add, Text,, Disable DEP on %A_LoopReadLine%
-		Gui, Hide
-		Gui, Loading:Show
+		GuiControl, Loading:Text, LoadingTxt, Disable DEP on %A_LoopReadLine%
 		ErrorLevel:=1
 		While (ErrorLevel != 0)
 		{
@@ -659,13 +613,8 @@ Loop, read, %SelectedFileMain%
 			GuiControl,Loading:, lvl, 1
 			Process, Exist, % pid
 		}
-		Gui,Loading:Destroy
 		Run, %comspec% /c wmic /node:"%A_LoopReadLine%" process call create 'cmd.exe /c netsh int tcp set global chimney=disabled',, hide, pid
-		Gui, Loading:-Caption
-		Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
-		Gui, Loading:Add, Text,, Disable TCP Offload on %A_LoopReadLine%
-		Gui, Hide
-		Gui, Loading:Show
+		GuiControl, Loading:Text, LoadingTxt, Disable TCP Offload on %A_LoopReadLine%
 		ErrorLevel:=1
 		While (ErrorLevel != 0)
 		{
@@ -673,7 +622,6 @@ Loop, read, %SelectedFileMain%
 			GuiControl,Loading:, lvl, 1
 			Process, Exist, % pid
 		}
-		Gui,Loading:Destroy
 	}
 }
 If ErrDisableDEPTOE
@@ -683,6 +631,7 @@ If ErrDisableDEPTOE
 }
 Else
 	MsgBox,,Disable DEP/TOE, Task complete.
+Gui, Loading:Destroy
 Gui, 1:Show
 Return
 
@@ -707,44 +656,50 @@ FileAppend,
 3 – OptOut - DEP is enabled for all processes. Administrators can manually create a list of specific applications which do not have DEP applied
 
 ), %LocDriveLetter%:\%company%Tech\depstatus.txt
+Gui,Loading:Destroy
+Gui, Loading:-Caption
+Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
+Gui, Loading:Add, Text, vLoadingTxt,
+GuiControl, Loading:Move, LoadingTxt, W300
+Gui, Hide
+Gui, Loading:Show
 Loop, read, %SelectedFileMain%
 {
-	Gui,Loading:Destroy
-	Gui, Loading:-Caption
-	Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
-	Gui, Loading:Add, Text,, Pinging %A_LoopReadLine%...
-	Gui, Hide
-	Gui, Loading:Show
+	GuiControl, Loading:Text, LoadingTxt, Pinging %A_LoopReadLine%...
 	RTT := Ping4(A_LoopReadLine, PingResult)
 	If ErrorLevel
 	{
 		ErrDEPPing := ErrDEPPing . "`n" . A_LoopReadLine
-		Gui, Loading:Destroy
 		continue
 	}
-	Gui, Loading:Destroy
 	If (MyCheckBox = 0)
 	{
 		FileAppend, %A_LoopReadLine%`r`n, %LocDriveLetter%:\%company%Tech\depstatus.txt
 		Run, %comspec% /k wmic /node:"%A_LoopReadLine%" OS Get DataExecutionPrevention_SupportPolicy > %LocDriveLetter%:\%company%Tech\depstatus_%A_LoopReadLine%.txt
-		IfNotExist %LocDriveLetter%:\%company%Tech\depstatus_%A_LoopReadLine%.txt
-			Sleep, 500
-		IfNotExist %LocDriveLetter%:\%company%Tech\depstatus_%A_LoopReadLine%.txt
-			Sleep, 1500
-		IfNotExist %LocDriveLetter%:\%company%Tech\depstatus_%A_LoopReadLine%.txt
-			Sleep, 1500
-		FileGetSize, fsizedep, %LocDriveLetter%:\%company%Tech\depstatus_%A_LoopReadLine%.txt
-		If fsizedep = 0
-			Sleep, 500
-		If fsizedep = 0
+		GuiControl, Loading:Text, LoadingTxt, Waiting for DEP file on %A_LoopReadLine%
+		DEPStatus = 0
+		While DEPStatus = 0
 		{
-			Sleep, 1500
-			FileGetSize, fsizedep, %LocDriveLetter%:\%company%Tech\depstatus_%A_LoopReadLine%.txt
+			IfExist %LocDriveLetter%:\%company%Tech\depstatus_%A_LoopReadLine%.txt
+				DEPStatus = 1
+			GuiControl,Loading:, lvl, 1
+			Sleep, 20
+			If (A_Index > 600)
+				break
 		}
-		If fsizedep = 0
+		IfNotExist %LocDriveLetter%:\%company%Tech\depstatus_%A_LoopReadLine%.txt
 		{
-			Sleep, 1500
+			ErrDEPServers := ErrDEPServers . "`n" . A_LoopReadLine
+			continue
+		}
+		GuiControl, Loading:Text, LoadingTxt, Waiting for DEP size on %A_LoopReadLine%
+		While fsizedep = 0
+		{
 			FileGetSize, fsizedep, %LocDriveLetter%:\%company%Tech\depstatus_%A_LoopReadLine%.txt
+			GuiControl,Loading:, lvl, 1
+			Sleep, 20
+			If (A_Index > 600)
+				break
 		}
 		If fsizedep = 0
 		{
@@ -759,11 +714,7 @@ Loop, read, %SelectedFileMain%
 	{
 		FileAppend, %A_LoopReadLine%`r`n, %LocDriveLetter%:\%company%Tech\depstatus.txt
 		Run, %comspec% /c wmic /node:"%A_LoopReadLine%" OS Get DataExecutionPrevention_SupportPolicy > %LocDriveLetter%:\%company%Tech\depstatus_%A_LoopReadLine%.txt,, hide, pid
-		Gui, Loading:-Caption
-		Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
-		Gui, Loading:Add, Text,, Audit DEP on %A_LoopReadLine%
-		Gui, Hide
-		Gui, Loading:Show
+		GuiControl, Loading:Text, LoadingTxt, Audit DEP on %A_LoopReadLine%
 		ErrorLevel:=1
 		While (ErrorLevel != 0)
 		{
@@ -771,37 +722,43 @@ Loop, read, %SelectedFileMain%
 			GuiControl,Loading:, lvl, 1
 			Process, Exist, % pid
 		}
-		IfNotExist %LocDriveLetter%:\%company%Tech\depstatus_%A_LoopReadLine%.txt
-			Sleep, 500
-		IfNotExist %LocDriveLetter%:\%company%Tech\depstatus_%A_LoopReadLine%.txt
-			Sleep, 1500
-		IfNotExist %LocDriveLetter%:\%company%Tech\depstatus_%A_LoopReadLine%.txt
-			Sleep, 1500
-		FileGetSize, fsizedep, %LocDriveLetter%:\%company%Tech\depstatus_%A_LoopReadLine%.txt
-		If fsizedep = 0
-			Sleep, 500
-		If fsizedep = 0
+		GuiControl, Loading:Text, LoadingTxt, Waiting for DEP status on %A_LoopReadLine%
+		DEPStatus = 0
+		While DEPStatus = 0
 		{
-			Sleep, 1500
-			FileGetSize, fsizedep, %LocDriveLetter%:\%company%Tech\depstatus_%A_LoopReadLine%.txt
+			IfExist %LocDriveLetter%:\%company%Tech\depstatus_%A_LoopReadLine%.txt
+				DEPStatus = 1
+			GuiControl,Loading:, lvl, 1
+			Sleep, 20
+			If (A_Index > 600)
+				break
 		}
-		If fsizedep = 0
+		IfNotExist %LocDriveLetter%:\%company%Tech\depstatus_%A_LoopReadLine%.txt
 		{
-			Sleep, 1500
+			ErrDEPServers := ErrDEPServers . "`n" . A_LoopReadLine
+			continue
+		}
+		GuiControl, Loading:Text, LoadingTxt, Waiting for DEP size on %A_LoopReadLine%
+		While fsizedep = 0
+		{
 			FileGetSize, fsizedep, %LocDriveLetter%:\%company%Tech\depstatus_%A_LoopReadLine%.txt
+			GuiControl,Loading:, lvl, 1
+			Sleep, 20
+			If (A_Index > 600)
+				break
 		}
 		If fsizedep = 0
 		{
 			ErrDEPServers := ErrDEPServers . "`n" . A_LoopReadLine
 			continue
 		}
+		GuiControl, Loading:Text, LoadingTxt, Updating DEP status from %A_LoopReadLine%
 		FileRead, DEPs, %LocDriveLetter%:\%company%Tech\depstatus_%A_LoopReadLine%.txt
 		If not ErrorLevel
 			FileAppend, %DEPs%`r`n, %LocDriveLetter%:\%company%Tech\depstatus.txt
 	}
 	Sleep, 100
 	FileDelete %LocDriveLetter%:\%company%Tech\depstatus_%A_LoopReadLine%.txt
-	Gui,Loading:Destroy
 }
 If ErrDEPPing
 {
@@ -817,6 +774,7 @@ Else
 	MsgBox,,Audit DEP, Task Complete, look for %LocDriveLetter%:\%company%Tech\depstatus.txt
 Sleep, 100
 FileDelete %LocDriveLetter%:\%company%Tech\depstatus_*.txt
+Gui, Loading:Destroy
 Gui, 1:Show
 Return
 
