@@ -5,7 +5,7 @@
 
 company = GEC
 
-version = 2017.04.03.1948_%company%
+version = 2017.04.20.2200_%company%
 
 if not A_IsAdmin
 {
@@ -134,7 +134,7 @@ IfNotExist, %SelectedFileMain%
 	Gui, 1:Show
 	Return
 }
-Gui,Loading:Destroy
+Gui, Loading:Destroy
 Gui, Loading:-Caption
 Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
 Gui, Loading:Add, Text, vLoadingTxt,
@@ -185,6 +185,7 @@ Loop, read, %SelectedFileMain%
 		}
 	}
 }
+Gui, Loading:Destroy
 If ErrRunServers
 {
 	MsgBox,,Run Failures, Failed to ping: %ErrRunServers%
@@ -192,7 +193,6 @@ If ErrRunServers
 }
 Else
 	MsgBox,,Run Command, Task Complete.
-Gui, Loading:Destroy
 Gui, 1:Show
 Return
 
@@ -208,7 +208,7 @@ IfNotExist, %SelectedFileMain%
 	Gui, 1:Show
 	Return
 }
-Gui,Loading:Destroy
+Gui, Loading:Destroy
 Gui, Loading:-Caption
 Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
 Gui, Loading:Add, Text, vLoadingTxt,
@@ -247,6 +247,7 @@ Loop, read, %SelectedFileMain%
 		;Run, %comspec% /c wmic /node:"%A_LoopReadLine%" os where primary=true call win32shutdown 0,, hide
 	}
 }
+Gui, Loading:Destroy
 If ErrLogoffServers
 {
 	MsgBox,,Logoff Failures, Failed to ping: %ErrLogoffServers%
@@ -254,7 +255,6 @@ If ErrLogoffServers
 }
 Else
 	MsgBox,,Logoff Servers, Task Complete.
-Gui, Loading:Destroy
 Gui, 1:Show
 Return
 
@@ -275,7 +275,7 @@ IfNotExist, %SelectedFileMain%
 	Gui, 1:Show
 	Return
 }
-Gui,Loading:Destroy
+Gui, Loading:Destroy
 Gui, Loading:-Caption
 Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
 Gui, Loading:Add, Text, vLoadingTxt,
@@ -309,6 +309,7 @@ Loop, read, %SelectedFileMain%
 		}
 	}
 }
+Gui, Loading:Destroy
 If ErrRebootServers
 {
 	MsgBox,,Reboot Failures, Failed to ping: %ErrRebootServers%
@@ -316,7 +317,6 @@ If ErrRebootServers
 }
 Else
 	MsgBox,,Reboot Servers, Task Complete.
-Gui, Loading:Destroy
 Gui, 1:Show
 Return
 
@@ -336,7 +336,7 @@ IfNotExist, %SelectedFileMain%
 	Gui, 1:Show
 	Return
 }
-Gui,Loading:Destroy
+Gui, Loading:Destroy
 Gui, Loading:-Caption
 Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
 Gui, Loading:Add, Text, vLoadingTxt,
@@ -427,6 +427,7 @@ Loop, read, %SelectedFileMain%
 		}
 	}
 }
+Gui, Loading:Destroy
 IfExist %A_ScriptDir%\checksvc.txt
 	FileDelete, %A_ScriptDir%\checksvc.txt
 If ErrStopAll
@@ -436,7 +437,6 @@ If ErrStopAll
 }
 Else
 	MsgBox,,StopAll Services, Task Complete.
-Gui, Loading:Destroy
 Gui, 1:Show
 Return
 
@@ -459,7 +459,7 @@ IfNotExist, %SelectedFileMain%
 	Gui, 1:Show
 	Return
 }
-Gui,Loading:Destroy
+Gui, Loading:Destroy
 Gui, Loading:-Caption
 Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
 Gui, Loading:Add, Text, vLoadingTxt,
@@ -550,6 +550,7 @@ Loop, read, %SelectedFileMain%
 		}
 	}
 }
+Gui, Loading:Destroy
 IfExist %A_ScriptDir%\checksvc.txt
 	FileDelete, %A_ScriptDir%\checksvc.txt
 If ErrStopAll
@@ -559,7 +560,6 @@ If ErrStopAll
 }
 Else
 	MsgBox,,StartAll Services, Task Complete.
-Gui, Loading:Destroy
 Gui, 1:Show
 Return
 
@@ -580,7 +580,7 @@ IfNotExist, %SelectedFileMain%
 	Gui, 1:Show
 	Return
 }
-Gui,Loading:Destroy
+Gui, Loading:Destroy
 Gui, Loading:-Caption
 Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
 Gui, Loading:Add, Text, vLoadingTxt,
@@ -624,6 +624,7 @@ Loop, read, %SelectedFileMain%
 		}
 	}
 }
+Gui, Loading:Destroy
 If ErrDisableDEPTOE
 {
 	MsgBox,,DEP/TOE Failures, Failed to ping: %ErrDisableDEPTOE%
@@ -631,7 +632,6 @@ If ErrDisableDEPTOE
 }
 Else
 	MsgBox,,Disable DEP/TOE, Task complete.
-Gui, Loading:Destroy
 Gui, 1:Show
 Return
 
@@ -656,7 +656,7 @@ FileAppend,
 3 – OptOut - DEP is enabled for all processes. Administrators can manually create a list of specific applications which do not have DEP applied
 
 ), %LocDriveLetter%:\%company%Tech\depstatus.txt
-Gui,Loading:Destroy
+Gui, Loading:Destroy
 Gui, Loading:-Caption
 Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
 Gui, Loading:Add, Text, vLoadingTxt,
@@ -760,6 +760,7 @@ Loop, read, %SelectedFileMain%
 	Sleep, 100
 	FileDelete %LocDriveLetter%:\%company%Tech\depstatus_%A_LoopReadLine%.txt
 }
+Gui, Loading:Destroy
 If ErrDEPPing
 {
 	MsgBox,,DEP Failures, Failed to ping: %ErrDEPPing%
@@ -774,7 +775,6 @@ Else
 	MsgBox,,Audit DEP, Task Complete, look for %LocDriveLetter%:\%company%Tech\depstatus.txt
 Sleep, 100
 FileDelete %LocDriveLetter%:\%company%Tech\depstatus_*.txt
-Gui, Loading:Destroy
 Gui, 1:Show
 Return
 
@@ -813,30 +813,26 @@ IfNotExist, %SelectedFileMain%
 	Return
 }
 ErrAddRole = 
+Gui, Loading:Destroy
+Gui, Loading:-Caption
+Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
+Gui, Loading:Add, Text, vLoadingTxt,
+GuiControl, Loading:Move, LoadingTxt, W300
+Gui, Hide
+Gui, Loading:Show
 Loop, Read, %SelectedFileMain%
 {
-	Gui,Loading:Destroy
-	Gui, Loading:-Caption
-	Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
-	Gui, Loading:Add, Text,, Pinging %A_LoopReadLine%...
-	Gui, Hide
-	Gui, Loading:Show
+	GuiControl, Loading:Text, LoadingTxt, Pinging %A_LoopReadLine%...
 	RTT := Ping4(A_LoopReadLine, PingResult)
 	If ErrorLevel
 	{
 		ErrAddRole := ErrAddRole . "`n" . A_LoopReadLine
-		Gui, Loading:Destroy
 		continue
 	}
-	Gui, Loading:Destroy
 	If (MyCheckBox = 0)
 	{
 		Run powershell.exe -NoExit -Command Add-WindowsFeature -IncludeAllSubFeature SNMP-WMI-Provider`,NET-Framework-Core -ComputerName %A_LoopReadLine%,,, pid
-		Gui, Loading:-Caption
-		Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
-		Gui, Loading:Add, Text,, SNMP/.NET for %A_LoopReadLine%
-		Gui, Hide
-		Gui, Loading:Show
+		GuiControl, Loading:Text, LoadingTxt, SNMP/.NET for %A_LoopReadLine%
 		ErrorLevel:=1
 		While (ErrorLevel != 0)
 		{
@@ -844,16 +840,11 @@ Loop, Read, %SelectedFileMain%
 			GuiControl,Loading:, lvl, 1
 			Process, Exist, % pid
 		}
-		Gui,Loading:Destroy
 	}
 	Else
 	{
 		Run powershell.exe -Command Add-WindowsFeature -IncludeAllSubFeature SNMP-WMI-Provider`,NET-Framework-Core -ComputerName %A_LoopReadLine%,,, pid
-		Gui, Loading:-Caption
-		Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
-		Gui, Loading:Add, Text,, SNMP/.NET for %A_LoopReadLine%
-		Gui, Hide
-		Gui, Loading:Show
+		GuiControl, Loading:Text, LoadingTxt, SNMP/.NET for %A_LoopReadLine%
 		ErrorLevel:=1
 		While (ErrorLevel != 0)
 		{
@@ -861,12 +852,12 @@ Loop, Read, %SelectedFileMain%
 			GuiControl,Loading:, lvl, 1
 			Process, Exist, % pid
 		}
-		Gui,Loading:Destroy
 	}
 }
 IISservers = 
 Loop, Read, %SelectedFileMain%
 	IISservers .= A_LoopReadLine "|"
+Gui, Loading:Destroy
 Gui, IIS:+Resize -MaximizeBox -Caption
 Gui, IIS:Add, Text, vIISText, Choose servers which need IIS:
 Gui, IIS:Add, ListBox, vServerSelectionIIS 8 W130 H160, %IISservers%
@@ -882,30 +873,26 @@ IfNotExist %LocDriveLetter%:\%company%Tech\IISFeatures.txt
 Loop, Read, %LocDriveLetter%:\%company%Tech\IISFeatures.txt
 	IISFeatures = %A_LoopReadLine%
 ErrIIS = 
+Gui, Loading:Destroy
+Gui, Loading:-Caption
+Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
+Gui, Loading:Add, Text, vLoadingTxt,
+GuiControl, Loading:Move, LoadingTxt, W300
+Gui, IIS:Hide
+Gui, Loading:Show
 Loop, parse, ServerSelectionIIS, |
 {
-	Gui,Loading:Destroy
-	Gui, Loading:-Caption
-	Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
-	Gui, Loading:Add, Text,, Pinging %A_LoopField%...
-	Gui, Hide
-	Gui, Loading:Show
+	GuiControl, Loading:Text, LoadingTxt, Pinging %A_LoopField%...
 	RTT := Ping4(A_LoopField, PingResult)
 	If ErrorLevel
 	{
 		ErrIIS := ErrIIS . "`n" . A_LoopField
-		Gui, Loading:Destroy
 		continue
 	}
-	Gui, Loading:Destroy
 	If (MyCheckBox = 0)
 	{	
 		Run, powershell.exe -NoExit -Command Add-WindowsFeature %IISFeatures% -ComputerName %A_LoopField%,,, pid
-		Gui, Loading:-Caption
-		Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
-		Gui, Loading:Add, Text,, IIS components on %A_LoopField%
-		Gui, Hide
-		Gui, Loading:Show
+		GuiControl, Loading:Text, LoadingTxt, IIS components on %A_LoopField%
 		ErrorLevel:=1
 		While (ErrorLevel != 0)
 		{
@@ -913,16 +900,11 @@ Loop, parse, ServerSelectionIIS, |
 			GuiControl,Loading:, lvl, 1
 			Process, Exist, % pid
 		}
-		Gui,Loading:Destroy
 	}
 	Else
 	{
 		Run powershell.exe -Command Add-WindowsFeature %IISFeatures% -ComputerName %A_LoopField%,,, pid
-		Gui, Loading:-Caption
-		Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
-		Gui, Loading:Add, Text,, IIS components on %A_LoopField%
-		Gui, Hide
-		Gui, Loading:Show
+		GuiControl, Loading:Text, LoadingTxt, IIS components on %A_LoopField%
 		ErrorLevel:=1
 		While (ErrorLevel != 0)
 		{
@@ -930,9 +912,9 @@ Loop, parse, ServerSelectionIIS, |
 			GuiControl,Loading:, lvl, 1
 			Process, Exist, % pid
 		}
-		Gui,Loading:Destroy
 	}
 }
+Gui, Loading:Destroy
 If ErrAddRole
 {
 	MsgBox,,AddRole Failures, Failed to ping: %ErrAddRole%
@@ -991,22 +973,22 @@ IfMsgBox Cancel
 	Return
 }
 PingDBServers = 
+Gui,Loading:Destroy
+Gui, Loading:-Caption
+Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
+Gui, Loading:Add, Text, vLoadingTxt,
+GuiControl, Loading:Move, LoadingTxt, W300
+Gui, Hide
+Gui, Loading:Show
 Loop, parse, ServerSelectionDB, |
 {
-	Gui,Loading:Destroy
-	Gui, Loading:-Caption
-	Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
-	Gui, Loading:Add, Text,, Pinging %A_LoopField%...
-	Gui, Hide
-	Gui, Loading:Show
+	GuiControl, Loading:Text, LoadingTxt, Pinging %A_LoopField%...
 	RTT := Ping4(A_LoopField, PingResult)
 	If ErrorLevel
 	{
 		PingDBServers := PingDBServers . "`n" . A_LoopField
-		Gui, Loading:Destroy
 		continue
 	}
-	Gui, Loading:Destroy
 	IfNotExist \\%A_LoopField%\%RemDriveLetter%$\Program files\Microsoft SQL Server\MSSQL12.MSSQLSERVER\MSSQL\Binn\perf-MSSQLSERVERsqlctr.ini
 	{	
 		IfNotExist \\%A_LoopField%\%RemDriveLetter%$\Program files\Microsoft SQL Server\MSSQL11.MSSQLSERVER\MSSQL\Binn\perf-MSSQLSERVERsqlctr.ini
@@ -1059,11 +1041,7 @@ Loop, parse, ServerSelectionDB, |
 			RunWait, %comspec% /c tasklist /s %A_LoopField% /fi "imagename eq sqlservr.exe" > "%A_ScriptDir%\sqlstatus.txt",, hide
 			RunWait, %comspec% /c find /i "PID" < "%A_ScriptDir%\sqlstatus.txt" > "%A_ScriptDir%\sqlresult.txt",, hide
 			FileGetSize, fsize, %A_ScriptDir%\sqlresult.txt
-			Gui, Loading:-Caption
-			Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
-			Gui, Loading:Add, Text,, Waiting for SQL to stop on %A_LoopField%
-			Gui, Hide
-			Gui, Loading:Show
+			GuiControl, Loading:Text, LoadingTxt, Waiting for SQL to stop on %A_LoopField%
 			While fsize <> 0
 			{
 				Sleep, 20
@@ -1072,7 +1050,6 @@ Loop, parse, ServerSelectionDB, |
 				RunWait, %comspec% /c find /i "PID" < "%A_ScriptDir%\sqlstatus.txt" > "%A_ScriptDir%\sqlresult.txt",, hide
 				FileGetSize, fsize, %A_ScriptDir%\sqlresult.txt
 			}
-			Gui,Loading:Destroy
 			RunWait, %comspec% /k wmic /node:"%A_LoopField%" process call create 'cmd.exe /k sc config MSSQLSERVER start= auto'
 			RunWait, %comspec% /k wmic /node:"%A_LoopField%" process call create 'cmd.exe /k sc config SQLSERVERAGENT start= auto'
 			RunWait, %comspec% /k wmic /node:"%A_LoopField%" process call create 'cmd.exe /k sc start SQLSERVERAGENT'
@@ -1088,11 +1065,7 @@ Loop, parse, ServerSelectionDB, |
 		RunWait, %comspec% /c tasklist /s %A_LoopField% /fi "imagename eq unlodctr.exe" > "%A_ScriptDir%\sqlstatus.txt",, hide
 		RunWait, %comspec% /c find /i "PID" < "%A_ScriptDir%\sqlstatus.txt" > "%A_ScriptDir%\sqlresult.txt",, hide
 		FileGetSize, fsize, %A_ScriptDir%\sqlresult.txt
-		Gui, Loading:-Caption
-		Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
-		Gui, Loading:Add, Text,, unlodctr on %A_LoopField%
-		Gui, Hide
-		Gui, Loading:Show
+		GuiControl, Loading:Text, LoadingTxt, unlodctr on %A_LoopField%
 		Sleep, 20
 		While fsize <> 0
 		{
@@ -1102,7 +1075,6 @@ Loop, parse, ServerSelectionDB, |
 			RunWait, %comspec% /c find /i "PID" < "%A_ScriptDir%\sqlstatus.txt" > "%A_ScriptDir%\sqlresult.txt",, hide
 			FileGetSize, fsize, %A_ScriptDir%\sqlresult.txt
 		}
-		Gui,Loading:Destroy
 		RunWait, %comspec% /c wmic /node:"%A_LoopField%" process call create 'cmd.exe /c lodctr "%dbpath%\perf-MSSQLSERVERsqlctr.ini"',, hide
 		IfExist %A_ScriptDir%\sqlstatus.txt
 			FileDelete %A_ScriptDir%\sqlstatus.txt
@@ -1111,11 +1083,7 @@ Loop, parse, ServerSelectionDB, |
 		RunWait, %comspec% /c tasklist /s %A_LoopField% /fi "imagename eq lodctr.exe" > "%A_ScriptDir%\sqlstatus.txt",, hide
 		RunWait, %comspec% /c find /i "PID" < "%A_ScriptDir%\sqlstatus.txt" > "%A_ScriptDir%\sqlresult.txt",, hide
 		FileGetSize, fsize, %A_ScriptDir%\sqlresult.txt
-		Gui, Loading:-Caption
-		Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
-		Gui, Loading:Add, Text,, lodctr ini on %A_LoopField%
-		Gui, Hide
-		Gui, Loading:Show
+		GuiControl, Loading:Text, LoadingTxt, lodctr ini on %A_LoopField%
 		While fsize <> 0
 		{
 			Sleep, 20
@@ -1124,7 +1092,6 @@ Loop, parse, ServerSelectionDB, |
 			RunWait, %comspec% /c find /i "PID" < "%A_ScriptDir%\sqlstatus.txt" > "%A_ScriptDir%\sqlresult.txt",, hide
 			FileGetSize, fsize, %A_ScriptDir%\sqlresult.txt
 		}
-		Gui,Loading:Destroy
 		RunWait, %comspec% /c wmic /node:"%A_LoopField%" process call create 'cmd.exe /c lodctr /R',, hide
 		IfExist %A_ScriptDir%\sqlstatus.txt
 			FileDelete %A_ScriptDir%\sqlstatus.txt
@@ -1133,11 +1100,7 @@ Loop, parse, ServerSelectionDB, |
 		RunWait, %comspec% /c tasklist /s %A_LoopField% /fi "imagename eq lodctr.exe" > "%A_ScriptDir%\sqlstatus.txt",, hide
 		RunWait, %comspec% /c find /i "PID" < "%A_ScriptDir%\sqlstatus.txt" > "%A_ScriptDir%\sqlresult.txt",, hide
 		FileGetSize, fsize, %A_ScriptDir%\sqlresult.txt
-		Gui, Loading:-Caption
-		Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
-		Gui, Loading:Add, Text,, lodctr /R on %A_LoopField%
-		Gui, Hide
-		Gui, Loading:Show
+		GuiControl, Loading:Text, LoadingTxt, lodctr /R on %A_LoopField%
 		While fsize <> 0
 		{
 			Sleep, 20
@@ -1146,7 +1109,6 @@ Loop, parse, ServerSelectionDB, |
 			RunWait, %comspec% /c find /i "PID" < "%A_ScriptDir%\sqlstatus.txt" > "%A_ScriptDir%\sqlresult.txt",, hide
 			FileGetSize, fsize, %A_ScriptDir%\sqlresult.txt
 		}
-		Gui,Loading:Destroy
 		If SQLRestart
 		{
 			RunWait, %comspec% /c wmic /node:"%A_LoopField%" process call create 'cmd.exe /k sc config MSSQLSERVER start= disabled',, hide
@@ -1161,11 +1123,7 @@ Loop, parse, ServerSelectionDB, |
 			RunWait, %comspec% /c tasklist /s %A_LoopField% /fi "imagename eq sqlservr.exe" > "%A_ScriptDir%\sqlstatus.txt",, hide
 			RunWait, %comspec% /c find /i "PID" < "%A_ScriptDir%\sqlstatus.txt" > "%A_ScriptDir%\sqlresult.txt",, hide
 			FileGetSize, fsize, %A_ScriptDir%\sqlresult.txt
-			Gui, Loading:-Caption
-			Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
-			Gui, Loading:Add, Text,, Waiting for SQL to stop on %A_LoopField%
-			Gui, Hide
-			Gui, Loading:Show
+			GuiControl, Loading:Text, LoadingTxt, Waiting for SQL to stop on %A_LoopField%
 			While fsize <> 0
 			{
 				Sleep, 20
@@ -1174,13 +1132,13 @@ Loop, parse, ServerSelectionDB, |
 				RunWait, %comspec% /c find /i "PID" < "%A_ScriptDir%\sqlstatus.txt" > "%A_ScriptDir%\sqlresult.txt",, hide
 				FileGetSize, fsize, %A_ScriptDir%\sqlresult.txt
 			}
-			Gui,Loading:Destroy
 			RunWait, %comspec% /c wmic /node:"%A_LoopField%" process call create 'cmd.exe /k sc config MSSQLSERVER start= auto',, hide
 			RunWait, %comspec% /c wmic /node:"%A_LoopField%" process call create 'cmd.exe /k sc config SQLSERVERAGENT start= auto',, hide
 			RunWait, %comspec% /c wmic /node:"%A_LoopField%" process call create 'cmd.exe /k sc start SQLSERVERAGENT',, hide
 		}
 	}
 }
+Gui, Loading:Destroy
 If ErrDBServers
 	MsgBox,,SQL Missing, SQL PerfMon ini missing on: %ErrDBServers%
 IfExist %A_ScriptDir%\sqlresult.txt
@@ -1232,22 +1190,22 @@ If nppver =
 	Return
 }
 PingNPPServers = 
+Gui, Loading:Destroy
+Gui, Loading:-Caption
+Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
+Gui, Loading:Add, Text, vLoadingTxt,
+GuiControl, Loading:Move, LoadingTxt, W300
+Gui, Hide
+Gui, Loading:Show
 Loop, read, %SelectedFileMain%
 {
-	Gui,Loading:Destroy
-	Gui, Loading:-Caption
-	Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
-	Gui, Loading:Add, Text,, Pinging %A_LoopReadLine%...
-	Gui, Hide
-	Gui, Loading:Show
+	GuiControl, Loading:Text, LoadingTxt, Pinging %A_LoopReadLine%...
 	RTT := Ping4(A_LoopReadLine, PingResult)
 	If ErrorLevel
 	{
 		PingNPPServers := PingNPPServers . "`n" . A_LoopReadLine
-		Gui, Loading:Destroy
 		continue
 	}
-	Gui, Loading:Destroy
 	IfExist %A_ScriptDir%\checkos.txt
 	FileDelete, %A_ScriptDir%\checkos.txt
 	IfExist %A_ScriptDir%\result.txt
@@ -1297,6 +1255,7 @@ Loop, read, %SelectedFileMain%
 		}
 	}
 }
+Gui, Loading:Destroy
 If ErrNPServers
 	MsgBox,,NP++ Missing, Failed to find %nppver% on: %ErrNPServers%
 IfExist %A_ScriptDir%\checkos.txt
@@ -1310,6 +1269,7 @@ If PingNPPServers
 }
 Else
 	MsgBox,,Install NP++, Task complete.
+Gui, 1:Show
 Return
 
 7z:
@@ -1348,22 +1308,22 @@ If 7zver =
 	Return
 }
 Ping7z = 
+Gui, Loading:Destroy
+Gui, Loading:-Caption
+Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
+Gui, Loading:Add, Text, vLoadingTxt,
+GuiControl, Loading:Move, LoadingTxt, W300
+Gui, Hide
+Gui, Loading:Show
 Loop, read, %SelectedFileMain%
 {
-	Gui,Loading:Destroy
-	Gui, Loading:-Caption
-	Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
-	Gui, Loading:Add, Text,, Pinging %A_LoopReadLine%...
-	Gui, Hide
-	Gui, Loading:Show
+	GuiControl, Loading:Text, LoadingTxt, Pinging %A_LoopReadLine%...
 	RTT := Ping4(A_LoopReadLine, PingResult)
 	If ErrorLevel
 	{
 		Ping7z := Ping7z . "`n" . A_LoopReadLine
-		Gui, Loading:Destroy
 		continue
 	}
-	Gui, Loading:Destroy
 	;IfExist %A_ScriptDir%\checkos.txt
 		;FileDelete, %A_ScriptDir%\checkos.txt
 	;IfExist %A_ScriptDir%\result.txt
@@ -1407,11 +1367,7 @@ Loop, read, %SelectedFileMain%
 			If A_LoopReadLine = %A_ComputerName%
 			{
 				Run, %comspec% /c "cmd /c %LocDriveLetter%:\%company%Tech\Tools\%7zver% /S /D="%LocDriveLetter%:\Program Files\7-zip\"",, hide, pid
-				Gui, Loading:-Caption
-				Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
-				Gui, Loading:Add, Text,, Installing 7zip on %A_LoopReadLine%
-				Gui, Hide
-				Gui, Loading:Show
+				GuiControl, Loading:Text, LoadingTxt, Installing 7zip on %A_LoopReadLine%
 				ErrorLevel:=1
 				While (ErrorLevel != 0)
 				{
@@ -1419,17 +1375,12 @@ Loop, read, %SelectedFileMain%
 					GuiControl,Loading:, lvl, 1
 					Process, Exist, % pid
 				}
-				Gui,Loading:Destroy
 				EnvSet, PATH, %LocDriveLetter%:\Program Files\7-zip\
 			}
 			Else
 			{
 				Run, %comspec% /c wmic /node:"%A_LoopReadLine%" process call create 'cmd /c %RemDriveLetter%:\%company%Tech\tools\%7zver% /S /D="%RemDriveLetter%:\Program Files\7-zip\"',, hide, pid
-				Gui, Loading:-Caption
-				Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
-				Gui, Loading:Add, Text,, Installing 7zip on %A_LoopReadLine%
-				Gui, Hide
-				Gui, Loading:Show
+				GuiControl, Loading:Text, LoadingTxt, Installing 7zip on %A_LoopReadLine%
 				ErrorLevel:=1
 				While (ErrorLevel != 0)
 				{
@@ -1437,11 +1388,11 @@ Loop, read, %SelectedFileMain%
 					GuiControl,Loading:, lvl, 1
 					Process, Exist, % pid
 				}
-				Gui,Loading:Destroy
 			}
 		;}
 	}
 }
+Gui, Loading:Destroy
 If ErrServers7z
 	MsgBox,,7zip Missing, Failed to find %7zver% on: %ErrServers7z%
 IfExist %A_ScriptDir%\checkos.txt
@@ -1514,40 +1465,44 @@ If BindServerSelection =
 	Exit
 }
 ErrSCC = 
+MissCert = 
+Gui,Loading:Destroy
+Gui, Loading:-Caption
+Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
+Gui, Loading:Add, Text, vLoadingTxt,
+GuiControl, Loading:Move, LoadingTxt, W300
+Gui, Hide
+Gui, Loading:Show
 Loop, parse, BindServerSelection, |
 {
-	Gui,Loading:Destroy
-	Gui, Loading:-Caption
-	Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
-	Gui, Loading:Add, Text,, Pinging %A_LoopField%...
-	Gui, Hide
-	Gui, Loading:Show
+	GuiControl, Loading:Text, LoadingTxt, Pinging %A_LoopField%...
 	RTT := Ping4(A_LoopField, PingResult)
 	If ErrorLevel
 	{
 		ErrSCC := ErrSCC . "`n" . A_LoopField
-		Gui, Loading:Destroy
 		continue
 	}
-	Gui, Loading:Destroy
 	IfNotExist \\%A_LoopField%\%RemDriveLetter%$\%company%Tech\Tools\cert_thumb.ps1
 		RunWait, %comspec% /c "robocopy /ETA %LocDriveLetter%:\%company%Tech\Tools \\%A_LoopField%\%RemDriveLetter%$\%company%Tech\Tools cert_thumb.ps1",, hide
 	If (FullBind = 1)
 	{
+		GuiControl, Loading:Text, LoadingTxt, Cert management on %A_LoopField%...
 		If (MyCheckBox = 0)
 		{
 			RunWait, %comspec% /k wmic /node:"%A_LoopField%" process call create 'powershell.exe %RemDriveLetter%:\%company%Tech\Tools\cert_thumb.ps1'
 			RunWait, %comspec% /k "robocopy /ETA \\%A_LoopField%\%RemDriveLetter%$\%company%Tech\ %LocDriveLetter%:\%company%Tech\RemoteNodeCerts cert_%A_LoopField%.txt"
-			IfNotExist %LocDriveLetter%:\%company%Tech\RemoteNodeCerts\cert_%A_LoopField%.txt
+			MissCert = 0
+			While MissCert = 0
 			{
-				Sleep, 1000
-				RunWait, %comspec% /k "robocopy /ETA \\%A_LoopField%\%RemDriveLetter%$\%company%Tech\ %LocDriveLetter%:\%company%Tech\RemoteNodeCerts cert_%A_LoopField%.txt"
+				IfExist %LocDriveLetter%:\%company%Tech\RemoteNodeCerts\cert_%A_LoopField%.txt
+					MissCert = 1
+				GuiControl, Loading:, lvl, 1
+				Sleep, 20
+				If (A_Index > 600)
+					break
 			}
-			IfNotExist %LocDriveLetter%:\%company%Tech\RemoteNodeCerts\cert_%A_LoopField%.txt
-			{
-				Sleep, 2000
+			IfExist %LocDriveLetter%:\%company%Tech\RemoteNodeCerts\cert_%A_LoopField%.txt
 				RunWait, %comspec% /k "robocopy /ETA \\%A_LoopField%\%RemDriveLetter%$\%company%Tech\ %LocDriveLetter%:\%company%Tech\RemoteNodeCerts cert_%A_LoopField%.txt"
-			}
 			IfNotExist %LocDriveLetter%:\%company%Tech\RemoteNodeCerts\cert_%A_LoopField%.txt
 				MsgBox,,Certificate Thumbprint, Pull thumbprint manually from %A_LoopField%
 		}
@@ -1555,19 +1510,22 @@ Loop, parse, BindServerSelection, |
 		{
 			RunWait, %comspec% /c wmic /node:"%A_LoopField%" process call create 'powershell.exe %RemDriveLetter%:\%company%Tech\Tools\cert_thumb.ps1',, hide
 			RunWait, %comspec% /c "robocopy /ETA \\%A_LoopField%\%RemDriveLetter%$\%company%Tech\ %LocDriveLetter%:\%company%Tech\RemoteNodeCerts cert_%A_LoopField%.txt",, hide
-			IfNotExist %LocDriveLetter%:\%company%Tech\RemoteNodeCerts\cert_%A_LoopField%.txt
+			MissCert = 0
+			While MissCert = 0
 			{
-				Sleep, 1000
-				RunWait, %comspec% /c "robocopy /ETA \\%A_LoopField%\%RemDriveLetter%$\%company%Tech\ %LocDriveLetter%:\%company%Tech\RemoteNodeCerts cert_%A_LoopField%.txt",, hide
+				IfExist %LocDriveLetter%:\%company%Tech\RemoteNodeCerts\cert_%A_LoopField%.txt
+					MissCert = 1
+				GuiControl, Loading:, lvl, 1
+				Sleep, 20
+				If (A_Index > 600)
+					break
 			}
+			IfExist %LocDriveLetter%:\%company%Tech\RemoteNodeCerts\cert_%A_LoopField%.txt
+				RunWait, %comspec% /c "robocopy /ETA \\%A_LoopField%\%RemDriveLetter%$\%company%Tech\ %LocDriveLetter%:\%company%Tech\RemoteNodeCerts cert_%A_LoopField%.txt"
 			IfNotExist %LocDriveLetter%:\%company%Tech\RemoteNodeCerts\cert_%A_LoopField%.txt
-			{
-				Sleep, 2000
-				RunWait, %comspec% /c "robocopy /ETA \\%A_LoopField%\%RemDriveLetter%$\%company%Tech\ %LocDriveLetter%:\%company%Tech\RemoteNodeCerts cert_%A_LoopField%.txt",, hide
-			}
-			IfNotExist %LocDriveLetter%:\%company%Tech\RemoteNodeCerts\cert_%A_LoopField%.txt
-				MsgBox,,Thumbprint, Pull thumbprint manually from %A_LoopField%
+				MsgBox,,Certificate Thumbprint, Pull thumbprint manually from %A_LoopField%
 		}
+		Gui, Loading:Destroy
 		InputBox, certhash, Cert Hash, Enter certificate hash for %A_LoopField% (Check %LocDriveLetter%:\%company%Tech\RemoteNodeCerts):
 		If ErrorLevel
 			Return
@@ -1577,6 +1535,13 @@ Loop, parse, BindServerSelection, |
 			Return
 		StringReplace, ports, ports, %A_Space%,,All
 		hostname = %A_LoopField%
+		Gui,Loading:Destroy
+		Gui, Loading:-Caption
+		Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
+		Gui, Loading:Add, Text, vLoadingTxt, Cert binding on %A_LoopField%
+		GuiControl, Loading:Move, LoadingTxt, W300
+		Gui, Hide
+		Gui, Loading:Show
 		Loop, parse, ports, `,
 		{
 			If (MyCheckBox = 0)
@@ -1612,6 +1577,7 @@ Loop, parse, BindServerSelection, |
 			MsgBox,,PsExec Missing, PsExec (PsTools) missing in %LocDriveLetter%:\%company%Tech\Tools\PsTools\
 			continue
 		}
+		GuiControl, Loading:Text, LoadingTxt, Pulling cert from %A_LoopField%...
 		If A_LoopField = %A_ComputerName%
 			RunWait, %comspec% /c netsh http show sslcert > %LocDriveLetter%:\%company%Tech\RemoteNodeCerts\certinfo_%A_LoopField%.txt,, hide
 		Else
@@ -1626,6 +1592,7 @@ Loop, parse, BindServerSelection, |
 		}
 	}
 }
+Gui, Loading:Destroy
 If ErrCertInfo
 	MsgBox,,CertInfo Fail, Failed to pull certinfo on: %ErrCertInfo%
 If ErrSCC
@@ -1903,8 +1870,10 @@ IfNotExist %LocDriveLetter%:\%company%Tech\RDPMan.ps1
 IfNotExist %LocDriveLetter%:\%company%Tech\RDPMan.ps1
 {
 	MsgBox,,PS Fail,Creation of PS Script failed.  Cannot create RDG file.
+	Gui, 1:Show
 	Return
 }
+Gui, Loading:Destroy
 If MyCheckBox = 0
 	RunWait powershell.exe -NoExit -Command %LocDriveLetter%:\%company%Tech\RDPMan.ps1
 Else
@@ -1934,28 +1903,28 @@ IfNotExist, %LocDriveLetter%:\%company%Tech
 IfNotExist, %LocDriveLetter%:\%company%Tech\Logoff.lnk
 	FileCreateShortcut, C:\Windows\System32\shutdown.exe, %LocDriveLetter%:\%company%Tech\Logoff.lnk, , /l /f
 ErrLogoffLink = 
+Gui,Loading:Destroy
+Gui, Loading:-Caption
+Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
+Gui, Loading:Add, Text, vLoadingTxt,
+GuiControl, Loading:Move, LoadingTxt, W300
+Gui, Hide
+Gui, Loading:Show
 Loop, read, %SelectedFileMain%
 {
-	Gui,Loading:Destroy
-	Gui, Loading:-Caption
-	Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
-	Gui, Loading:Add, Text,, Pinging %A_LoopReadLine%...
-	Gui, Hide
-	Gui, Loading:Show
+	GuiControl, Loading:Text, LoadingTxt, Pinging %A_LoopReadLine%...
 	RTT := Ping4(A_LoopReadLine, PingResult)
 	If ErrorLevel
 	{
 		ErrLogoffLink := ErrLogoffLink . "`n" . A_LoopReadLine
-		Gui, Loading:Destroy
 		continue
 	}
-	Gui, Loading:Destroy
 	If (MyCheckBox = 0)
 		Run, %comspec% /k "robocopy /ETA %LocDriveLetter%:\%company%Tech \\%A_LoopReadLine%\c$\Users\Public\Desktop Logoff.lnk"
 	Else
 		Run, %comspec% /c "robocopy /ETA %LocDriveLetter%:\%company%Tech \\%A_LoopReadLine%\c$\Users\Public\Desktop Logoff.lnk",, hide
 }
-Sleep, 500
+Gui, Loading:Destroy
 IfExist %A_ScriptDir%\Logoff.lnk
 	FileDelete, %A_ScriptDir%\Logoff.lnk
 If ErrLogoffLink
@@ -2014,10 +1983,18 @@ IfNotExist, %SelectedFileMain%
 	Return
 }
 ErrPushTech =
+Gui,Loading:Destroy
+Gui, Loading:-Caption
+Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
+Gui, Loading:Add, Text, vLoadingTxt,
+GuiControl, Loading:Move, LoadingTxt, W300
+Gui, Hide
+Gui, Loading:Show
 Loop, read, %SelectedFileMain%
 {
 	If A_LoopReadLine = %A_ComputerName%
 	{
+		GuiControl, Loading:Text, LoadingTxt, Setting up local folders...
 		IfNotExist %LocDriveLetter%:\%company%Tech
 			FileCreateDir, %LocDriveLetter%:\%company%Tech
 		IfNotExist %LocDriveLetter%:\%company%Tech\LicenseKeys
@@ -2060,30 +2037,19 @@ Loop, read, %SelectedFileMain%
 		Gui, 1:Show
 		Return
 	}
-	Gui,Loading:Destroy
-	Gui, Loading:-Caption
-	Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
-	Gui, Loading:Add, Text,, Pinging %A_LoopReadLine%...
-	Gui, Hide
-	Gui, Loading:Show
+	GuiControl, Loading:Text, LoadingTxt, Pinging %A_LoopReadLine%...
 	RTT := Ping4(A_LoopReadLine, PingResult)
 	If ErrorLevel
 	{
 		ErrPushTech := ErrPushTech . "`n" . A_LoopReadLine
-		Gui, Loading:Destroy
 		continue
 	}
-	Gui, Loading:Destroy
 	If (MyCheckBox = 0)
 		Run, %comspec% /k "robocopy /E /ETA %LocDriveLetter%:\%company%Tech\Tools \\%A_LoopReadLine%\%RemDriveLetter%$\%company%Tech\Tools"
 	Else
 	{
 		Run, %comspec% /c "robocopy /E /ETA %LocDriveLetter%:\%company%Tech\Tools \\%A_LoopReadLine%\%RemDriveLetter%$\%company%Tech\Tools",, hide, pid
-		Gui, Loading:-Caption
-		Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
-		Gui, Loading:Add, Text,, Pushing Tools to %A_LoopReadLine%
-		Gui, Hide
-		Gui, Loading:Show
+		GuiControl, Loading:Text, LoadingTxt, Pushing Tools to %A_LoopReadLine%
 		ErrorLevel:=1
 		While (ErrorLevel != 0)
 		{
@@ -2091,9 +2057,9 @@ Loop, read, %SelectedFileMain%
 			GuiControl,Loading:, lvl, 1
 			Process, Exist, % pid
 		}
-		Gui,Loading:Destroy
 	}
 }
+Gui, Loading:Destroy
 If ErrPushTech
 {
 	MsgBox,,Push Ping, Failed to ping: %ErrPushTech%
@@ -2105,7 +2071,7 @@ Gui, 1:Show
 Return
 
 PushConfigMgr:
-Gui, Submit, nohide
+Gui, Submit
 GuiControlGet, MyCheckBox
 GuiControlGet, LocDriveLetter
 GuiControlGet, RemDriveLetter
@@ -2128,7 +2094,6 @@ IfNotExist, %LocDriveLetter%:\Program Files\NICE Systems\Nice Services Configura
 	Return
 	AppBtn:
 	Gui, APP:Submit
-	Gui, APP:Destroy
 	If appnode =
 	{
 		MsgBox,,Blank Host, Hostname cannot be blank!
@@ -2138,20 +2103,22 @@ IfNotExist, %LocDriveLetter%:\Program Files\NICE Systems\Nice Services Configura
 	Gui,Loading:Destroy
 	Gui, Loading:-Caption
 	Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
-	Gui, Loading:Add, Text,, Pinging %appnode%...
+	Gui, Loading:Add, Text, vLoadingTxt,
+	GuiControl, Loading:Move, LoadingTxt, W300
 	Gui, Hide
 	Gui, Loading:Show
+	GuiControl, Loading:Text, LoadingTxt, Pinging %appnode%...
 	RTT := Ping4(appnode, PingResult)
 	If ErrorLevel
 	{
-		MsgBox,,Ping App,Failed to ping %appnode%
 		Gui, Loading:Destroy
+		MsgBox,,Ping App,Failed to ping %appnode%
 		Gui, 1:Show
 		Return
 	}
-	Gui, Loading:Destroy
 	IfNotExist, \\%appnode%\%RemDriveLetter%$\Program Files\NICE Systems\Applications\Tools\Nice Services Configuration Manager
 	{
+		Gui, Loading:Destroy
 		MsgBox,,Config Manager Missing, Local node and/or %appnode% do not have ConfigMgr!  (Have you deployed yet?)
 		Gui, 1:Show
 		Return
@@ -2161,11 +2128,7 @@ IfNotExist, %LocDriveLetter%:\Program Files\NICE Systems\Nice Services Configura
 	Else
 	{
 		Run, %comspec% /c robocopy /E /ETA "\\%appnode%\%RemDriveLetter%$\Program Files\NICE Systems\Applications\Tools\Nice Services Configuration Manager" "%LocDriveLetter%:\Program Files\NICE Systems\Nice Services Configuration Manager",, hide, pid
-		Gui, Loading:-Caption
-		Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
-		Gui, Loading:Add, Text,, Pulling ConfigMgr from %appnode%
-		Gui, Hide
-		Gui, Loading:Show
+		GuiControl, Loading:Text, LoadingTxt, Pulling ConfigMgr from %appnode%
 		ErrorLevel:=1
 		While (ErrorLevel != 0)
 		{
@@ -2173,7 +2136,6 @@ IfNotExist, %LocDriveLetter%:\Program Files\NICE Systems\Nice Services Configura
 			GuiControl,Loading:, lvl, 1
 			Process, Exist, % pid
 		}
-		Gui,Loading:Destroy
 	}
 	IfNotExist, %A_ScriptDir%\Nice Services Configuration Manager.lnk
 		FileCreateShortcut, %LocDriveLetter%:\Program Files\NICE Systems\Nice Services Configuration Manager\Nice Services Configuration Manager.exe, %LocDriveLetter%:\%company%Tech\Nice Services Configuration Manager.lnk
@@ -2181,20 +2143,13 @@ IfNotExist, %LocDriveLetter%:\Program Files\NICE Systems\Nice Services Configura
 	ErrPushConfig =
 	Loop, read, %SelectedFileMain%
 	{
-		Gui,Loading:Destroy
-		Gui, Loading:-Caption
-		Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
-		Gui, Loading:Add, Text,, Pinging %A_LoopReadLine%...
-		Gui, Hide
-		Gui, Loading:Show
+		GuiControl, Loading:Text, LoadingTxt, Pinging %A_LoopReadLine%...
 		RTT := Ping4(A_LoopReadLine, PingResult)
 		If ErrorLevel
 		{
 			ErrPushConfig := ErrPushConfig . "`n" . A_LoopReadLine
-			Gui, Loading:Destroy
 			continue
 		}
-		Gui, Loading:Destroy
 		If (MyCheckBox = 0)
 		{
 			If A_LoopReadLine = %A_ComputerName%
@@ -2215,11 +2170,7 @@ IfNotExist, %LocDriveLetter%:\Program Files\NICE Systems\Nice Services Configura
 			Else
 			{
 				RunWait, %comspec% /c taskkill /S %A_LoopReadLine% /IM "Nice Services Configuration Manager.exe",, hide, pid
-				Gui, Loading:-Caption
-				Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
-				Gui, Loading:Add, Text,, Killing ConfigMgr on %A_LoopReadLine%
-				Gui, Hide
-				Gui, Loading:Show
+				GuiControl, Loading:Text, LoadingTxt, Killing ConfigMgr on %A_LoopReadLine%
 				ErrorLevel:=1
 				While (ErrorLevel != 0)
 				{
@@ -2227,14 +2178,9 @@ IfNotExist, %LocDriveLetter%:\Program Files\NICE Systems\Nice Services Configura
 					GuiControl,Loading:, lvl, 1
 					Process, Exist, % pid
 				}
-				Gui,Loading:Destroy
 				Sleep, 200
 				Run, %comspec% /c robocopy /E /ETA "%LocDriveLetter%:\Program Files\NICE Systems\Nice Services Configuration Manager" "\\%A_LoopReadLine%\%RemDriveLetter%$\Program Files\NICE Systems\Nice Services Configuration Manager",, hide, pid
-				Gui, Loading:-Caption
-				Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
-				Gui, Loading:Add, Text,, Pushing ConfigMgr to %A_LoopReadLine%
-				Gui, Hide
-				Gui, Loading:Show
+				GuiControl, Loading:Text, LoadingTxt, Pushing ConfigMgr to %A_LoopReadLine%
 				ErrorLevel:=1
 				While (ErrorLevel != 0)
 				{
@@ -2242,14 +2188,9 @@ IfNotExist, %LocDriveLetter%:\Program Files\NICE Systems\Nice Services Configura
 					GuiControl,Loading:, lvl, 1
 					Process, Exist, % pid
 				}
-				Gui,Loading:Destroy
 				Sleep, 200
 				Run, %comspec% /c robocopy /ETA %LocDriveLetter%:\%company%Tech \\%A_LoopReadLine%\c$\Users\Public\Desktop "Nice Services Configuration Manager.lnk",, hide, pid
-				Gui, Loading:-Caption
-				Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
-				Gui, Loading:Add, Text,, Pushing link to %A_LoopReadLine%
-				Gui, Hide
-				Gui, Loading:Show
+				GuiControl, Loading:Text, LoadingTxt, Pushing link to %A_LoopReadLine%
 				ErrorLevel:=1
 				While (ErrorLevel != 0)
 				{
@@ -2257,11 +2198,10 @@ IfNotExist, %LocDriveLetter%:\Program Files\NICE Systems\Nice Services Configura
 					GuiControl,Loading:, lvl, 1
 					Process, Exist, % pid
 				}
-				Gui,Loading:Destroy
 			}
 		}
 	}
-	Sleep, 500
+	Gui, Loading:Destroy
 	IfExist %A_ScriptDir%\Nice Services Configuration Manager.lnk
 		FileDelete, %A_ScriptDir%\Nice Services Configuration Manager.lnk
 	If ErrPushConfig
@@ -2278,22 +2218,22 @@ IfNotExist, %A_ScriptDir%\Nice Services Configuration Manager.lnk
 	FileCreateShortcut, %LocDriveLetter%:\Program Files\NICE Systems\Nice Services Configuration Manager\Nice Services Configuration Manager.exe, %LocDriveLetter%:\%company%Tech\Nice Services Configuration Manager.lnk
 Sleep, 200
 ErrPushConfig =
+Gui,Loading:Destroy
+Gui, Loading:-Caption
+Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
+Gui, Loading:Add, Text, vLoadingTxt,
+GuiControl, Loading:Move, LoadingTxt, W300
+Gui, Hide
+Gui, Loading:Show
 Loop, read, %SelectedFileMain%
 {
-	Gui,Loading:Destroy
-	Gui, Loading:-Caption
-	Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
-	Gui, Loading:Add, Text,, Pinging %A_LoopReadLine%...
-	Gui, Hide
-	Gui, Loading:Show
+	GuiControl, Loading:Text, LoadingTxt, Pinging %A_LoopReadLine%...
 	RTT := Ping4(A_LoopReadLine, PingResult)
 	If ErrorLevel
 	{
 		ErrPushConfig := ErrPushConfig . "`n" . A_LoopReadLine
-		Gui, Loading:Destroy
 		continue
 	}
-	Gui, Loading:Destroy
 	If (MyCheckBox = 0)
 	{
 		If A_LoopReadLine = %A_ComputerName%
@@ -2314,11 +2254,7 @@ Loop, read, %SelectedFileMain%
 		Else
 		{
 			Run, %comspec% /c taskkill /S %A_LoopReadLine% /IM "Nice Services Configuration Manager.exe",, hide, pid
-			Gui, Loading:-Caption
-			Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
-			Gui, Loading:Add, Text,, Killing ConfigMgr on %A_LoopReadLine%
-			Gui, Hide
-			Gui, Loading:Show
+			GuiControl, Loading:Text, LoadingTxt, Killing ConfigMgr on %A_LoopReadLine%
 			ErrorLevel:=1
 			While (ErrorLevel != 0)
 			{
@@ -2326,14 +2262,9 @@ Loop, read, %SelectedFileMain%
 				GuiControl,Loading:, lvl, 1
 				Process, Exist, % pid
 			}
-			Gui,Loading:Destroy
 			Sleep, 200
 			Run, %comspec% /c robocopy /E /ETA "%LocDriveLetter%:\Program Files\NICE Systems\Nice Services Configuration Manager" "\\%A_LoopReadLine%\%RemDriveLetter%$\Program Files\NICE Systems\Nice Services Configuration Manager",, hide, pid
-			Gui, Loading:-Caption
-			Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
-			Gui, Loading:Add, Text,, Pushing ConfigMgr to %A_LoopReadLine%
-			Gui, Hide
-			Gui, Loading:Show
+			GuiControl, Loading:Text, LoadingTxt, Pushing ConfigMgr to %A_LoopReadLine%
 			ErrorLevel:=1
 			While (ErrorLevel != 0)
 			{
@@ -2341,14 +2272,9 @@ Loop, read, %SelectedFileMain%
 				GuiControl,Loading:, lvl, 1
 				Process, Exist, % pid
 			}
-			Gui,Loading:Destroy
 			Sleep, 200
 			Run, %comspec% /c robocopy /ETA %LocDriveLetter%:\%company%Tech \\%A_LoopReadLine%\c$\Users\Public\Desktop "Nice Services Configuration Manager.lnk",, hide, pid
-			Gui, Loading:-Caption
-			Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
-			Gui, Loading:Add, Text,, Pushing link to %A_LoopReadLine%
-			Gui, Hide
-			Gui, Loading:Show
+			GuiControl, Loading:Text, LoadingTxt, Pushing link to %A_LoopReadLine%
 			ErrorLevel:=1
 			While (ErrorLevel != 0)
 			{
@@ -2356,11 +2282,10 @@ Loop, read, %SelectedFileMain%
 				GuiControl,Loading:, lvl, 1
 				Process, Exist, % pid
 			}
-			Gui,Loading:Destroy
 		}
 	}
 }
-Sleep, 500
+Gui, Loading:Destroy
 IfExist %A_ScriptDir%\Nice Services Configuration Manager.lnk
 	FileDelete, %A_ScriptDir%\Nice Services Configuration Manager.lnk
 If ErrPushConfig
@@ -2390,22 +2315,22 @@ IfNotExist, %SelectedFileMain%
 	Return
 }
 ErrRegUpdate = 
+Gui,Loading:Destroy
+Gui, Loading:-Caption
+Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
+Gui, Loading:Add, Text, vLoadingTxt,
+GuiControl, Loading:Move, LoadingTxt, W300
+Gui, Hide
+Gui, Loading:Show
 Loop, read, %SelectedFileMain%
 {
-	Gui,Loading:Destroy
-	Gui, Loading:-Caption
-	Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
-	Gui, Loading:Add, Text,, Pinging %A_LoopReadLine%...
-	Gui, Hide
-	Gui, Loading:Show
+	GuiControl, Loading:Text, LoadingTxt, Pinging %A_LoopReadLine%...
 	RTT := Ping4(A_LoopReadLine, PingResult)
 	If ErrorLevel
 	{
 		ErrRegUpdate := ErrRegUpdate . "`n" . A_LoopReadLine
-		Gui, Loading:Destroy
 		continue
 	}
-	Gui, Loading:Destroy
 	IfNotExist \\%A_LoopReadLine%\%RemDriveLetter%$\%company%Tech\Tools\Registry_Setup.exe
 	{
 		ErrRegServers := ErrRegServers . "`n" . A_LoopReadLine
@@ -2425,11 +2350,7 @@ Loop, read, %SelectedFileMain%
 		Else
 		{
 			Run, %comspec% /c wmic /node:"%A_LoopReadLine%" process call create "cmd.exe /c %RemDriveLetter%:\%company%Tech\Tools\Registry_Setup.exe",, hide, pid
-			Gui, Loading:-Caption
-			Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
-			Gui, Loading:Add, Text,, Running registry setup on %A_LoopReadLine%
-			Gui, Hide
-			Gui, Loading:Show
+			GuiControl, Loading:Text, LoadingTxt, Running registry setup on %A_LoopReadLine%
 			ErrorLevel:=1
 			While (ErrorLevel != 0)
 			{
@@ -2437,10 +2358,10 @@ Loop, read, %SelectedFileMain%
 				GuiControl,Loading:, lvl, 1
 				Process, Exist, % pid
 			}
-			Gui,Loading:Destroy
 		}
 	}
 }
+Gui, Loading:Destroy
 If ErrRegServers
 	MsgBox,,Registry Setup Missing, Failed to find Registry_Setup.exe on: %ErrRegServers%
 If ErrRegUpdate
@@ -2479,22 +2400,22 @@ IfMsgBox Cancel
 	Return
 }
 ErrRegBak = 
+Gui,Loading:Destroy
+Gui, Loading:-Caption
+Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
+Gui, Loading:Add, Text, vLoadingTxt,
+GuiControl, Loading:Move, LoadingTxt, W300
+Gui, Hide
+Gui, Loading:Show
 Loop, read, %SelectedFileMain%
 {
-	Gui,Loading:Destroy
-	Gui, Loading:-Caption
-	Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
-	Gui, Loading:Add, Text,, Pinging %A_LoopReadLine%...
-	Gui, Hide
-	Gui, Loading:Show
+	GuiControl, Loading:Text, LoadingTxt, Pinging %A_LoopReadLine%...
 	RTT := Ping4(A_LoopReadLine, PingResult)
 	If ErrorLevel
 	{
 		ErrRegBak := ErrRegBak . "`n" . A_LoopReadLine
-		Gui, Loading:Destroy
 		continue
 	}
-	Gui, Loading:Destroy
 	line := A_LoopReadLine
 	GuiControlGet, MyCheckBox
 	If (MyCheckBox = 0)
@@ -2519,11 +2440,7 @@ Loop, read, %SelectedFileMain%
 		IfNotExist \\%line%\%RemDriveLetter%$\%company%Tech\RegBackup
 		{
 			Run, %comspec% /c wmic /node:"%line%" process call create 'cmd.exe /c mkdir %RemDriveLetter%:\%company%Tech\RegBackup',, hide, pid
-			Gui, Loading:-Caption
-			Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
-			Gui, Loading:Add, Text,, Creating folder on %line%
-			Gui, Hide
-			Gui, Loading:Show
+			GuiControl, Loading:Text, LoadingTxt, Creating folder on %line%
 			ErrorLevel:=1
 			While (ErrorLevel != 0)
 			{
@@ -2531,18 +2448,13 @@ Loop, read, %SelectedFileMain%
 				GuiControl,Loading:, lvl, 1
 				Process, Exist, % pid
 			}
-			Gui,Loading:Destroy
 		}
 		Else
 			RunWait, %comspec% /c wmic /node:"%line%" process call create 'cmd.exe /c del /F /Q %RemDriveLetter%:\%company%Tech\RegBackup\*.*',,hide
 		IfExist \\%line%\%RemDriveLetter%$\%company%Tech\RegBackup\hklm_%line%.reg
 			RunWait, %comspec% /c wmic /node:"%line%" process call create 'cmd.exe /c del /F /Q %RemDriveLetter%:\%company%Tech\RegBackup\hklm_%line%.reg',, hide
 		Run, %comspec% /c wmic /node:"%line%" process call create 'cmd.exe /c reg export hklm %RemDriveLetter%:\%company%Tech\RegBackup\hklm_%line%.reg',, hide, pid
-		Gui, Loading:-Caption
-		Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
-		Gui, Loading:Add, Text,, Backup HKLM on %line%
-		Gui, Hide
-		Gui, Loading:Show
+		GuiControl, Loading:Text, LoadingTxt, Backup HKLM on %line%
 		ErrorLevel:=1
 		While (ErrorLevel != 0)
 		{
@@ -2550,15 +2462,10 @@ Loop, read, %SelectedFileMain%
 			GuiControl,Loading:, lvl, 1
 			Process, Exist, % pid
 		}
-		Gui,Loading:Destroy
 		IfExist \\%line%\%RemDriveLetter%$\%company%Tech\RegBackup\hkcu_%line%.reg
 			RunWait, %comspec% /c wmic /node:"%line%" process call create 'cmd.exe /c del /F /Q %RemDriveLetter%:\%company%Tech\RegBackup\hkcu_%line%.reg',, hide
 		Run, %comspec% /c wmic /node:"%line%" process call create 'cmd.exe /c reg export hkcu %RemDriveLetter%:\%company%Tech\RegBackup\hkcu_%line%.reg',, hide, pid
-		Gui, Loading:-Caption
-		Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
-		Gui, Loading:Add, Text,, Backup HKCU on %line%
-		Gui, Hide
-		Gui, Loading:Show
+		GuiControl, Loading:Text, LoadingTxt, Backup HKCU on %line%
 		ErrorLevel:=1
 		While (ErrorLevel != 0)
 		{
@@ -2566,13 +2473,8 @@ Loop, read, %SelectedFileMain%
 			GuiControl,Loading:, lvl, 1
 			Process, Exist, % pid
 		}
-		Gui,Loading:Destroy
 	}
-	Gui, Loading:-Caption
-	Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
-	Gui, Loading:Add, Text,,  Waiting for HKLM to finish on %line%
-	Gui, Hide
-	Gui, Loading:Show
+	GuiControl, Loading:Text, LoadingTxt,  Waiting for HKLM to finish on %line%
 	HKLM_Exist = 0
 	While HKLM_Exist = 0
 	{	
@@ -2581,17 +2483,12 @@ Loop, read, %SelectedFileMain%
 		GuiControl,Loading:, lvl, 1
 		Sleep 20
 	}
-	Gui,Loading:Destroy
 	IfNotExist \\%line%\%RemDriveLetter%$\%company%Tech\RegBackup\hklm_%line%.reg
 	{
 		ErrhklmServers := ErrhklmServers . "`n" . line
 		continue
 	}
-	Gui, Loading:-Caption
-	Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
-	Gui, Loading:Add, Text,, Waiting for HKCU to finish on %line%
-	Gui, Hide
-	Gui, Loading:Show
+	GuiControl, Loading:Text, LoadingTxt, Waiting for HKCU to finish on %line%
 	HKCU_Exist = 0
 	While HKCU_Exist = 0
 	{	
@@ -2600,7 +2497,6 @@ Loop, read, %SelectedFileMain%
 		GuiControl,Loading:, lvl, 1
 		Sleep 20
 	}
-	Gui,Loading:Destroy
 	IfNotExist \\%line%\%RemDriveLetter%$\%company%Tech\RegBackup\hkcu_%line%.reg
 	{
 		ErrhkcuServers := ErrhkcuServers . "`n" . line
@@ -2618,11 +2514,7 @@ Loop, read, %SelectedFileMain%
 			RunWait, %comspec% /c tasklist /s %line% /fi "imagename eq 7z.exe" > "%A_ScriptDir%\7zstatus.txt",, hide
 			RunWait, %comspec% /c find /i "PID" < %A_ScriptDir%\7zstatus.txt > "%A_ScriptDir%\result.txt",, hide
 			FileGetSize, fsize, %A_ScriptDir%\result.txt
-			Gui, Loading:-Caption
-			Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
-			Gui, Loading:Add, Text,, Zipping files on %line%
-			Gui, Hide
-			Gui, Loading:Show
+			GuiControl, Loading:Text, LoadingTxt, Zipping files on %line%
 			While fsize <> 0
 			{
 				Sleep, 20
@@ -2631,7 +2523,6 @@ Loop, read, %SelectedFileMain%
 				RunWait, %comspec% /c find /i "PID" < "%A_ScriptDir%\7zstatus.txt" > "%A_ScriptDir%\result.txt",, hide
 				FileGetSize, fsize, %A_ScriptDir%\result.txt
 			}
-			Gui,Loading:Destroy
 			IfNotExist \\%line%\%RemDriveLetter%$\%company%Tech\RegBackup\regbackup_%line%.zip
 			{
 				ErrregbackupServers := ErrregbackupServers . "`n" . line
@@ -2645,6 +2536,7 @@ Loop, read, %SelectedFileMain%
 		}
 	}
 }
+Gui, Loading:Destroy
 If ErrhklmServers
 	MsgBox,,HKLM Backup, HKLM failed to backup on: %ErrhklmServers%
 If ErrhkcuServers
@@ -2716,28 +2608,29 @@ IfNotExist, %SelectedFileMain%
 	Return
 }
 ErrSecPol = 
+Gui,Loading:Destroy
+Gui, Loading:-Caption
+Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
+Gui, Loading:Add, Text, vLoadingTxt,
+GuiControl, Loading:Move, LoadingTxt, W300
+Gui, Hide
+Gui, Loading:Show
 Loop, read, %SelectedFileMain%
 {
-	Gui,Loading:Destroy
-	Gui, Loading:-Caption
-	Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
-	Gui, Loading:Add, Text,, Pinging %A_LoopReadLine%...
-	Gui, Hide
-	Gui, Loading:Show
+	GuiControl, Loading:Text, LoadingTxt, Pinging %A_LoopReadLine%...
 	RTT := Ping4(A_LoopReadLine, PingResult)
 	If ErrorLevel
 	{
 		ErrSecPol := ErrSecPol . "`n" . A_LoopReadLine
-		Gui, Loading:Destroy
 		continue
 	}
-	Gui, Loading:Destroy
 	IfNotExist, C:\Program Files (x86)\Windows Resource Kits\Tools
 	{
 		MsgBox,,Resource Kit, Please install Windows Resource Kit locally to C:\Program Files (x86)\Windows Resource Kits\Tools
 		Gui, 1:Show
 		Return
 	}
+	GuiControl, Loading:Text, LoadingTxt, Updating policies on %A_LoopReadLine%...
 	line := A_LoopReadLine
 	Loop, parse, user, `,
 	{
@@ -2770,6 +2663,7 @@ Loop, read, %SelectedFileMain%
 		}
 	}
 }
+Gui, Loading:Destroy
 If ErrSecPol
 {
 	MsgBox,,SecPol Failures, Failed to ping: %ErrSecPol%
@@ -2797,32 +2691,28 @@ IfNotExist, %LocDriveLetter%:\Program Files\NICE Systems\Logs
 IfNotExist, %LocDriveLetter%:\%company%Tech\Logs.lnk
 	FileCreateShortcut, %LocDriveLetter%:\Program Files\NICE Systems\Logs, %LocDriveLetter%:\%company%Tech\Logs.lnk
 ErrPushLog =
+Gui, Loading:Destroy
+Gui, Loading:-Caption
+Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
+Gui, Loading:Add, Text, vLoadingTxt,
+GuiControl, Loading:Move, LoadingTxt, W300
+Gui, Hide
+Gui, Loading:Show
 Loop, read, %SelectedFileMain%
 {
-	Gui,Loading:Destroy
-	Gui, Loading:-Caption
-	Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
-	Gui, Loading:Add, Text,, Pinging %A_LoopReadLine%...
-	Gui, Hide
-	Gui, Loading:Show
+	GuiControl, Loading:Text, LoadingTxt, Pinging %A_LoopReadLine%...
 	RTT := Ping4(A_LoopReadLine, PingResult)
 	If ErrorLevel
 	{
 		ErrPushLog := ErrPushLog . "`n" . A_LoopReadLine
-		Gui, Loading:Destroy
 		continue
 	}
-	Gui, Loading:Destroy
 	If (MyCheckBox = 0)
 		RunWait, %comspec% /k "robocopy /ETA %LocDriveLetter%:\%company%Tech \\%A_LoopReadLine%\c$\Users\Public\Desktop Logs.lnk"
 	Else
 	{
 		Run, %comspec% /c "robocopy /ETA %LocDriveLetter%:\%company%Tech \\%A_LoopReadLine%\c$\Users\Public\Desktop Logs.lnk",, hide, pid
-		Gui, Loading:-Caption
-		Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
-		Gui, Loading:Add, Text,, Pushing logs link to %A_LoopReadLine%
-		Gui, Hide
-		Gui, Loading:Show
+		GuiControl, Loading:Text, LoadingTxt, Pushing logs link to %A_LoopReadLine%
 		ErrorLevel:=1
 		While (ErrorLevel != 0)
 		{
@@ -2830,9 +2720,9 @@ Loop, read, %SelectedFileMain%
 			GuiControl,Loading:, lvl, 1
 			Process, Exist, % pid
 		}
-		Gui,Loading:Destroy
 	}
 }
+Gui, Loading:Destroy
 If ErrPushLog
 {
 	MsgBox,,Log Failures, Failed to ping: %ErrPushLog%
@@ -2955,6 +2845,7 @@ Loop, read, %SelectedFileMain%
 		}
 	}
 }
+Gui,Loading:Destroy
 If ErrEventvwr or ErrCopyEventApp or ErrCopyEventSys
 {
 	If ErrEventvwr
@@ -2967,7 +2858,6 @@ If ErrEventvwr or ErrCopyEventApp or ErrCopyEventSys
 }
 Else
 	MsgBox,, EventVwr Pull, Task Complete.  Check %LocDriveLetter%:\%company%Tech\RemoteEventvwr.
-Gui,Loading:Destroy
 Gui, 1:Show
 Return
 
