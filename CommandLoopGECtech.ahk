@@ -330,6 +330,12 @@ IfMsgBox No
 	Return
 IfNotExist %LocDriveLetter%:\%company%Tech\services.txt
 	AppendServices()
+IfNotExist %LocDriveLetter%:\%company%Tech\services.txt
+{
+	MsgBox,,Issue, Append Services failed, %LocDriveLetter%:\%company%Tech\services.txt does not exist.
+	Gui, 1:Show
+	Return
+}
 IfNotExist, %SelectedFileMain%
 {
 	MsgBox,,File Selection, No Server List found %SelectedFileMain%
@@ -453,6 +459,12 @@ IfMsgBox No
 }
 IfNotExist %LocDriveLetter%:\%company%Tech\services.txt
 	AppendServices()
+IfNotExist %LocDriveLetter%:\%company%Tech\services.txt
+{
+	MsgBox,, Issue, Append Services failed, %LocDriveLetter%:\%company%Tech\services.txt does not exist.
+	Gui, 1:Show
+	Return
+}
 IfNotExist, %SelectedFileMain%
 {
 	MsgBox,,File Selection, No Server List found %SelectedFileMain%
@@ -1483,7 +1495,7 @@ Loop, parse, BindServerSelection, |
 		continue
 	}
 	IfNotExist \\%A_LoopField%\%RemDriveLetter%$\%company%Tech\Tools\cert_thumb.ps1
-		RunWait, %comspec% /c "robocopy /ETA %LocDriveLetter%:\%company%Tech\Tools \\%A_LoopField%\%RemDriveLetter%$\%company%Tech\Tools cert_thumb.ps1",, hide
+		RunWait, %comspec% /c "robocopy /ETA %RemDriveLetter%:\Program Files\NICE Systems\ \\%A_LoopField%\%RemDriveLetter%$\%company%Tech\Tools cert_thumb.ps1",, hide
 	If (FullBind = 1)
 	{
 		GuiControl, Loading:Text, LoadingTxt, Cert management on %A_LoopField%...
@@ -2646,6 +2658,9 @@ Loop, read, %SelectedFileMain%
 			Run, %comspec% /k ntrights -m \\%line% -u %A_LoopField% +r SeServiceLogonRight
 			Run, %comspec% /k ntrights -m \\%line% -u %A_LoopField% +r SeSecurityPrivilege
 			Run, %comspec% /k ntrights -m \\%line% -u %A_LoopField% +r SeAssignPrimaryTokenPrivilege
+			Run, %comspec% /k ntrights -m \\%line% -u %A_LoopField% +r SeNetworkLogonRight
+			Run, %comspec% /k ntrights -m \\%line% -u %A_LoopField% +r SeBackupPrivilege
+			Run, %comspec% /k ntrights -m \\%line% -u %A_LoopField% +r SeAuditPrivilege
 			Run, %comspec% /k wmic /node:"%line%" process call create "cmd.exe /k net localgroup Administrators "%A_LoopField%" /add"
 		}
 		Else
@@ -2659,6 +2674,9 @@ Loop, read, %SelectedFileMain%
 			Run, %comspec% /c ntrights -m \\%line% -u %A_LoopField% +r SeServiceLogonRight,, hide
 			Run, %comspec% /c ntrights -m \\%line% -u %A_LoopField% +r SeSecurityPrivilege,, hide
 			Run, %comspec% /c ntrights -m \\%line% -u %A_LoopField% +r SeAssignPrimaryTokenPrivilege,, hide
+			Run, %comspec% /c ntrights -m \\%line% -u %A_LoopField% +r SeNetworkLogonRight,, hide
+			Run, %comspec% /c ntrights -m \\%line% -u %A_LoopField% +r SeBackupPrivilege,, hide
+			Run, %comspec% /c ntrights -m \\%line% -u %A_LoopField% +r SeAuditPrivilege,, hide
 			Run, %comspec% /c wmic /node:"%line%" process call create "cmd.exe /c net localgroup Administrators "%A_LoopField%" /add",, hide
 		}
 	}
@@ -2863,6 +2881,7 @@ Return
 
 AppendServices()
 {
+global
 GuiControlGet, LocDriveLetter
 FileAppend, 
 (
