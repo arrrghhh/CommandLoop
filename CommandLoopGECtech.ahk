@@ -2661,6 +2661,8 @@ Loop, read, %SelectedFileMain%
 			Run, %comspec% /k ntrights -m \\%line% -u %A_LoopField% +r SeNetworkLogonRight
 			Run, %comspec% /k ntrights -m \\%line% -u %A_LoopField% +r SeBackupPrivilege
 			Run, %comspec% /k ntrights -m \\%line% -u %A_LoopField% +r SeAuditPrivilege
+			Run, %comspec% /k ntrights -m \\%line% -u %A_LoopField% +r SeLockMemoryPrivilege
+			Run, %comspec% /k ntrights -m \\%line% -u %A_LoopField% +r SeManageVolumePrivilege
 			Run, %comspec% /k wmic /node:"%line%" process call create "cmd.exe /k net localgroup Administrators "%A_LoopField%" /add"
 		}
 		Else
@@ -2677,6 +2679,8 @@ Loop, read, %SelectedFileMain%
 			Run, %comspec% /c ntrights -m \\%line% -u %A_LoopField% +r SeNetworkLogonRight,, hide
 			Run, %comspec% /c ntrights -m \\%line% -u %A_LoopField% +r SeBackupPrivilege,, hide
 			Run, %comspec% /c ntrights -m \\%line% -u %A_LoopField% +r SeAuditPrivilege,, hide
+			Run, %comspec% /c ntrights -m \\%line% -u %A_LoopField% +r SeLockMemoryPrivilege,, hide
+			Run, %comspec% /c ntrights -m \\%line% -u %A_LoopField% +r SeManageVolumePrivilege,, hide
 			Run, %comspec% /c wmic /node:"%line%" process call create "cmd.exe /c net localgroup Administrators "%A_LoopField%" /add",, hide
 		}
 	}
