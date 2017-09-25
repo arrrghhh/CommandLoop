@@ -2601,6 +2601,18 @@ MsgBox,,Logger Backup, Task Complete.
 Return
 
 SecPol:
+IfNotExist, C:\Program Files (x86)\Windows Resource Kits\Tools
+{
+	MsgBox,,Resource Kit, Please install Windows Resource Kit locally to C:\Program Files (x86)\Windows Resource Kits\Tools
+	Gui, 1:Show
+	Return
+}
+IfNotExist, %SelectedFileMain%
+{
+	MsgBox,,File Selection, No Server List found %SelectedFileMain%
+	Gui, 1:Show
+	Return
+}
 InputBox, user, User Account, Please enter (comma separated) user account(s) (domain\user):
 If ErrorLevel
 {
@@ -2610,12 +2622,6 @@ If ErrorLevel
 If user = 
 {
 	MsgBox,,User Blank, User account cannot be blank!
-	Gui, 1:Show
-	Return
-}
-IfNotExist, %SelectedFileMain%
-{
-	MsgBox,,File Selection, No Server List found %SelectedFileMain%
 	Gui, 1:Show
 	Return
 }
@@ -2635,12 +2641,6 @@ Loop, read, %SelectedFileMain%
 	{
 		ErrSecPol := ErrSecPol . "`n" . A_LoopReadLine
 		continue
-	}
-	IfNotExist, C:\Program Files (x86)\Windows Resource Kits\Tools
-	{
-		MsgBox,,Resource Kit, Please install Windows Resource Kit locally to C:\Program Files (x86)\Windows Resource Kits\Tools
-		Gui, 1:Show
-		Return
 	}
 	GuiControl, Loading:Text, LoadingTxt, Updating policies on %A_LoopReadLine%...
 	line := A_LoopReadLine
