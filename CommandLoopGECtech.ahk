@@ -5,7 +5,7 @@
 
 company = GEC
 
-version = 2017.04.20.2200_%company%
+version = 2017.09.28.0724_%company%
 
 if not A_IsAdmin
 {
@@ -29,14 +29,14 @@ menu, FileMenu, add, File Selection, FSM
 SelectedFileMain = %LocDriveLetter%:\%company%Tech\servers.txt
 menu, FileMenu, add, Exit, ExitSub
 menu, DangerZone, add, &Reboot Servers, REBOOT
-menu, DangerZone, add, Stop/&Disable NICE Services, STOPALL
-menu, DangerZone, add, Start/&Auto NICE Services, STARTALL
-menu, DEPTOEmain, add, Disable DEP/TOE, DisableDEPTOE
-menu, DEPTOEmain, add, Audit DEP, AuditDEPTOE
+menu, DangerZone, add, Stop/&Disable Verint Services, STOPALL
+menu, DangerZone, add, Start/&Auto Verint Services, STARTALL
+;menu, DEPTOEmain, add, Disable DEP/TOE, DisableDEPTOE
+;menu, DEPTOEmain, add, Audit DEP, AuditDEPTOE
 menu, HelpMenu, add, About, About
 menu, MyMenuBar, Add, &File, :FileMenu
 menu, MyMenuBar, Add, &DangerZone, :DangerZone
-menu, MyMenuBar, Add, D&EP/TOE, :DEPTOEmain
+;menu, MyMenuBar, Add, D&EP/TOE, :DEPTOEmain
 menu, MyMenuBar, Add, &Help, :HelpMenu
 gui, menu, MyMenuBar
 Menu, Tray, Tip, CommandLoop
@@ -48,15 +48,15 @@ gui, add, button, hwndhbuttonrun gRUN, &Run
 gui, add, button, hwndhbuttonlogoff gLOGOFF, &Logoff Servers
 gui, add, button, hwndhbuttonnp gNP++, &Install NP++
 gui, add, button, hwndhbutton7z g7z, Install 7&zip
-gui, add, button, hwndhbuttonscc gscc, SCC Binding
+;gui, add, button, hwndhbuttonscc gscc, SCC Binding
 gui, add, button, hwndhbuttonrdp grdp, RDP Man Setup
 gui, add, button, x105 y52 hwndhbuttonpulog gLogoffLink, Push Logoff Link
 ;gui, add, button, x105 y52 hwndhbuttonfunc gFUNCTEST, &Push FuncTest Shortcut
 gui, add, button, hwndhbuttonpunice gPushNiceTech, Push %company%Tech Folder
-gui, add, button, hwndhbuttonserv gPushConfigMgr, Push NICE ServiceMgr
+;gui, add, button, hwndhbuttonserv gPushConfigMgr, Push NICE ServiceMgr
 gui, add, button, hwndhbuttonsecpol gSecPol, Security Policies
-gui, add, button, hwndhbuttonaddrolefeat gAddRoleFeat, Add Roles/Features
-gui, add, button, hwndhbuttonperfcount gPerfCount, Reset PerfMon
+;gui, add, button, hwndhbuttonaddrolefeat gAddRoleFeat, Add Roles/Features
+;gui, add, button, hwndhbuttonperfcount gPerfCount, Reset PerfMon
 gui, add, button, x240 y110 hwndhbuttonreg gRegistryChange, Update Registry
 gui, add, button, hwndhbuttonregback gRegBackup, Backup Registry
 gui, add, button, hwndhbuttonlogs gPushLogShortcut, Logs Shortcut
@@ -2893,61 +2893,54 @@ global
 GuiControlGet, LocDriveLetter
 FileAppend, 
 (
-AASearchController
-ActiveMQ
-AuditTrailService
-CLSCoreService
-CLSDBSrvrService
-CLSMonitorService
-CLSRCMService
-CIMService
-CoachingServerService
-ContentAnalysisService
-EnrollmentService
-EvaluationServerService
-FLM
-FTFQueryServerService
-IntegrationBusMasterService_10.0.0.3
-IntegrationBusNode_COREIN
-IntegrationsDispatch
-InvestigationsServerService
-IPCapture
-LogService
-MMLLogger
-MMLTrayIcon
-MonitorServerService
-MQ_NICEMQ
-NBAService
-NICEAgentCenter
-"NICE Archiving Manager"
-"NICE BSF Server"
-"NICE Connection Manager Service"
-"NICE IP Capture"
-"NICE MediaCollectionServer"
-"Nice Minibus Server"
-NiceIPPhoneApplications
-NiceKeepAliveService
-NiceJmxAgent
-NiceMyUniverse
-"NICE Recorder Administrator"
-"NICE Recording Sessions Manager"
-NiceRetentionService
-"NICE Retriever"
-"NICE Screen Capture"
-"NICE ScreenCapture AIR"
-NICETextCaptureAIR
-NotificationService
-NTLoggerSvc
-PlaybackAdministration
-PlaybackStreaming
-RuleEngineService
-RulesManagerService
-SCLoader
-SearchTomcat7
-Searchzookeeper
-SystemAdminService
-TextAnalysisService
-TRSService
+DataExport
+ADAM_Directory
+cisdncta
+TFChannelAlarm
+CFTomCat64
+I360PPA
+I360PPCMM
+I360PPI
+I360SecureWebGateway
+SpeechCatTomCat64
+TRSTomCat64
+CIAETLService
+I360CMS
+I360SMA
+IndexBuilder
+"Integration Server"
+LoggerServer
+"Mas Service"
+MinerTomcat
+PhoneticBoostingService
+PurgerService
+"Recorder Agent Server"
+"Recorder Alarm Service"
+"Recorder Analytics Service"
+"Recorder Analyzer Service"
+"Recorder Archiver Service"
+"Recorder Biometrics Service"
+"Recorder Compressor Service"
+"Recorder Consolidator Service"
+"Recorder Content Server"
+"Recorder DiskManager Service"
+"Recorder Import Export Engine"
+"Recorder Ingestion Web Service"
+"Recorder Integration Service"
+"Recorder IP CaptureEngine"
+"Recorder Redundancy Controller"
+"Recorder RTP Proxy"
+"Recorder Screen CaptureEngine"
+"Recorder TDM CaptureEngine"
+RecorderTomcat
+"Recorder WebServices Service"
+"Recorder Workflow Service"
+SpeechTranscriptionSystem
+"Verint Telephony Playback Engine"
+"VerintTelephonyPlaybackServer"
+TFServer
+WFO_ProductionDomain_ProductionServer
+WatchDog
 ), %LocDriveLetter%:\%company%Tech\services.txt
 }
 
