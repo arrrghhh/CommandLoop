@@ -501,7 +501,7 @@ Loop, read, %SelectedFileMain%
 		{
 			IfExist %A_ScriptDir%\checksvc.txt
 				FileDelete, %A_ScriptDir%\checksvc.txt
-			RunWait, %comspec% /c sc \\%line% query %A_LoopReadLine% |findstr STATE > "%A_ScriptDir%\checksvc.txt",, hide
+			RunWait, %comspec% /c sc \\%line% qc %A_LoopReadLine% |findstr AUTO > "%A_ScriptDir%\checksvc.txt",, hide
 			FileGetSize, fsize, %A_ScriptDir%\checksvc.txt
 			IfNotEqual, fsize, 0
 				RunWait, %comspec% /k wmic /node:"%line%" process call create 'cmd.exe /k sc config %A_LoopReadLine% start= auto'
@@ -512,7 +512,7 @@ Loop, read, %SelectedFileMain%
 		{
 			IfExist %A_ScriptDir%\checksvc.txt
 				FileDelete, %A_ScriptDir%\checksvc.txt
-			RunWait, %comspec% /c sc \\%line% query %A_LoopReadLine% |findstr STATE > "%A_ScriptDir%\checksvc.txt",, hide
+			RunWait, %comspec% /c sc \\%line% qc %A_LoopReadLine% |findstr AUTO > "%A_ScriptDir%\checksvc.txt",, hide
 			FileGetSize, fsize, %A_ScriptDir%\checksvc.txt
 			IfNotEqual, fsize, 0
 				RunWait, %comspec% /k wmic /node:"%line%" process call create 'cmd.exe /k sc start %A_LoopReadLine%'
@@ -526,7 +526,7 @@ Loop, read, %SelectedFileMain%
 		{
 			IfExist %A_ScriptDir%\checksvc.txt
 				FileDelete, %A_ScriptDir%\checksvc.txt
-			RunWait, %comspec% /c sc \\%line% query %A_LoopReadLine% |findstr STATE > "%A_ScriptDir%\checksvc.txt",, hide
+			RunWait, %comspec% /c sc \\%line% qc %A_LoopReadLine% |findstr AUTO > "%A_ScriptDir%\checksvc.txt",, hide
 			FileGetSize, fsize, %A_ScriptDir%\checksvc.txt
 			IfNotEqual, fsize, 0
 			{
@@ -547,7 +547,7 @@ Loop, read, %SelectedFileMain%
 		{
 			IfExist %A_ScriptDir%\checksvc.txt
 				FileDelete, %A_ScriptDir%\checksvc.txt
-			RunWait, %comspec% /c sc \\%line% query %A_LoopReadLine% |findstr STATE > "%A_ScriptDir%\checksvc.txt",, hide
+			RunWait, %comspec% /c sc \\%line% qc %A_LoopReadLine% |findstr AUTO > "%A_ScriptDir%\checksvc.txt",, hide
 			FileGetSize, fsize, %A_ScriptDir%\checksvc.txt
 			IfNotEqual, fsize, 0
 			{
