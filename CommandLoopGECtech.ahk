@@ -286,7 +286,11 @@ ErrRebootServers =
 Loop, read, %SelectedFileMain%
 {
 	If A_LoopReadLine = %A_ComputerName%
-		continue
+	{
+		MsgBox, 4, %A_LoopReadLine%, Reboot this node?
+		IfMsgBox No
+			continue
+	}
 	GuiControl, Loading:Text, LoadingTxt, Pinging %A_LoopReadLine%...
 	RTT := Ping4(A_LoopReadLine, PingResult)
 	If ErrorLevel
