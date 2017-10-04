@@ -329,7 +329,7 @@ gui, submit, nohide
 GuiControlGet, MyCheckBox
 GuiControlGet, LocDriveLetter
 GuiControlGet, RemDriveLetter
-MsgBox,4,Stop All NICE Services, Are you sure?
+MsgBox,4,Stop All Verint Services, Are you sure?
 IfMsgBox No
 	Return
 IfNotExist %LocDriveLetter%:\%company%Tech\services.txt
@@ -357,8 +357,8 @@ ErrStopAll =
 Loop, read, %SelectedFileMain%
 {
 	line := A_LoopReadLine
-	If line = %A_ComputerName%
-		continue
+	;If line = %A_ComputerName%
+		;continue
 	GuiControl, Loading:Text, LoadingTxt, Pinging %A_LoopReadLine%...
 	RTT := Ping4(A_LoopReadLine, PingResult)
 	If ErrorLevel
@@ -368,14 +368,19 @@ Loop, read, %SelectedFileMain%
 	}
 	If (MyCheckBox = 0)
 	{
+		IfExist %A_ScriptDir%\%line%-service_auto.txt
+			FileDelete, %A_ScriptDir%\%line%-service_auto.txt
 		Loop, read, %LocDriveLetter%:\%company%Tech\services.txt
 		{
 			IfExist %A_ScriptDir%\checksvc.txt
 				FileDelete, %A_ScriptDir%\checksvc.txt
-			RunWait, %comspec% /c sc \\%line% query %A_LoopReadLine% |findstr STATE > "%A_ScriptDir%\checksvc.txt",, hide
+			RunWait, %comspec% /c sc \\%line% qc %A_LoopReadLine% |findstr AUTO > "%A_ScriptDir%\checksvc.txt",, hide
 			FileGetSize, fsize, %A_ScriptDir%\checksvc.txt
 			IfNotEqual, fsize, 0
+			{
 				RunWait, %comspec% /k wmic /node:"%line%" process call create 'cmd.exe /k sc config %A_LoopReadLine% start= disabled'
+				FileAppend, %A_LoopReadLine%`n, %A_ScriptDir%\%line%-service_auto.txt
+			}
 			Else
 				continue
 		}
@@ -383,7 +388,7 @@ Loop, read, %SelectedFileMain%
 		{
 			IfExist %A_ScriptDir%\checksvc.txt
 				FileDelete, %A_ScriptDir%\checksvc.txt
-			RunWait, %comspec% /c sc \\%line% query %A_LoopReadLine% |findstr STATE > "%A_ScriptDir%\checksvc.txt",, hide
+			RunWait, %comspec% /c sc \\%line% query %A_LoopReadLine% |findstr RUNNING > "%A_ScriptDir%\checksvc.txt",, hide
 			FileGetSize, fsize, %A_ScriptDir%\checksvc.txt
 			IfNotEqual, fsize, 0
 				RunWait, %comspec% /k wmic /node:"%line%" process call create 'cmd.exe /k sc stop %A_LoopReadLine%'
@@ -393,15 +398,18 @@ Loop, read, %SelectedFileMain%
 	}
 	Else
 	{
+		IfExist %A_ScriptDir%\%line%-service_auto.txt
+			FileDelete, %A_ScriptDir%\%line%-service_auto.txt
 		Loop, read, %LocDriveLetter%:\%company%Tech\services.txt
 		{
 			IfExist %A_ScriptDir%\checksvc.txt
 				FileDelete, %A_ScriptDir%\checksvc.txt
-			RunWait, %comspec% /c sc \\%line% query %A_LoopReadLine% |findstr STATE > "%A_ScriptDir%\checksvc.txt",, hide
+			RunWait, %comspec% /c sc \\%line% qc %A_LoopReadLine% |findstr AUTO > "%A_ScriptDir%\checksvc.txt",, hide
 			FileGetSize, fsize, %A_ScriptDir%\checksvc.txt
 			IfNotEqual, fsize, 0
 			{
 				Run, %comspec% /c wmic /node:"%line%" process call create 'cmd.exe /c sc config %A_LoopReadLine% start= disabled',, hide, pid
+				FileAppend, %A_LoopReadLine%`n, %A_ScriptDir%\%line%-service_auto.txt
 				GuiControl, Loading:Text, LoadingTxt, Disabling %A_LoopReadLine% on %line%
 				ErrorLevel:=1
 				While (ErrorLevel != 0)
@@ -418,7 +426,7 @@ Loop, read, %SelectedFileMain%
 		{
 			IfExist %A_ScriptDir%\checksvc.txt
 				FileDelete, %A_ScriptDir%\checksvc.txt
-			RunWait, %comspec% /c sc \\%line% query %A_LoopReadLine% |findstr STATE > "%A_ScriptDir%\checksvc.txt",, hide
+			RunWait, %comspec% /c sc \\%line% query %A_LoopReadLine% |findstr RUNNING > "%A_ScriptDir%\checksvc.txt",, hide
 			FileGetSize, fsize, %A_ScriptDir%\checksvc.txt
 			IfNotEqual, fsize, 0
 			{
@@ -455,7 +463,7 @@ gui, submit, nohide
 GuiControlGet, MyCheckBox
 GuiControlGet, LocDriveLetter
 GuiControlGet, RemDriveLetter
-MsgBox,4,Start all NICE Services, Are you sure?
+MsgBox,4,Start all Verint Services, Are you sure?
 IfMsgBox No
 {
 	Gui, 1:Show
@@ -486,10 +494,11 @@ ErrStartAll =
 Loop, read, %SelectedFileMain%
 {
 	line := A_LoopReadLine
-	If line = %A_ComputerName%
-		continue
+	;If line = %A_ComputerName%
+		;continue
 	GuiControl, Loading:Text, LoadingTxt, Pinging %A_LoopReadLine%...
 	RTT := Ping4(A_LoopReadLine, PingResult)
+	GuiControl, Loading:Text, LoadingTxt, Done
 	If ErrorLevel
 	{
 		ErrStartAll := ErrStartAll . "`n" . A_LoopReadLine
@@ -497,38 +506,20 @@ Loop, read, %SelectedFileMain%
 	}
 	If (MyCheckBox = 0)
 	{
-		Loop, read, %LocDriveLetter%:\%company%Tech\services.txt
+		IfExist %A_ScriptDir%\%line%-service_auto.txt
 		{
-			IfExist %A_ScriptDir%\checksvc.txt
-				FileDelete, %A_ScriptDir%\checksvc.txt
-			RunWait, %comspec% /c sc \\%line% qc %A_LoopReadLine% |findstr AUTO > "%A_ScriptDir%\checksvc.txt",, hide
-			FileGetSize, fsize, %A_ScriptDir%\checksvc.txt
-			IfNotEqual, fsize, 0
+			Loop, read, %A_ScriptDir%\%line%-service_auto.txt
+			{
 				RunWait, %comspec% /k wmic /node:"%line%" process call create 'cmd.exe /k sc config %A_LoopReadLine% start= auto'
-			Else
-				continue
-		}
-		Loop, read, %LocDriveLetter%:\%company%Tech\services.txt
-		{
-			IfExist %A_ScriptDir%\checksvc.txt
-				FileDelete, %A_ScriptDir%\checksvc.txt
-			RunWait, %comspec% /c sc \\%line% qc %A_LoopReadLine% |findstr AUTO > "%A_ScriptDir%\checksvc.txt",, hide
-			FileGetSize, fsize, %A_ScriptDir%\checksvc.txt
-			IfNotEqual, fsize, 0
 				RunWait, %comspec% /k wmic /node:"%line%" process call create 'cmd.exe /k sc start %A_LoopReadLine%'
-			Else
-				continue
+			}
 		}
 	}
 	Else
 	{
-		Loop, read, %LocDriveLetter%:\%company%Tech\services.txt
+		IfExist %A_ScriptDir%\%line%-service_auto.txt
 		{
-			IfExist %A_ScriptDir%\checksvc.txt
-				FileDelete, %A_ScriptDir%\checksvc.txt
-			RunWait, %comspec% /c sc \\%line% qc %A_LoopReadLine% |findstr AUTO > "%A_ScriptDir%\checksvc.txt",, hide
-			FileGetSize, fsize, %A_ScriptDir%\checksvc.txt
-			IfNotEqual, fsize, 0
+			Loop, read, %A_ScriptDir%\%line%-service_auto.txt
 			{
 				Run, %comspec% /c wmic /node:"%line%" process call create 'cmd.exe /c sc config %A_LoopReadLine% start= auto',, hide, pid
 				GuiControl, Loading:Text, LoadingTxt, Set %A_LoopReadLine% on %line% to auto
@@ -539,18 +530,6 @@ Loop, read, %SelectedFileMain%
 					GuiControl,Loading:, lvl, 1
 					Process, Exist, % pid
 				}
-			}
-			Else
-				continue
-		}
-		Loop, read, %LocDriveLetter%:\%company%Tech\services.txt
-		{
-			IfExist %A_ScriptDir%\checksvc.txt
-				FileDelete, %A_ScriptDir%\checksvc.txt
-			RunWait, %comspec% /c sc \\%line% qc %A_LoopReadLine% |findstr AUTO > "%A_ScriptDir%\checksvc.txt",, hide
-			FileGetSize, fsize, %A_ScriptDir%\checksvc.txt
-			IfNotEqual, fsize, 0
-			{
 				Run, %comspec% /c wmic /node:"%line%" process call create 'cmd.exe /c sc start %A_LoopReadLine%',, hide, pid
 				GuiControl, Loading:Text, LoadingTxt, Starting %A_LoopReadLine% on %line%
 				ErrorLevel:=1
@@ -561,8 +540,6 @@ Loop, read, %SelectedFileMain%
 					Process, Exist, % pid
 				}
 			}
-			Else
-				continue
 		}
 	}
 }
