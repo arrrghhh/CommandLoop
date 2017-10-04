@@ -61,8 +61,8 @@ gui, add, button, x240 y110 hwndhbuttonreg gRegistryChange, Update Registry
 gui, add, button, hwndhbuttonregback gRegBackup, Backup Registry
 gui, add, button, hwndhbuttonlogs gPushLogShortcut, Logs Shortcut
 gui, add, button, hwndhbuttonevnt gEventVwr, Pull EventVwr
-gui, add, DropDownList, x240 y52 w35 hwndhddlremotedriveletter vRemDriveLetter, D||E|F|G|H
-gui, add, DropDownList, x280 y52 w35 hwndhddllocaldriveletter vLocDriveLetter gLocDrive, D||E|F|G|H
+gui, add, DropDownList, x240 y52 w35 hwndhddlremotedriveletter vRemDriveLetter, C|D||E|F|G|H
+gui, add, DropDownList, x280 y52 w35 hwndhddllocaldriveletter vLocDriveLetter gLocDrive, C|D||E|F|G|H
 gui, add, checkbox, checked x240 y82 vMyCheckBox, Close CMD?
 
 ;Populate the TT's
