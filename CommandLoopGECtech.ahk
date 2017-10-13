@@ -5,7 +5,7 @@
 
 company = GEC
 
-version = 2017.10.04.1020_%company%
+version = 2017.10.13.1619_%company%
 
 if not A_IsAdmin
 {
@@ -14,7 +14,7 @@ if not A_IsAdmin
 }
 OnExit, ExitSub
 RemDriveLetter = D
-LocDriveLetter = D
+LocDriveLetter := SubStr(A_ScriptDir, 1, 1)
 
 IfWinActive, Program Manager
 	WinMinimizeAllUndo
@@ -26,7 +26,6 @@ Else
 
 GuiControlGet, LocDriveLetter
 menu, FileMenu, add, File Selection, FSM
-SelectedFileMain = %LocDriveLetter%:\%company%Tech\servers.txt
 menu, FileMenu, add, Exit, ExitSub
 menu, DangerZone, add, &Reboot Servers, REBOOT
 menu, DangerZone, add, Stop/&Disable NICE Services, STOPALL
@@ -40,6 +39,22 @@ menu, MyMenuBar, Add, D&EP/TOE, :DEPTOEmain
 menu, MyMenuBar, Add, &Help, :HelpMenu
 gui, menu, MyMenuBar
 Menu, Tray, Tip, CommandLoop
+
+SelectedFileMain = 
+
+Loop, Files, servers.txt, R
+{
+	SelectedFileMain = %A_LoopFileLongPath%
+	break
+}
+
+If SelectedFileMain = 
+{
+	IfNotExist %LocDriveLetter%:\%company%Tech\servers.txt
+		MsgBox Could not find servers.txt, please define manually.
+	IfExist %LocDriveLetter%:\%company%Tech\servers.txt
+		SelectedFileMain = %LocDriveLetter%:\%company%Tech\servers.txt
+}
 
 gui, font, s8, MS Shell Dlg
 gui, add, Text, w300 h100 r1 vFile, %SelectedFileMain%
@@ -62,8 +77,13 @@ gui, add, button, hwndhbuttonregback gRegBackup, Backup Registry
 gui, add, button, hwndhbuttonlogs gPushLogShortcut, Logs Shortcut
 gui, add, button, hwndhbuttonevnt gEventVwr, Pull EventVwr
 gui, add, DropDownList, x240 y52 w35 hwndhddlremotedriveletter vRemDriveLetter, C|D||E|F|G|H
-gui, add, DropDownList, x280 y52 w35 hwndhddllocaldriveletter vLocDriveLetter gLocDrive, C|D||E|F|G|H
+gui, add, DropDownList, x280 y52 w35 hwndhddllocaldriveletter vLocDriveLetter, C|D|E|F|G|H
 gui, add, checkbox, checked x240 y82 vMyCheckBox, Close CMD?
+
+If LocDriveLetter = D
+	GuiControl,, LocDriveLetter, C|D||E|F|G|H
+If LocDriveLetter = E
+	GuiControl,, LocDriveLetter, C|D|E||F|G|H
 
 ;Populate the TT's
 AnytimeTipTxt := "Anytime"
@@ -112,14 +132,6 @@ TT.Attach(HDdlLocalDriveLetter, LocalDriveLetterTipTxt)
 TT.Update(HDdlLocalDriveLetter, LocalDriveLetterTipTxt)
 
 gui, show,, Command Loop
-Return
-
-LocDrive:
-GuiControlGet, MyCheckBox
-GuiControlGet, LocDriveLetter
-GuiControlGet, RemDriveLetter
-SelectedFileMain = %LocDriveLetter%:\%company%Tech\servers.txt
-guicontrol, , File, %SelectedFileMain%
 Return
 
 RUN:
