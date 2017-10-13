@@ -50,10 +50,10 @@ Loop, Files, servers.txt, R
 
 If SelectedFileMain = 
 {
-	IfNotExist %LocDriveLetter%:\%company%Tech\servers.txt
-		MsgBox Could not find servers.txt, please define manually.
 	IfExist %LocDriveLetter%:\%company%Tech\servers.txt
 		SelectedFileMain = %LocDriveLetter%:\%company%Tech\servers.txt
+	IfNotExist %LocDriveLetter%:\%company%Tech\servers.txt
+		MsgBox Could not find servers.txt, please define manually.
 }
 
 gui, font, s8, MS Shell Dlg
