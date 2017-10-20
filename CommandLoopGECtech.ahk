@@ -5,7 +5,6 @@
 
 company = GEC
 
-version = 2017.10.13.1619_%company%
 
 if not A_IsAdmin
 {
@@ -2941,6 +2940,7 @@ NiceIPPhoneApplications
 NiceKeepAliveService
 NiceJmxAgent
 NiceMyUniverse
+"NICE Real Time Voice Buffering"
 "NICE Recorder Administrator"
 "NICE Recording Sessions Manager"
 NiceRetentionService
@@ -2952,6 +2952,7 @@ NotificationService
 NTLoggerSvc
 PlaybackAdministration
 PlaybackStreaming
+RTIConnect
 RuleEngineService
 RulesManagerService
 SCLoader
