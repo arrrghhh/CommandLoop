@@ -5,6 +5,7 @@
 
 company = GEC
 
+version = 2017.10.20.1013_%company%
 
 if not A_IsAdmin
 {
