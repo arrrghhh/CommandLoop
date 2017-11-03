@@ -5,7 +5,7 @@
 
 company = GEC
 
-version = 2017.10.20.1013_%company%
+version = 2017.11.23.1709_%company%
 
 if not A_IsAdmin
 {
@@ -2931,6 +2931,7 @@ MonitorServerService
 MQ_NICEMQ
 NBAService
 NICEAgentCenter
+"NICE AgentCenter"
 "NICE Archiving Manager"
 "NICE BSF Server"
 "NICE Connection Manager Service"
@@ -2944,6 +2945,8 @@ NiceMyUniverse
 "NICE Real Time Voice Buffering"
 "NICE Recorder Administrator"
 "NICE Recording Sessions Manager"
+NiceReporterScheduler
+NiceRedundancyManager
 NiceRetentionService
 "NICE Retriever"
 "NICE Screen Capture"
@@ -2953,11 +2956,13 @@ NotificationService
 NTLoggerSvc
 PlaybackAdministration
 PlaybackStreaming
+ReporterEngineService
 RTIConnect
 RuleEngineService
 RulesManagerService
 SCLoader
 SearchTomcat7
+SearchTomcat8
 Searchzookeeper
 SystemAdminService
 TextAnalysisService
