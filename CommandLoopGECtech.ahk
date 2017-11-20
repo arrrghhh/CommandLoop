@@ -5,7 +5,7 @@
 
 company = GEC
 
-version = 2017.11.23.1709_%company%
+version = 2017.11.20.1509_%company%
 
 if not A_IsAdmin
 {
@@ -2343,6 +2343,7 @@ IfNotExist, %SelectedFileMain%
 	Return
 }
 ErrRegUpdate = 
+ErrRegServers = 
 Gui,Loading:Destroy
 Gui, Loading:-Caption
 Gui, Loading:Add, Progress, vlvl -Smooth 0x8 w250 h18 ; PBS_MARQUEE = 0x8
